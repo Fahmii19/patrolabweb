@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('shift', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->time('mulai');
-            $table->time('selesai');
+            $table->string('name');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->timestamps();
         });
     }

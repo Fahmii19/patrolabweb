@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('areas', function (Blueprint $table) {
             $table->id();
-            $table->string('kode')->unique();
-            $table->string('nama');
-            $table->foreignId('id_project');
+            $table->string('code')->unique();
+            $table->string('name')->nullable();
+            $table->string('img_location')->nullable();
+            $table->foreignId('project_id')->nullable();
             $table->timestamps();
         });
     }

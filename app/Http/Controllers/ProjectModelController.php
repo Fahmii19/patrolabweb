@@ -18,6 +18,7 @@ class ProjectModelController extends Controller
     {
         $data['title'] = 'Daftar Project';
         $data['project_model'] = ProjectModel::all();
+        // dd($data['project_model']);
         return view('super-admin.project.index', $data);
     }
 
@@ -107,12 +108,15 @@ class ProjectModelController extends Controller
     public function datatable()
     {
         $data = ProjectModel::all();
+        // dd($data);
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('nama_project', '{{$name}}')
+            ->addColumn('nama_project', function (ProjectModel $project) {
+                return $project->nama_project;
+            })
             ->addColumn('wilayah', function (ProjectModel $project) {
-                return $project->data_wilayah->name;
+                return $project->nama_project;
                 // dd($project);
             })
             ->addColumn('action', function (ProjectModel $project) {
@@ -125,11 +129,11 @@ class ProjectModelController extends Controller
             ->toJson();
     }
 
-    public function by_wilayah(Request $request,$id)
+    public function by_wilayah(Request $request, $id)
     {
         $old = [];
-        if($request->id_project){
-            $old = explode(',',$request->id_project);
+        if ($request->id_project) {
+            $old = explode(',', $request->id_project);
         }
         $data = Wilayah::find($id)->projects;
         if ($data->count() <= 0) {
@@ -141,11 +145,11 @@ class ProjectModelController extends Controller
         }
         $html = '';
         foreach ($data as $item) {
-            $checked = in_array($item->id,$old) ? 'checked' : '';
+            $checked = in_array($item->id, $old) ? 'checked' : '';
             $html .= '<label class="col">
-            <input class="form-check-input me-1" type="checkbox" value="'.$item->id.'"
-                name="id_project[]" '.$checked.'>
-            <span>'.$item->nama_project.'</span>
+            <input class="form-check-input me-1" type="checkbox" value="' . $item->id . '"
+                name="id_project[]" ' . $checked . '>
+            <span>' . $item->nama_project . '</span>
         </label>';
         }
         return response()->json([

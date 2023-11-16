@@ -36,6 +36,7 @@ class AreaController extends Controller
     {
         $data['title'] = "Tambah Data Area";
         $data['project'] = ProjectModel::all();
+        // dd($data['project']);
         return view('super-admin.area.create', $data);
     }
 
@@ -54,19 +55,20 @@ class AreaController extends Controller
             //     'nama' => ['required', 'string'],
             //     'id_wilayah' => ['required', 'numeric']
             // ]);
-            $validator = Validator::make($request->all(),
+            $validator = Validator::make(
+                $request->all(),
                 [
                     'code' => ['required', 'unique:areas'],
                     'name' => ['required', 'string'],
                     'img_location' => ['required', 'string'],
                     'project_id' => ['required', 'numeric']
                 ]
-                );
+            );
 
-                if($validator->fails()){
-                    return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
-                }
-                
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            }
+
             $data = $validator->validated();
             $action = Area::create($data);
             DB::commit();
@@ -137,7 +139,7 @@ class AreaController extends Controller
             ->addColumn('code', '{{$code}}')
             ->addColumn('name', '{{$name}}')
             ->addColumn('img_location', '{{$img_location}}')
-            ->addColumn('project_id', function(Area $area){
+            ->addColumn('project_id', function (Area $area) {
                 return $area->project->name;
             })
             ->toJson();
@@ -160,7 +162,7 @@ class AreaController extends Controller
         $html = '<option value="" selected disabled>--Pilih--</option>';
         foreach ($data as $item) {
             $selected = $item->id == $old ? 'selected' : '';
-            $html .= '<option value="'.$item->id.'"'.$selected.'>'.$item->nama.'</option>';
+            $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->nama . '</option>';
         }
         return response()->json([
             "status" => "true",
