@@ -51,7 +51,7 @@ class WilayahController extends Controller
             $action = Wilayah::create($data);
             DB::commit();
 
-            dd($action);
+            // dd($action);
 
             if ($action) {
                 return redirect()->route('wilayah.index')->with('success', 'data wilayah berhasil disimpan');

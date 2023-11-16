@@ -25,7 +25,7 @@
                     <button onclick="window.history.back()" class="btn btn-warning">
                         << Kembali</button>
                 </div>
-                <form action="{{ route('wilayah.store') }}" method="POST">
+                <form action="{{ route('aset.store') }}" method="POST">
                     @csrf
                     <div class="row row-cols-1 row-cols-lg-2">
                         <div class="col">

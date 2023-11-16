@@ -27,6 +27,7 @@ class AsetController extends Controller
     public function create()
     {
         $data['title'] = "Tambah Data Aset";
+
         return view('super-admin.aset.create', $data);
     }
 
@@ -39,22 +40,22 @@ class AsetController extends Controller
     public function store(Request $request)
     {
 
-        dd($request->all());
+        // dd($request);
+        // dd("masuk");
 
-        // Input Validation
         $request->validate([
-            'code' => 'required',
-            'name' => 'required',
-            'asset_master_type' => 'required',
+            'kode' => 'required',
+            'nama' => 'required',
+            // 'asset_master_type' => 'required',
             'status' => 'required',
         ]);
 
-        // Insert Data
+        // dd($request);
 
         $aset = new Aset();
-        $aset->code = $request->code;
-        $aset->name = $request->name;
-        $aset->asset_master_type = $request->asset_master_type;
+        $aset->code = $request->kode;
+        $aset->name = $request->nama;
+        // $aset->asset_master_type = $request->asset_master_type;
         $aset->status = $request->status;
         $aset->save();
     }
