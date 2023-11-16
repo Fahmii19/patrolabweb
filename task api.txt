@@ -1,0 +1,19 @@
+1. data guard/petugas beserta data login usernya
+2. data schedule
+- wilayah_id
+- project_id
+- area_id
+- guard_id
+- shift_id
+- tanggal (date)
+- created_at
+- updated_at
+- created_by (user admin id)
+
+3. data route / rute patroli
+- schedule_id
+- check_point_id
+
+
+
+
