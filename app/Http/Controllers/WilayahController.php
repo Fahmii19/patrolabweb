@@ -51,17 +51,18 @@ class WilayahController extends Controller
             $action = Wilayah::create($data);
             DB::commit();
 
+            dd($action);
+
             if ($action) {
-               return redirect()->route('wilayah.index')->with('success','data wilayah berhasil disimpan');
+                return redirect()->route('wilayah.index')->with('success', 'data wilayah berhasil disimpan');
             }
             DB::rollback();
             return redirect()->back()->with('error', 'data wilayah gagal disimpan');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('WilayahController store '.$e->getMessage());
-            return redirect()->back()->with('error',$e->getMessage());
+            Log::debug('WilayahController store ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
     }
 
     /**
@@ -101,7 +102,7 @@ class WilayahController extends Controller
             DB::beginTransaction();
             $unique = 'unique:wilayahs';
 
-            if($request->kode == $wilayah->kode){
+            if ($request->kode == $wilayah->kode) {
                 $unique = '';
             }
             $data = $request->validate([
@@ -134,7 +135,7 @@ class WilayahController extends Controller
     {
         try {
             DB::beginTransaction();
-           
+
             $action = $wilayah->delete();
             DB::commit();
 
@@ -150,20 +151,21 @@ class WilayahController extends Controller
         }
     }
 
-    public function datatable() {
+    public function datatable()
+    {
         $data = Wilayah::all();
         return DataTables::of($data)
-        ->addIndexColumn()
-        ->escapeColumns('active')
-        ->addColumn('kode','{{$kode}}')
-        ->addColumn('nama', '{{$nama}}')
-        ->addColumn('action', function(Wilayah $wilayah){
-            $data = [
-                'editurl' => route('wilayah.edit',$wilayah->id),
-                'deleteurl' => route('wilayah.destroy',$wilayah->id)
-            ];
-            return $data;
-        })
-        ->toJson(); 
+            ->addIndexColumn()
+            ->escapeColumns('active')
+            ->addColumn('kode', '{{$kode}}')
+            ->addColumn('nama', '{{$nama}}')
+            ->addColumn('action', function (Wilayah $wilayah) {
+                $data = [
+                    'editurl' => route('wilayah.edit', $wilayah->id),
+                    'deleteurl' => route('wilayah.destroy', $wilayah->id)
+                ];
+                return $data;
+            })
+            ->toJson();
     }
 }

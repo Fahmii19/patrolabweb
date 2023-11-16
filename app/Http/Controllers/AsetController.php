@@ -38,7 +38,25 @@ class AsetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        dd($request->all());
+
+        // Input Validation
+        $request->validate([
+            'code' => 'required',
+            'name' => 'required',
+            'asset_master_type' => 'required',
+            'status' => 'required',
+        ]);
+
+        // Insert Data
+
+        $aset = new Aset();
+        $aset->code = $request->code;
+        $aset->name = $request->name;
+        $aset->asset_master_type = $request->asset_master_type;
+        $aset->status = $request->status;
+        $aset->save();
     }
 
     /**
