@@ -107,8 +107,13 @@ class GuardController extends Controller
      */
     public function show(Guard $guard)
     {
-        //
+        $title = 'Detail Guard';
+
+        // Mengirim data Guard dan title ke view sebagai variabel terpisah
+        return view('super-admin.guard-page.show', compact('guard', 'title'));
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -183,34 +188,32 @@ class GuardController extends Controller
      * @param  \App\Models\Guard  $guard
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Guard $id)
+    public function destroy(Guard $guard)
     {
-        // try {
-        //     DB::beginTransaction();
-        //     Guard::find($id)->delete();
-        //     DB::commit();
-        //     return redirect()->route('guard.index')->with('success', 'Data Berhasil Dihapus');
-        // } catch (Throwable $e) {
-        //     DB::rollback();
-        //     Log::debug('ProjectModelController destroy() ' . $e->getMessage());
-        //     return redirect()->back()->with('error', $e->getMessage());
-        // }
         try {
             DB::beginTransaction();
 
-            // Hapus Guard
-            $id->delete();
+            // Jika Guard memiliki hubungan dengan model User, hapus User terkait
+            if ($guard->user) {
+                $guard->user->delete();
+            }
+
+            // Hapus hubungan many-to-many dengan projects jika ada
+            $guard->projects()->detach();
+
+            // Hapus data Guard
+            $guard->delete();
 
             DB::commit();
 
-            return redirect()->route('guard.index')->with('success', 'Data berhasil dihapus.');
+            return redirect()->route('guard.index')->with('success', 'Guard berhasil dihapus.');
         } catch (\Exception $e) {
             DB::rollback();
 
-            // Mengembalikan user ke form dengan pesan error
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus Guard: ' . $e->getMessage());
         }
     }
+
 
     public function datatable()
     {

@@ -41,7 +41,8 @@ use App\Models\IncomingVehicle;
 */
 
 Route::get('/', function () {
-    return redirect('/dashboard'); })->name('home');
+    return redirect('/dashboard');
+})->name('home');
 
 Route::get('/dashboard', function () {
     if (auth()->user()->hasRole('super-admin')) {
@@ -65,7 +66,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'project-model' => ProjectModelController::class,
         'aset-location' => AsetLocationController::class,
         'aset-patroli' => AsetPatroliController::class,
-        'shift'=>ShiftController::class,
+        'shift' => ShiftController::class,
         'audit-log' => AuditLogController::class,
         'incoming-vehicle' => IncomingVehicleController::class,
         'outcoming-vehicle' => OutcomingVehicleController::class,
@@ -100,22 +101,21 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
     Route::get('incoming-vehicle.datatable', [IncomingVehicleController::class, 'datatable'])->name('incoming-vehicle.datatable');
     Route::get('outcoming-vehicle.datatable', [OutcomingVehicleController::class, 'datatable'])->name('outcoming-vehicle.datatable');
-    
+
 
     //Guard
     Route::get('guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');
+    Route::get('/guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
 
-     //Pleton
-     Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
+
+    //Pleton
+    Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
 
     //Audit Log
     Route::get('audit-log-datatable', [AuditLogController::class, 'datatable'])->name('audit-log.datatable');
 
     //Ajax hak akses
     Route::post('get-hak-akses', [HakAksesController::class, 'get_hak_akses'])->name('get-hak-akses');
-
-
-
 });
 
 Route::middleware('auth')->group(function () {
