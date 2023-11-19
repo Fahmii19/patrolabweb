@@ -18,7 +18,6 @@ class ProjectModelController extends Controller
     {
         $data['title'] = 'Daftar Project';
         $data['project_model'] = ProjectModel::all();
-        // dd($data['project_model']);
         return view('super-admin.project.index', $data);
     }
 
@@ -28,20 +27,28 @@ class ProjectModelController extends Controller
         return view('super-admin.project.create', $data);
     }
 
+    // done
     public function store(Request $request)
     {
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                'nama_project' => 'required',
-                'wilayah' => 'required|in:option1',
+                'namaProyek' => 'required|string|max:255', // Tambahkan aturan validasi yang diperlukan
+                'namaWilayah' => 'required|string|max:255', // Tambahkan aturan validasi yang diperlukan
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+
             $data = $validator->validated();
-            ProjectModel::create($data);
+
+            // Sesuaikan nama field dengan skema tabel Anda
+            ProjectModel::create([
+                'nama_project' => $data['namaProyek'],
+                'wilayah' => $data['namaWilayah'],
+            ]);
+
             DB::commit();
             return redirect()->route('project-model.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (Throwable $e) {
@@ -51,9 +58,9 @@ class ProjectModelController extends Controller
         }
     }
 
+
     public function show($id)
     {
-        //return dd(ProjectModel::find($id)->data_wilayah);
         $data['title'] = 'Detail Project Model';
         $data['project_model'] = ProjectModel::find($id);
         return view('super-admin.project.show', $data);
@@ -63,6 +70,7 @@ class ProjectModelController extends Controller
     {
         $data['title'] = 'Edit Project Model';
         $data['project_model'] = ProjectModel::find($id);
+        // dd($data['project_model']);
         return view('super-admin.project.edit', $data);
     }
 
@@ -71,16 +79,25 @@ class ProjectModelController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                'nama_project' => 'required',
-                'wilayah' => 'required|in:option1',
+                'namaProyek' => 'required|string|max:255', // Sesuaikan aturan validasi
+                'namaWilayah' => 'required|integer', // Sesuaikan aturan validasi
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
-            $data = $validator->validated();
 
-            ProjectModel::find($id)->update($data);
+            $project = ProjectModel::find($id);
+            if (!$project) {
+                return redirect()->back()->with('error', 'Project tidak ditemukan');
+            }
+
+            // Update data project
+            $project->update([
+                'nama_project' => $request->namaProyek,
+                'wilayah' => $request->namaWilayah,
+            ]);
+
             DB::commit();
             return redirect()->route('project-model.index')->with('success', 'Data Berhasil Diedit');
         } catch (Throwable $e) {
@@ -89,6 +106,7 @@ class ProjectModelController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
 
     public function destroy($id)
     {
@@ -115,7 +133,7 @@ class ProjectModelController extends Controller
                 return $project->nama_project;
             })
             ->addColumn('wilayah', function (ProjectModel $project) {
-                return $project->nama_project;
+                return $project->wilayah;
                 // dd($project);
             })
             ->addColumn('action', function (ProjectModel $project) {

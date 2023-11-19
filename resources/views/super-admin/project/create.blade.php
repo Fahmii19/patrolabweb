@@ -29,18 +29,22 @@
                 @csrf
                 <div class="row row-cols-1 row-cols-lg-2">
                     <div class="col">
+
                         <div class="mb-3">
-                            <label for="kode" class="form-label">Kode Wilayah <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('kode') is-invalid @enderror" name="kode" id="kode" value="{{old('kode')}}" placeholder="Masukkan kode wilayah">
-                            @error('kode') <span class="text-danger d-block">{{$message}}</span> @enderror
+                            <label for="namaProyek" class="form-label">Nama Proyek <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('namaProyek') is-invalid @enderror" name="namaProyek" id="namaProyek" value="{{ old('namaProyek') }}" placeholder="Masukkan nama proyek">
+                            @error('namaProyek') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
+
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" id="nama" value="{{old('nama')}}" placeholder="Masukkan Nama wilayah">
-                            @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
+                            <label for="namaWilayah" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('namaWilayah') is-invalid @enderror" name="namaWilayah" id="namaWilayah" value="{{ old('namaWilayah') }}" placeholder="Masukkan nama wilayah">
+                            @error('namaWilayah') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                     </div>
                 </div>
+
+
                 <button type="submit" class="btn btn-success">Simpan</button>
             </form>
         </div>
