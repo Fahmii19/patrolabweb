@@ -8,6 +8,8 @@ use App\Models\Shift;
 use App\Models\Guard;
 use App\Models\User;
 use App\Models\Pleton;
+use App\Models\Wilayah;
+use App\Models\Area;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +39,11 @@ class GuardController extends Controller
         $data['title'] = 'Tambah Guard';
         $data['pleton'] = Pleton::all();
         $data['shift'] = Shift::all();
-        return view('super-admin.guard-page.create',$data);
+        $data['wilayah'] = Wilayah::all();
+        $data['area'] = Area::all();
+        // dd($data['area']);
+        // dd($data);
+        return view('super-admin.guard-page.create', $data);
     }
 
     /**
@@ -48,46 +54,50 @@ class GuardController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
+        // Validasi input form
+        $validatedData = $request->validate([
+            'no_badge' => 'required|numeric',
+            'nama' => 'required|string|max:255',
+            'ttl' => 'required|date',
+            'jenis_kelamin' => 'required|in:laki-laki,perempuan',
+            'email' => 'required|email|unique:guards,email',
+            'wa' => 'required|numeric',
+            'alamat' => 'required|string|max:255',
+            'password' => 'required|string|min:8',
+            'id_wilayah' => 'required|numeric', // Tambahkan validasi untuk id_wilayah
+            'id_area' => 'required|numeric', // Tambahkan validasi untuk id_area
+        ]);
+
         try {
             DB::beginTransaction();
-            $validator = Validator::make($request->all(),[
-                'badge_number'=>'required|numeric',
-                'name'=>'required|string',
-                'dob'=>'required',
-                'gender'=>'required|in:MALE,FEMALE',
-                'email'=>'required|unique:guards',
-                'address'=>'required|string',
-                'img_avatar'=>'required',
-                'wa'=>'required|numeric',
-                'password'=>'required',
+
+            // Membuat instance baru dari Guard dengan data yang divalidasi
+            $guard = Guard::create([
+                'no_badge' => $validatedData['no_badge'],
+                'nama' => $validatedData['nama'],
+                'ttl' => $validatedData['ttl'],
+                'jenis_kelamin' => $validatedData['jenis_kelamin'],
+                'email' => $validatedData['email'],
+                'wa' => $validatedData['wa'],
+                'alamat' => $validatedData['alamat'],
+                'password' => bcrypt($validatedData['password']),
+                'id_wilayah' => $validatedData['id_wilayah'],
+                'id_area' => $validatedData['id_area'],
             ]);
 
-            if($validator->fails()){
-                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
-            }
-            $data = $validator->validated();
-
-            $guard = Guard::create($data);
-            $data_user = [
-                'guard_id' => $guard->id,
-                'name' => $guard->name,
-                'no_badge' => $guard->badge_number,
-                'email' => $guard->email,
-                'password' => bcrypt($request->password),
-                'status'=>'ACTIVED',
-            ];
-            $usr = User::create($data_user);
-            $usr->assignRole('user');
-
             DB::commit();
-            return redirect()->route('guard.index')->with('success', 'Data Berhasil Ditambahkan');
-        } catch (Throwable $e) {
+
+            return redirect()->route('guard.index')->with('success', 'Data berhasil ditambahkan.');
+        } catch (\Exception $e) {
             DB::rollback();
-            Log::debug('GuardController store() ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+
+            // Mengembalikan user ke form dengan pesan error
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage())->withInput();
         }
     }
+
+
+
 
     /**
      * Display the specified resource.
@@ -112,7 +122,7 @@ class GuardController extends Controller
         $data['wilayah'] = Wilayah::all();
         $data['area'] = Area::all();
         $data['guard'] = $guard;
-        return view('super-admin.guard-page.edit',$data);
+        return view('super-admin.guard-page.edit', $data);
     }
 
     /**
@@ -124,7 +134,47 @@ class GuardController extends Controller
      */
     public function update(Request $request, Guard $guard)
     {
-        //
+        // Validasi input form
+        $validatedData = $request->validate([
+            'no_badge' => 'required|numeric',
+            'nama' => 'required|string|max:255',
+            'ttl' => 'required|date',
+            'jenis_kelamin' => 'required|in:laki-laki,perempuan',
+            'email' => 'required|email|unique:guards,email,' . $guard->id,
+            'wa' => 'required|numeric',
+            'alamat' => 'required|string|max:255',
+            'id_wilayah' => 'required|numeric',
+            'id_area' => 'required|numeric',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Update instance Guard dengan data yang divalidasi
+            $guard->update([
+                'no_badge' => $validatedData['no_badge'],
+                'nama' => $validatedData['nama'],
+                'ttl' => $validatedData['ttl'],
+                'jenis_kelamin' => $validatedData['jenis_kelamin'],
+                'email' => $validatedData['email'],
+                'wa' => $validatedData['wa'],
+                'alamat' => $validatedData['alamat'],
+                'id_wilayah' => $validatedData['id_wilayah'],
+                'id_area' => $validatedData['id_area'],
+                // Perbarui password hanya jika password baru disediakan
+                'password' => $validatedData['password'] ? bcrypt($validatedData['password']) : $guard->password,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('guard.index')->with('success', 'Data berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            // Mengembalikan user ke form dengan pesan error
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage())->withInput();
+        }
     }
 
     /**
@@ -133,31 +183,56 @@ class GuardController extends Controller
      * @param  \App\Models\Guard  $guard
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Guard $guard)
+    public function destroy(Guard $id)
     {
-        //
+        // try {
+        //     DB::beginTransaction();
+        //     Guard::find($id)->delete();
+        //     DB::commit();
+        //     return redirect()->route('guard.index')->with('success', 'Data Berhasil Dihapus');
+        // } catch (Throwable $e) {
+        //     DB::rollback();
+        //     Log::debug('ProjectModelController destroy() ' . $e->getMessage());
+        //     return redirect()->back()->with('error', $e->getMessage());
+        // }
+        try {
+            DB::beginTransaction();
+
+            // Hapus Guard
+            $id->delete();
+
+            DB::commit();
+
+            return redirect()->route('guard.index')->with('success', 'Data berhasil dihapus.');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            // Mengembalikan user ke form dengan pesan error
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
+        }
     }
 
     public function datatable()
     {
         $data = Guard::all();
+        // dd($data);
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('no_badge', '{{$badge_number}}')
-            ->addColumn('nama', '{{$name}}')
+            ->addColumn('no_badge', '{{$no_badge}}')
+            ->addColumn('nama', '{{$nama}}')
             ->addColumn('email', '{{$email}}')
             ->addColumn('created_at', function (Guard $guard) {
                 return date('d M y', strtotime($guard->created_at));
             })
-            // ->addColumn('action', function (Guard $guard) {
-            //     $data = [
-            //         'showurl' => route('guard.show', $guard->id),
-            //         'editurl' => route('guard.edit', $guard->id),
-            //         'deleteurl' => route('guard.destroy', $guard->id)
-            //     ];
-            //     return $data;
-            // })
+            ->addColumn('action', function (Guard $guard) {
+                $data = [
+                    'showurl' => route('guard.show', $guard->id),
+                    'editurl' => route('guard.edit', $guard->id),
+                    'deleteurl' => route('guard.destroy', $guard->id)
+                ];
+                return $data;
+            })
             ->toJson();
     }
 }

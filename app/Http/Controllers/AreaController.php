@@ -133,6 +133,7 @@ class AreaController extends Controller
     public function datatable()
     {
         $data = Area::all();
+        // dd($data);
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
@@ -140,7 +141,7 @@ class AreaController extends Controller
             ->addColumn('name', '{{$name}}')
             ->addColumn('img_location', '{{$img_location}}')
             ->addColumn('project_id', function (Area $area) {
-                return $area->project->name;
+                return $area->name;
             })
             ->toJson();
     }

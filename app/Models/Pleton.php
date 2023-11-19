@@ -11,8 +11,8 @@ class Pleton extends Model
     protected $guarded = ['id'];
     protected $table = 'pleton';
 
-    public function guards()
-    {
-        return $this->hasMany(Guard::class, 'pleton_id', 'id');
-    }
+    // public function guards()
+    // {
+    //     return $this->hasMany(Guard::class, 'pleton_id', 'id');
+    // }
 }

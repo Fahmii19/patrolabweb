@@ -25,7 +25,8 @@ class AtensiController extends Controller
         return view('super-admin.atensi.index', $data);
     }
 
-    public function all_data(){
+    public function all_data()
+    {
         $data['atensi'] = Atensi::all();
 
         return response()->json([
@@ -33,12 +34,11 @@ class AtensiController extends Controller
             'message' => 'berhasil menampilkan data',
             'data' => $data
         ], 200);
-
     }
 
     public function data_per_user($id_user)
     {
-       $data = Atensi::where('id_user', $id_user)->get();
+        $data = Atensi::where('id_user', $id_user)->get();
 
         return response()->json([
             'status' => true,
@@ -75,7 +75,7 @@ class AtensiController extends Controller
                     'id_project' => ['required', 'numeric'],
                     'id_area' => ['required', 'numeric'],
                     'judul_atensi' => ['required'],
-                    'prioritas' => ['required','in:high,medium,low'],
+                    'prioritas' => ['required', 'in:high,medium,low'],
                     'tanggal_mulai' => ['required'],
                     'tanggal_selesai' => ['required'],
                     'deskripsi' => ['required']
@@ -159,6 +159,7 @@ class AtensiController extends Controller
     public function datatable()
     {
         $data = Atensi::all();
+        dd($data);
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')

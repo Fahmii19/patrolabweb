@@ -46,4 +46,13 @@
     </div>
 </div>
 <!-- Container-fluid Ends-->
+
+@push('js')
+<script>
+    active_menu("#menu_aset", "#patroli_asset")
+
+</script>
+@endpush
+
+
 @endsection
