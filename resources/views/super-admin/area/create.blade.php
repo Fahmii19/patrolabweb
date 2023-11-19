@@ -48,11 +48,15 @@
                             <select class="form-select" name="project_id" id="myselect0">
                                 <option selected value="" disabled>Pilih Project</option>
                                 @foreach ($project as $item)
-                                <option value="{{$item->id}}" {{ old('project_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ old('project_id') == $item->id ? 'selected' : '' }}>{{ $item->nama_project }}</option>
                                 @endforeach
                             </select>
-                            @error('project_id') <span class="text-danger d-block">{{$message}}</span> @enderror
+                            @error('project_id')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
                         </div>
+
+
                     </div>
                 </div>
                 <button type="submit" class="btn btn-success">Simpan</button>
@@ -63,6 +67,7 @@
 @push('js')
 <script>
     active_menu("#data_master", "#area")
+
 </script>
 @endpush
 <!-- Container-fluid Ends-->
