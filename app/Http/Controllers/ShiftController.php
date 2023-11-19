@@ -60,6 +60,7 @@ class ShiftController extends Controller
     {
         $data['title'] = 'Edit Shift';
         $data['shift'] = Shift::find($id);
+        // dd($data['shift']);
         return view('super-admin.shift.edit', $data);
     }
 

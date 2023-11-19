@@ -25,7 +25,7 @@
                 <button onclick="window.history.back()" class="btn btn-warning">
                     << Kembali</button>
             </div>
-            <form action="{{ route('shift.update',$shift->id) }}" method="post">
+            <form action="{{ route('shift.update', $shift->id) }}" method="post">
                 @csrf
                 @method('put')
                 <div class="card">
@@ -34,25 +34,25 @@
 
                             <div class="col">
                                 <div class="mb-3">
-                                    <label for="nama" class="form-label">Nama Shift <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" id="nama" placeholder="Masukkan Nama Shift" value="{{ old('nama') ? old('nama') : $shift->nama }}">
-                                    @error('nama')<span class="text-danger d-block">{{ $message }}</span>@enderror
+                                    <label for="name" class="form-label">Nama Shift <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Masukkan Nama Shift" value="{{ old('name', $shift->name) }}">
+                                    @error('name')<span class="text-danger d-block">{{ $message }}</span>@enderror
                                 </div>
                             </div>
 
                             <div class="col">
                                 <div class="mb-3">
-                                    <label for="mulai" class="form-label">Mulai <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('mulai') is-invalid @enderror" name="mulai" id="mulai" placeholder="Masukkan Mulai" value="{{ old('mulai') ? old('mulai') : $shift->mulai }}">
-                                    @error('mulai')<span class="text-danger d-block">{{ $message }}</span>@enderror
+                                    <label for="start_time" class="form-label">Mulai <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('start_time') is-invalid @enderror" name="start_time" id="start_time" placeholder="Masukkan Mulai" value="{{ old('start_time', $shift->start_time) }}">
+                                    @error('start_time')<span class="text-danger d-block">{{ $message }}</span>@enderror
                                 </div>
                             </div>
 
                             <div class="col">
                                 <div class="mb-3">
-                                    <label for="selesai" class="form-label">Selesai <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('selesai') is-invalid @enderror" name="selesai" id="selesai" placeholder="Masukkan Selesai" value="{{ old('selesai') ? old('selesai') : $shift->selesai }}">
-                                    @error('selesai')<span class="text-danger d-block">{{ $message }}</span>@enderror
+                                    <label for="end_time" class="form-label">Selesai <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('end_time') is-invalid @enderror" name="end_time" id="end_time" placeholder="Masukkan Selesai" value="{{ old('end_time', $shift->end_time) }}">
+                                    @error('end_time')<span class="text-danger d-block">{{ $message }}</span>@enderror
                                 </div>
                             </div>
 
@@ -63,12 +63,15 @@
                     </div>
                 </div>
             </form>
+
+
         </div>
     </div>
 </div>
 @push('js')
 <script>
     active_menu("#data_master", "#shift")
+
 </script>
 @endpush
 <!-- Container-fluid Ends-->
