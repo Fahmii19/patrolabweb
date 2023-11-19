@@ -9,5 +9,5 @@ class Aset extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $table = 'asset_patrol_master';
+    protected $table = 'asets';
 }

@@ -65,10 +65,14 @@
         </div>
     </div>
 </div>
+
 @push('js')
 <script>
-    active_menu("#data_master", "#wilayah")
+    active_menu("#data_master", "#shift")
+
 </script>
 @endpush
+
+
 <!-- Container-fluid Ends-->
 @endsection

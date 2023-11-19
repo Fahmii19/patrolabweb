@@ -16,9 +16,72 @@ use Illuminate\Support\Facades\Validator;
 
 class HakAksesController extends Controller
 {
+
+    // private function get_permission($permissionNames, $feature)
+    // {
+    //     // dd($permissionNames, $feature);
+    //     $found = false;
+    //     dd($found);
+    //     foreach ($permissionNames as $name) {
+    //         if (strpos($name, $feature) !== false) {
+    //             $found = true;
+    //             dd($name);
+    //             break;
+    //         }
+    //     }
+    //     return $found ? 'checked' : '';
+    // }
+
+
     public function index()
     {
         $data['title'] = 'Daftar Hak Akses';
+
+        $role = Role::find(9);
+        if (!$role) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Role tidak ditemukan',
+            ], 404);
+        }
+
+
+
+        $permission_menu = $role->permissions->pluck('fitur')->all();
+
+
+        $permissions = []; // Inisialisasi array untuk menyimpan status 'checked'
+
+        foreach ($permission_menu as $menu) {
+            if (in_array($menu, ['menu', 'index', 'create', 'edit', 'show', 'destroy'])) {
+                $permissions[$menu] = 'checked';
+            }
+        }
+
+        $html = '<tr><th>' . htmlspecialchars($role->name) . '</th>';
+
+        foreach (['menu', 'index', 'create', 'edit', 'show', 'destroy'] as $feature) {
+            $checked = isset($permissions[$feature]) ? $permissions[$feature] : '';
+            $html .= '<td><input class="form-check-input me-1" type="checkbox" ' . $checked . ' name="permissions[' . $feature . ']"></td>';
+        }
+
+        $html .= '</tr>';
+
+        // dd($html);
+
+
+        // $permissions = [
+        //     'menu' => $this->get_permission($permission_title, 'menu'),
+        //     'index' => $this->get_permission($permission_title, 'index'),
+        //     'create' => $this->get_permission($permission_title, 'create'),
+        //     'edit' => $this->get_permission($permission_title, 'edit'),
+        //     'show' => $this->get_permission($permission_title, 'show'),
+        //     'destroy' => $this->get_permission($permission_title, 'destroy'),
+        // ];
+
+        // dd($permissions);
+
+
         return view('super-admin.hak-akses.index', $data);
     }
 
@@ -32,16 +95,17 @@ class HakAksesController extends Controller
 
     public function store(Request $request)
     {
-         try {
-            $validator = Validator::make($request->all(),[
-                'name'=>'required|unique:roles',
-                'permission_id'=>'required',
+
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|unique:roles',
+                'permission_id' => 'required',
             ]);
 
-            if($validator->fails()){
+            if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
-           $validator->validated();
+            $validator->validated();
             $role = Role::create(['name' => $request->name]);
             foreach ($request->permission_id as $item) {
                 $permission = Permission::find($item);
@@ -72,12 +136,12 @@ class HakAksesController extends Controller
     {
         try {
             DB::beginTransaction();
-            $validator = Validator::make($request->all(),[
-                'role_name'=>'required',
-                'permission_id'=>'required',
+            $validator = Validator::make($request->all(), [
+                'role_name' => 'required',
+                'permission_id' => 'required',
             ]);
 
-            if($validator->fails()){
+            if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
             $data = $validator->validated();
@@ -108,15 +172,15 @@ class HakAksesController extends Controller
 
     public function datatable()
     {
-        $data = Role::where('name','!=','super-admin')->where('name', '!=', 'user')->get();
-       return DataTables::of($data)
+        $data = Role::where('name', '!=', 'super-admin')->where('name', '!=', 'user')->get();
+        return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('name', '{{$name}}')
-            ->addColumn('permission', function (Role $role){
+            ->addColumn('permission', function (Role $role) {
                 $permission = '';
                 foreach ($role->permissions as $item) {
-                    $permission .= $item->name.'<br>';
+                    $permission .= $item->name . '<br>';
                 }
                 return $permission;
             })
@@ -130,55 +194,66 @@ class HakAksesController extends Controller
             ->toJson();
     }
 
-    public function get_hak_akses(Request $request){
-        $validator = Validator::make($request->all(),[
+    public function get_hak_akses(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'id' => 'required|numeric'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'message' => 'input tidak valid',
                 'data' => $validator->errors()
-            ],401);
-
+            ], 401);
         }
         $data = Role::find($request->id);
-        $permission_title = $data->first()->title;
-        function get_permission($title, $fitur){
-            $data = Permission::firstWhere([
-                'title' => $title,
-                'fitur' => $fitur
-            ]);
+        // $permission_title = $data->permissions->pluck('name')->all();
+        // $permission_menu = $data->permissions->pluck('fitur')->all();
 
-            if($data){
-                return 'checked';
+        // $permissions = [
+        //     'menu' => $this->get_permission($permission_title, $permission_menu),
+        //     'index' => $this->get_permission($permission_title, $permission_menu),
+        //     'create' => $this->get_permission($permission_title, $permission_menu),
+        //     'edit' => $this->get_permission($permission_title, $permission_menu),
+        //     'show' => $this->get_permission($permission_title, $permission_menu),
+        //     'destroy' => $this->get_permission($permission_title, $permission_menu),
+        // ];
+
+        // $html = '<tr><th>' . htmlspecialchars($data->name) . '</th>'; // Asumsi Anda ingin menampilkan nama role
+
+        // foreach ($permissions as $feature => $checked) {
+        //     $html .= '<td><input class="form-check-input me-1" type="checkbox" ' . $checked . ' name="permissions[' . $feature . ']"></td>';
+        // }
+
+        // $html .= '</tr>';
+
+
+        $permission_menu = $data->permissions->pluck('fitur')->all();
+
+
+        $permissions = []; // Inisialisasi array untuk menyimpan status 'checked'
+
+        foreach ($permission_menu as $menu) {
+            if (in_array($menu, ['menu', 'index', 'create', 'edit', 'show', 'destroy'])) {
+                $permissions[$menu] = 'checked';
             }
-            return '';
         }
-        $menu = get_permission($permission_title, 'menu');
-        $index = get_permission($permission_title, 'index');
-        $create = get_permission($permission_title, 'create');
-        $edit = get_permission($permission_title, 'edit');
-        $show = get_permission($permission_title, 'show');
-        $destroy = get_permission($permission_title, 'destroy');
-        $html = '
-                            <tr>
-                                <th>' . $permission_title . '</th>
-                                <td><input class="form-check-input me-1" type="checkbox" '.$menu.' ></td>
-                                <td><input class="form-check-input me-1" type="checkbox" '.$index.'></td>
-                                <td><input class="form-check-input me-1" type="checkbox" '.$create.'></td>
-                                <td><input class="form-check-input me-1" type="checkbox" '.$edit.'></td>
-                                <td><input class="form-check-input me-1" type="checkbox" '.$show.'></td>
-                                <td><input class="form-check-input me-1" type="checkbox" '.$destroy.'></td>
-                            </tr>
-        ';
-        
+
+        $html = '<tr><th>' . htmlspecialchars($data->name) . '</th>';
+
+        foreach (['menu', 'index', 'create', 'edit', 'show', 'destroy'] as $feature) {
+            $checked = isset($permissions[$feature]) ? $permissions[$feature] : '';
+            $html .= '<td><input class="form-check-input me-1" type="checkbox" ' . $checked . ' name="permissions[' . $feature . ']"></td>';
+        }
+
+        $html .= '</tr>';
+
+
         return response()->json([
             'status' => true,
             'message' => 'Berhasil mendapatkan data',
             'data' => $html
         ], 200);
     }
-   
 }

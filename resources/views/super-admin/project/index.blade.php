@@ -1,7 +1,3 @@
-<!-- @php
-$page = 'data-master';
-$section = 'wilayah';
-@endphp -->
 @extends('layouts.admin')
 @section('content')
 <div class="container-fluid">
@@ -73,24 +69,24 @@ $section = 'wilayah';
 @push('js')
 <script>
     $('#mytable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('project.datatable') }}",
-        columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            },
-            {
-                data: 'nama_project',
-                name: 'Nama Project'
-            },
-            {
-                data: 'wilayah',
-                name: 'Nama Wilayah'
-            },
-            {
-                name: "Action",
-                render: function(data, type, row) {
+        processing: true
+        , serverSide: true
+        , ajax: "{{ route('project.datatable') }}"
+        , columns: [{
+                data: 'DT_RowIndex'
+                , name: 'No'
+            }
+            , {
+                data: 'nama_project'
+                , name: 'Nama Project'
+            }
+            , {
+                data: 'wilayah'
+                , name: 'Nama Wilayah'
+            }
+            , {
+                name: "Action"
+                , render: function(data, type, row) {
                     let html = $('#actionbase').clone()
                     html = html.find('.d-flex')
                     html.find('a').attr('href', row.action.editurl)
@@ -103,6 +99,7 @@ $section = 'wilayah';
         ]
     });
     active_menu("#data_master", "#project")
+
 </script>
 <div class="d-flex">
     <a class="btn btn-warning me-2">Edit</a>

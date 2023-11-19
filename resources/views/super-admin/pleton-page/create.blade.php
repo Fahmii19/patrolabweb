@@ -63,9 +63,13 @@
 </div>
 <!-- Container-fluid Ends-->
 
+
 @push('js')
 <script>
-    active_menu("#menu-checkpoint", "#sub-add-checkpoint")
+    active_menu("#menu-guard", "#sub-list-pleton")
+
 </script>
 @endpush
+
+
 @endsection

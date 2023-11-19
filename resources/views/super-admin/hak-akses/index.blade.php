@@ -91,20 +91,20 @@ $section = 'wilayah';
 @push('js')
 <script>
     $('#mytable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('hak-akses.datatable') }}",
-        columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            },
-            {
-                data: 'name',
-                name: 'Name'
-            },
-            {
-                data: 'permission',
-                render: function(data, type, row) {
+        processing: true
+        , serverSide: true
+        , ajax: "{{ route('hak-akses.datatable') }}"
+        , columns: [{
+                data: 'DT_RowIndex'
+                , name: 'No'
+            }
+            , {
+                data: 'name'
+                , name: 'Name'
+            }
+            , {
+                data: 'permission'
+                , render: function(data, type, row) {
                     let html = $('#actionbase').clone()
                     html = html.find('.akses')
                     html.find('#button_permission').attr('onclick', 'lihat_akses(' + row.id + ')')
@@ -116,33 +116,36 @@ $section = 'wilayah';
     active_menu("#data_master", "#hak_akses")
 
     function lihat_akses(id) {
+        console.log(id)
         let modal = $('#detail_permission')
         $.ajax({
-            url: "{{ route('get-hak-akses') }}",
-            data: {
+            url: "{{ route('get-hak-akses') }}"
+            , data: {
                 id: id
-            },
-            method: "POST",
-            headers: {
+            }
+            , method: "POST"
+            , headers: {
                 'X-CSRF-TOKEN': "{{csrf_token()}}"
-            },
-            beforeSend: function() {
+            }
+            , beforeSend: function() {
 
-            },
-            success: function(response) {
-                console.log(response)
+            }
+            , success: function(response) {
+                // console.log(response.data)
+
                 $('#base_akses').html(response.data)
                 modal.modal('show')
-            },
-            error: function(response) {
-                console.log(response)
-            },
-            complete: function() {
+            }
+            , error: function(response) {
+                // console.log(response)
+            }
+            , complete: function() {
 
             }
         })
 
     }
+
 </script>
 @endpush
 @endsection

@@ -24,7 +24,8 @@
                 <button onclick="window.history.back()" class="btn btn-warning">
                     << Kembali</button>
             </div>
-            <form action="{{route('wilayah.store')}}" method="POST">
+            <form action="{{route('project-model.store')}}" method="POST">
+
                 @csrf
                 <div class="row row-cols-1 row-cols-lg-2">
                     <div class="col">
@@ -45,5 +46,15 @@
         </div>
     </div>
 </div>
+
+@push('js')
+<script>
+    active_menu("#data_master", "#project")
+
+</script>
+@endpush
+
+
+
 <!-- Container-fluid Ends-->
 @endsection

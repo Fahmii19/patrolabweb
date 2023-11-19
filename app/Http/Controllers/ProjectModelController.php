@@ -41,7 +41,6 @@ class ProjectModelController extends Controller
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
             $data = $validator->validated();
-
             ProjectModel::create($data);
             DB::commit();
             return redirect()->route('project-model.index')->with('success', 'Data Berhasil Ditambahkan');

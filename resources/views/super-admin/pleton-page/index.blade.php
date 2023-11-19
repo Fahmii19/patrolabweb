@@ -92,7 +92,7 @@
     <button class="btn btn-danger me-2">Hapus</button>
 </div> -->
 <script>
-    active_menu("#menu-guard", "#sub-list-guard")
+    active_menu("#menu-guard", "#sub-list-pleton")
 </script>
 @endpush
 @endsection

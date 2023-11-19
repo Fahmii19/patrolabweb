@@ -29,7 +29,6 @@
                         <th style="max-width: 40px;">No</th>
                         <th>Kode</th>
                         <th>Nama</th>
-                        <th>Jenis Aset</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -52,38 +51,35 @@
 @push('js')
 <script>
     $('#mytable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('aset.datatable') }}",
-        columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            },
-            {
-                data: 'kode',
-                name: 'kode'
-            },
-            {
-                data: 'nama',
-                name: 'nama'
-            },
-            {
-                data: 'asset_master_type',
-                name: 'jenis_asset'
-            },
-            {
-                data: 'status',
-                render: function(data, type, row) {
-                    if (row.status == 'ACTIVED') {
+        processing: true
+        , serverSide: true
+        , ajax: "{{ route('aset.datatable') }}"
+        , columns: [{
+                data: 'DT_RowIndex'
+                , name: 'No'
+            }
+            , {
+                data: 'kode'
+                , name: 'kode'
+            }
+            , {
+                data: 'nama'
+                , name: 'nama'
+            }
+            , {
+                data: 'status'
+                , render: function(data, type, row) {
+                    if (row.status == 'aktif') {
+
                         return '<span class="badge badge-success">' + row.status + '</span>'
                     } else {
                         return '<span class="badge badge-danger">' + row.status + '</span>'
                     }
                 }
-            },
-            {
-                name: "Action",
-                render: function(data, type, row) {
+            }
+            , {
+                name: "Action"
+                , render: function(data, type, row) {
                     let html = $('#actionbase').clone()
                     html = html.find('.d-flex')
                     html.find('a').attr('href', row.action.editurl)
@@ -96,6 +92,7 @@
         ]
     });
     active_menu("#data_master", "#asset")
+
 </script>
 <div class="d-flex">
     <a class="btn btn-warning me-2">Edit</a>

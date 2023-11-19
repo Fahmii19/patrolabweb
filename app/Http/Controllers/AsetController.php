@@ -15,6 +15,9 @@ class AsetController extends Controller
      */
     public function index()
     {
+
+        $data = Aset::all();
+
         $data['title'] = "Master data Aset";
         return view('super-admin.aset.index', $data);
     }
@@ -40,24 +43,21 @@ class AsetController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request);
-        // dd("masuk");
 
         $request->validate([
             'kode' => 'required',
             'nama' => 'required',
-            // 'asset_master_type' => 'required',
             'status' => 'required',
         ]);
 
-        // dd($request);
 
         $aset = new Aset();
-        $aset->code = $request->kode;
-        $aset->name = $request->nama;
-        // $aset->asset_master_type = $request->asset_master_type;
+        $aset->kode = $request->kode;
+        $aset->nama = $request->nama;
         $aset->status = $request->status;
         $aset->save();
+
+        return redirect()->route('aset.index')->with('success', 'Data Aset berhasil ditambahkan');
     }
 
     /**
@@ -79,7 +79,9 @@ class AsetController extends Controller
      */
     public function edit(Aset $aset)
     {
-        //
+        $data['title'] = "Edit Data Aset";
+        $data['aset'] = $aset;
+        return view('super-admin.aset.edit', $data);
     }
 
     /**
@@ -91,7 +93,18 @@ class AsetController extends Controller
      */
     public function update(Request $request, Aset $aset)
     {
-        //
+        $request->validate([
+            'kode' => 'required',
+            'nama' => 'required',
+            'status' => 'required',
+        ]);
+
+        $aset->kode = $request->kode;
+        $aset->nama = $request->nama;
+        $aset->status = $request->status;
+        $aset->save();
+
+        return redirect()->route('aset.index')->with('success', 'Data Aset berhasil diupdate');
     }
 
     /**
@@ -102,7 +115,9 @@ class AsetController extends Controller
      */
     public function destroy(Aset $aset)
     {
-        //
+        // hapus data
+        $aset->delete();
+        return redirect()->route('aset.index')->with('success', 'Data Aset berhasil dihapus');
     }
 
     public function datatable()
@@ -111,9 +126,8 @@ class AsetController extends Controller
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('kode', '{{$code}}')
-            ->addColumn('nama', '{{$name}}')
-            ->addColumn('jenis_asset', '{{$asset_master_type}}')
+            ->addColumn('kode', '{{$kode}}')
+            ->addColumn('nama', '{{$nama}}')
             ->addColumn('status', '{{$status}}')
             ->addColumn('action', function (Aset $aset) {
                 $data = [
