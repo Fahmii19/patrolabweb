@@ -22,6 +22,7 @@
                     <h5 class="card-title">Detail Pleton</h5>
                     <p>Nama Pleton: {{ $pleton->nama }}</p>
                     <p>Kode Pleton: {{ $pleton->no_badge }}</p>
+                    <p>Jumlah Anggota: {{ $pleton->guards_count }}</p>
                     <!-- Tampilkan informasi lainnya sesuai kebutuhan -->
                 </div>
             </div>

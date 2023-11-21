@@ -23,7 +23,7 @@
                         <th class="text-nowrap">Nama Pleton</th>
                         <th class="text-nowrap">Kode Pleton</th>
                         <th class="text-nowrap">Jumlah Member</th>
-                        <!-- <th class="text-nowrap">Aksi</th> -->
+                        <th class="text-nowrap">Aksi</th>
                     </tr>
                 </thead>
             </table>
@@ -46,46 +46,46 @@
 @push('js')
 <script>
     $('#mytable').addClass('w-100').DataTable({
-        scrollX: true,
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('pleton.datatable') }}",
-        columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            },
-            {
-                data: 'name',
-                name: 'name'
-            },
-            {
-                data: 'code',
-                name: 'code'
-            },
-            {
-                data: 'guards_count',
-                name: 'guards_count'
-            },
-            // {
-            //     data: 'created_at',
-            //     name: 'created_at'
-            // },
-            // {
-            //     name: "Action",
-            //     render: function(data, type, row) {
-            //         console.log(row)
-            //         let html = $('#actionbase').clone()
-            //         html = html.find('.d-flex')
-            //         html.find('#show').attr('href', row.action.showurl)
-            //         html.find('#edit').attr('href', row.action.editurl)
-            //         let form = html.find('form').attr('action', row.action.deleteurl)
-            //             .attr('id', 'delete_form' + row.id)
-            //         form.find('button').attr('form-id', '#delete_form' + row.id)
-            //         return html.html()
-            //     }
-            // }
+        scrollX: true
+        , processing: true
+        , serverSide: true
+        , ajax: "{{ route('pleton.datatable') }}"
+        , columns: [{
+                data: 'DT_RowIndex'
+                , name: 'DT_RowIndex'
+                , orderable: false
+                , searchable: false
+            }
+            , {
+                data: 'nama'
+                , name: 'nama'
+            }
+            , {
+                data: 'no_badge'
+                , name: 'no_badge'
+            }
+            , {
+                data: 'guards_count'
+                , name: 'guards_count'
+            }
+            , {
+                name: "Action"
+                , render: function(data, type, row) {
+                    let html = $('#actionbase').clone();
+                    html = html.find('.d-flex');
+                    html.find('#show').attr('href', row.action.showurl);
+                    html.find('#edit').attr('href', row.action.editurl);
+                    let form = html.find('form').attr('action', row.action.deleteurl)
+                        .attr('id', 'delete_form' + row.id);
+                    form.find('button').attr('form-id', '#delete_form' + row.id);
+                    return html.html();
+                }
+            }
+
+
         ]
     });
+
 </script>
 <!-- <div class="d-flex">
     <a class="btn btn-warning me-2">Edit</a>
@@ -93,6 +93,7 @@
 </div> -->
 <script>
     active_menu("#menu-guard", "#sub-list-pleton")
+
 </script>
 @endpush
 @endsection

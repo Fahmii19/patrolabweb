@@ -11,11 +11,13 @@ class Guard extends Model
     protected $guarded = ['id'];
     protected $table = 'guards';
 
-    public function user(){
-        return $this->hasOne(User::class,'guard_id');
+    public function user()
+    {
+        return $this->hasOne(User::class, 'guard_id');
     }
-    public function shift(){
-        return $this->belongsTo(Shift::class,'shift_id');
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class, 'shift_id');
     }
     // public function pleton(){
     //     return $this->belongsTo(Pleton::class,'pleton_id');
@@ -25,10 +27,10 @@ class Guard extends Model
     {
         return $this->belongsTo(Pleton::class, 'pleton_id', 'id');
     }
-    
+
     public function projects()
     {
-        return $this->belongsToMany(ProjectModel::class,'pivot_guard_projects','id_guard','id_project');
+        return $this->belongsToMany(ProjectModel::class, 'pivot_guard_projects', 'id_guard', 'id_project');
     }
 
     protected $with = ['projects'];

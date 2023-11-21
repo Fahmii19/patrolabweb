@@ -38,10 +38,10 @@ class PletonController extends Controller
         // dd("hahahahaha");
         $data['title'] = 'Tambah Pleton';
         $data['pletons'] = Pleton::all();
-        // $data['guards'] = Guard::all();
-        $data['guards'] = Guard::whereNull('pleton_id')->get();
+        $data['guards'] = Guard::all();
+        // $data['guards'] = Guard::get();
         // dd($data);
-        return view('super-admin.pleton-page.create',$data);
+        return view('super-admin.pleton-page.create', $data);
     }
 
     /**
@@ -56,7 +56,7 @@ class PletonController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'id_pleton' => 'required',
-                'id_guard'=>'required'
+                'id_guard' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -87,8 +87,14 @@ class PletonController extends Controller
      */
     public function show($id)
     {
-        //
+        // Mengambil data Pleton berdasarkan ID
+        $pleton = Pleton::findOrFail($id);
+        $title = "Detail Pleton"; // Judul halaman
+
+        // Mengirim data ke view
+        return view('super-admin.pleton-page.show', compact('pleton', 'title'));
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -98,7 +104,15 @@ class PletonController extends Controller
      */
     public function edit($id)
     {
-        //
+        $pleton = Pleton::findOrFail($id); // Find the Pleton by ID or fail
+        $guards = Guard::all(); // Assuming you need a list of guards for a dropdown
+
+        // Pass the necessary data to the view
+        return view('super-admin.pleton-page.edit', [
+            'title' => 'Edit Pleton',
+            'pleton' => $pleton,
+            'guards' => $guards
+        ]);
     }
 
     /**
@@ -110,7 +124,29 @@ class PletonController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Validasi request
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string|max:255',
+            'no_badge' => 'required|string|max:255|unique:pleton,no_badge,' . $id,
+            // Tambahkan aturan validasi lainnya jika diperlukan
+        ]);
+
+        // Cek jika validasi gagal
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Mencari dan memperbarui Pleton
+        $pleton = Pleton::findOrFail($id);
+        $pleton->nama = $request->nama;
+        $pleton->no_badge = $request->no_badge;
+        // Update field lainnya jika ada
+        $pleton->save();
+
+        // Redirect ke halaman sebelumnya dengan pesan sukses
+        return redirect()->route('pleton.index')->with('success', 'Pleton berhasil diperbarui.');
     }
 
     /**
@@ -121,29 +157,40 @@ class PletonController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // Mencari data Pleton berdasarkan ID
+        $pleton = Pleton::findOrFail($id);
+
+        // Melakukan penghapusan data
+        $pleton->delete();
+
+        // Mengirimkan pesan sukses setelah penghapusan
+        return redirect()->route('pleton.index')->with('success', 'Pleton berhasil dihapus');
     }
+
 
     public function datatable()
     {
         $data = Pleton::withCount('guards')->get();
+
         return DataTables::of($data)
             ->addIndexColumn()
-            ->escapeColumns('active')
-            ->addColumn('name', '{{$name}}')
-            ->addColumn('code', '{{$code}}')
-            ->addColumn('guards_count', '{{$guards_count}}')
-            // ->addColumn('created_at', function (Guard $guard) {
-            //     return date('d M y', strtotime($guard->created_at));
-            // })
-            // ->addColumn('action', function (Guard $guard) {
-            //     $data = [
-            //         'showurl' => route('guard.show', $guard->id),
-            //         'editurl' => route('guard.edit', $guard->id),
-            //         'deleteurl' => route('guard.destroy', $guard->id)
-            //     ];
-            //     return $data;
-            // })
+            ->addColumn('nama', function ($pleton) {
+                return $pleton->nama;
+            })
+            ->addColumn('no_badge', function ($pleton) {
+                return $pleton->no_badge;
+            })
+            ->addColumn('guards_count', function ($pleton) {
+                return $pleton->guards_count;
+            })
+            ->addColumn('action', function ($pleton) {
+                return [
+                    'showurl' => route('pleton.show', $pleton->id),
+                    'editurl' => route('pleton.edit', $pleton->id),
+                    'deleteurl' => route('pleton.destroy', $pleton->id)
+                ];
+            })
+            ->rawColumns(['action'])
             ->toJson();
     }
 }
