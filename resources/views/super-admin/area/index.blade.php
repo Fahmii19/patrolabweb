@@ -31,6 +31,8 @@
                         <th class="text-nowrap">Nama Area</th>
                         <th class="text-nowrap">Lokasi Image</th>
                         <th class="text-nowrap">Nama Project</th>
+                        <th class="text-nowrap">ID Aset</th>
+
                     </tr>
                 </thead>
             </table>
@@ -41,33 +43,42 @@
 @push('js')
 <script>
     $('#mytable').addClass('w-100').DataTable({
-        scrollX: true,
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('area.datatable') }}",
-        columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            },
-            {
-                data: 'code',
-                name: 'Kode area'
-            },
-            {
-                data: 'name',
-                name: 'Nama area'
-            },
-            {
-                data: 'img_location',
-                name: 'Lokasi Image'
-            },
-            {
-                data: 'project_id',
-                name: 'Nama Project'
+        scrollX: true
+        , processing: true
+        , serverSide: true
+        , ajax: "{{ route('area.datatable') }}"
+        , columns: [{
+                data: 'DT_RowIndex'
+                , name: 'No'
             }
+            , {
+                data: 'code'
+                , name: 'Kode area'
+            }
+            , {
+                data: 'name'
+                , name: 'Nama area'
+            }
+            , {
+                data: 'img_location'
+                , name: 'Lokasi Image'
+                , orderable: false
+                , searchable: false
+            },
+
+            {
+                data: 'project_id'
+                , name: 'Nama Project'
+            }
+            , {
+                data: 'asset_id'
+                , name: 'ID Aset'
+            } // Kolom baru untuk asset_id
+
         ]
     });
     active_menu("#data_master", "#area")
+
 </script>
 @endpush
 

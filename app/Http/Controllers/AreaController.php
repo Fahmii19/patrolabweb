@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Area;
+use App\Models\Aset;
 use App\Models\ProjectModel;
 use App\Models\Wilayah;
 use Illuminate\Http\Request;
@@ -36,7 +37,8 @@ class AreaController extends Controller
     {
         $data['title'] = "Tambah Data Area";
         $data['project'] = ProjectModel::all();
-        // dd($data['project']);
+        $data['asset'] = Aset::all();
+        // dd($data['asset']);
         return view('super-admin.area.create', $data);
     }
 
@@ -46,44 +48,57 @@ class AreaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
         try {
             DB::beginTransaction();
-            // $data = $request->validate([
-            //     'kode' => ['required', 'unique:areas'],
-            //     'nama' => ['required', 'string'],
-            //     'id_wilayah' => ['required', 'numeric']
-            // ]);
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'code' => ['required', 'unique:areas'],
-                    'name' => ['required', 'string'],
-                    'img_location' => ['required', 'string'],
-                    'project_id' => ['required', 'numeric']
-                ]
-            );
 
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            // Validasi input, termasuk file gambar
+            $this->validate($request, [
+                'code' => ['required', 'unique:areas'],
+                'name' => ['required', 'string'],
+                'img_location' => 'required|file|image|mimes:jpeg,png,jpg|max:6048', // Validasi file gambar
+                'project_id' => ['required', 'numeric'],
+                'asset_id' => ['required', 'numeric']
+            ]);
+
+            // Inisialisasi nama file
+            $filename = null;
+
+
+            // dd($request->all());
+
+
+            if ($request->hasFile('img_location')) {
+                $file = $request->file('img_location');
+                $currentDateTime = date('Ymd_His');
+                $filename = $currentDateTime . '_' . $file->getClientOriginalName();
+
+                // Pindahkan file ke direktori publik
+                $file->move(public_path('gambar'), $filename);
             }
 
-            $data = $validator->validated();
-            $action = Area::create($data);
+
+            // Membuat data area dengan filename gambar
+            $action = Area::create([
+                'code' => $request->code,
+                'name' => $request->name,
+                'img_location' => $filename,
+                'project_id' => $request->project_id,
+                'asset_id' => $request->asset_id
+            ]);
+
             DB::commit();
 
-            if ($action) {
-                return redirect()->route('area.index')->with('success', 'data area berhasil disimpan');
-            }
+            return redirect()->route('area.index')->with('success', 'Data area berhasil disimpan');
+        } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'data arae gagal disimpan');
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::debug('AreaController store ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::error('AreaController store error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Data area gagal disimpan: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -132,19 +147,36 @@ class AreaController extends Controller
 
     public function datatable()
     {
-        $data = Area::all();
-        // dd($data);
+        $data = Area::with(['project', 'asset'])->get();
+
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('code', '{{$code}}')
-            ->addColumn('name', '{{$name}}')
-            ->addColumn('img_location', '{{$img_location}}')
-            ->addColumn('project_id', function (Area $area) {
-                return $area->name;
+            ->addColumn('code', function ($row) {
+                return $row->code;
             })
+            ->addColumn('name', function ($row) {
+                return $row->name;
+            })
+            ->addColumn('img_location', function ($row) {
+                if ($row->img_location && file_exists(public_path('gambar/' . $row->img_location))) {
+                    $url = asset('gambar/' . $row->img_location);
+                } else {
+                    $url = asset('gambar/no-image.png');
+                }
+                return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
+            })
+            ->addColumn('project_name', function ($row) {
+                return $row->project ? $row->project->nama_project : '-';
+            })
+            ->addColumn('asset_name', function ($row) {
+                return $row->asset ? $row->asset->kode : '-';
+            })
+            ->rawColumns(['img_location'])
             ->toJson();
     }
+
+
 
     public function by_project(Request $request, $id)
     {

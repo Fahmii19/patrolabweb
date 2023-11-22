@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('guards', function (Blueprint $table) {
-            $table->unsignedBigInteger('pleton_id')->after('alamat'); // Menambahkan kolom 'pleton_id'
+        Schema::table('areas', function (Blueprint $table) {
+            $table->foreignId('asset_id')->nullable()->after('project_id');
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('guards', function (Blueprint $table) {
-            $table->dropColumn('pleton_id'); // Menghapus kolom 'pleton_id' jika migration di-rollback
+        Schema::table('areas', function (Blueprint $table) {
+            $table->dropColumn('asset_id');
         });
     }
 };

@@ -24,7 +24,7 @@
                 <button onclick="window.history.back()" class="btn btn-warning">
                     << Kembali</button>
             </div>
-            <form action="{{route('area.store')}}" method="POST">
+            <form action="{{route('area.store')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row row-cols-1 row-cols-lg-2">
                     <div class="col">
@@ -40,9 +40,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="img_location" class="form-label">Lokasi Image <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('img_location') is-invalid @enderror" name="img_location" id="img_location" value="{{old('img_location')}}" placeholder="Masukkan Lokasi Image">
+                            <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location" id="img_location">
                             @error('img_location') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
+
                         <div class="mb-3">
                             <label for="project_id" class="form-label">Nama Project <span class="text-danger">*</span></label>
                             <select class="form-select" name="project_id" id="myselect0">
@@ -55,6 +56,21 @@
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        <div class="mb-3">
+                            <label for="asset_id" class="form-label">Nama Aset <span class="text-danger">*</span></label>
+                            <select class="form-select" name="asset_id" id="myselect1">
+                                <option selected value="" disabled>Pilih Aset</option>
+                                @foreach ($asset as $item)
+                                <option value="{{ $item->id }}" {{ old('asset_id') == $item->id ? 'selected' : '' }}>{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+                            @error('asset_id')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
 
 
                     </div>

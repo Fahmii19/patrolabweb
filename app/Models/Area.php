@@ -11,11 +11,19 @@ class Area extends Model
     protected $guarded = ['id'];
     protected $table = 'areas';
 
-    public function project(){
-        return $this->belongsTo(ProjectModel::class,'project_id');
+    public function project()
+    {
+        return $this->belongsTo(ProjectModel::class, 'project_id');
     }
-    public function data_guards(){
-        return $this->hasMany(Area::class,'id_area');
+
+    public function asset()
+    {
+        return $this->belongsTo(AssetModel::class, 'asset_id');
+    }
+
+    public function data_guards()
+    {
+        return $this->hasMany(Area::class, 'id_area');
     }
 
     public function checkpoints()

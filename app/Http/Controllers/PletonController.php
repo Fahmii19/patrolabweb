@@ -38,8 +38,10 @@ class PletonController extends Controller
         // dd("hahahahaha");
         $data['title'] = 'Tambah Pleton';
         $data['pletons'] = Pleton::all();
-        $data['guards'] = Guard::all();
+        // $data['guards'] = Guard::all();
         // $data['guards'] = Guard::get();
+        // dd($data);
+        $data['guards'] = Guard::whereNull('pleton_id')->get();
         // dd($data);
         return view('super-admin.pleton-page.create', $data);
     }
