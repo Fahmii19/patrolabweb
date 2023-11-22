@@ -147,35 +147,39 @@ class AreaController extends Controller
 
     public function datatable()
     {
+        // $data = Area::all();
         $data = Area::with(['project', 'asset'])->get();
+        // $data = Area::with(['project', 'asset'])->orderBy('id', 'desc')->first();
+        // dd($data->project->nama_project);
 
+        // dd($data);
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('code', function ($row) {
-                return $row->code;
-            })
-            ->addColumn('name', function ($row) {
-                return $row->name;
-            })
+            ->addColumn('code', '{{$code}}')
+            ->addColumn('name', '{{$name}}')
             ->addColumn('img_location', function ($row) {
+                // Cek jika file gambar ada
                 if ($row->img_location && file_exists(public_path('gambar/' . $row->img_location))) {
                     $url = asset('gambar/' . $row->img_location);
                 } else {
-                    $url = asset('gambar/no-image.png');
+                    // Jika tidak ada, gunakan gambar default
+                    $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
                 }
                 return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
             })
+            ->addColumn('project_id', function (Area $area) {
+                return $area->project ? $area->project->name : '-';
+            })
+            ->rawColumns(['img_location'])
             ->addColumn('project_name', function ($row) {
                 return $row->project ? $row->project->nama_project : '-';
             })
-            ->addColumn('asset_name', function ($row) {
-                return $row->asset ? $row->asset->kode : '-';
+            ->addColumn('asset_code', function ($row) {
+                return $row->asset ? $row->asset->nama : '-';
             })
-            ->rawColumns(['img_location'])
             ->toJson();
     }
-
 
 
     public function by_project(Request $request, $id)

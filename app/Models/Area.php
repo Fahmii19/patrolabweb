@@ -18,7 +18,7 @@ class Area extends Model
 
     public function asset()
     {
-        return $this->belongsTo(AssetModel::class, 'asset_id');
+        return $this->belongsTo(Aset::class, 'asset_id');
     }
 
     public function data_guards()

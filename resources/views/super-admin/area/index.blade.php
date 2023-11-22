@@ -31,7 +31,7 @@
                         <th class="text-nowrap">Nama Area</th>
                         <th class="text-nowrap">Lokasi Image</th>
                         <th class="text-nowrap">Nama Project</th>
-                        <th class="text-nowrap">ID Aset</th>
+                        <th class="text-nowrap">Nama Aset</th>
 
                     </tr>
                 </thead>
@@ -67,13 +67,14 @@
             },
 
             {
-                data: 'project_id'
+                data: 'project_name'
                 , name: 'Nama Project'
             }
             , {
-                data: 'asset_id'
-                , name: 'ID Aset'
-            } // Kolom baru untuk asset_id
+                data: 'asset_code'
+                , name: 'Kode Aset'
+            }
+
 
         ]
     });
