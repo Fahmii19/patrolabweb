@@ -127,14 +127,14 @@ class CheckPointController extends Controller
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('name', '{{$name}}')
-            ->addColumn('qr_code', '{{$qr_code}}')
-            ->addColumn('location_long_lat', '{{$location_long_lat}}')
+            ->addColumn('name', '{{$nama}}')
+            // ->addColumn('qr_code', '{{$qr_code}}')
+            ->addColumn('location_long_lat', '{{$lokasi}}')
             ->addColumn('status', '{{$status}}')
-            ->addColumn('danger_status', '{{$danger_status}}')
-            ->addColumn('id_round', function (CheckPoint $checkpoints) {
-                return $checkpoints->round->name ?? '-';
-            })
+            // ->addColumn('danger_status', '{{$danger_status}}')
+            // ->addColumn('id_round', function (CheckPoint $checkpoints) {
+            //     return $checkpoints->round->name ?? '-';
+            // })
             ->toJson();
     }
 }
