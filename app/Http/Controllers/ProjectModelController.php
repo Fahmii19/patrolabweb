@@ -24,6 +24,7 @@ class ProjectModelController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Project';
+        $data['wilayah'] = Wilayah::all();
         return view('super-admin.project.create', $data);
     }
 
@@ -34,7 +35,7 @@ class ProjectModelController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'namaProyek' => 'required|string|max:255', // Tambahkan aturan validasi yang diperlukan
-                'namaWilayah' => 'required|string|max:255', // Tambahkan aturan validasi yang diperlukan
+                'idWilayah' => 'required|numeric', // Tambahkan aturan validasi yang diperlukan
             ]);
 
             if ($validator->fails()) {
@@ -46,7 +47,7 @@ class ProjectModelController extends Controller
             // Sesuaikan nama field dengan skema tabel Anda
             ProjectModel::create([
                 'nama_project' => $data['namaProyek'],
-                'wilayah' => $data['namaWilayah'],
+                'wilayah' => $data['idWilayah'],
             ]);
 
             DB::commit();
@@ -123,18 +124,15 @@ class ProjectModelController extends Controller
     }
 
     public function datatable()
-    {
-        $data = ProjectModel::all();
-        // dd($data);
+    {   
+
+        $data = ProjectModel::with('data_wilayah')->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('nama_project', function (ProjectModel $project) {
-                return $project->nama_project;
-            })
+            ->addColumn('nama_project', '{{$nama_project}}')
             ->addColumn('wilayah', function (ProjectModel $project) {
-                return $project->wilayah;
-                // dd($project);
+                return $project->data_wilayah->kode;
             })
             ->addColumn('action', function (ProjectModel $project) {
                 $data = [
