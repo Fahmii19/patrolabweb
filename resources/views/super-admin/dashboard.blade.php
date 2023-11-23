@@ -248,10 +248,6 @@ $page = 'dashboard';
     });
     menu_active("#menu_dashboard")
 </script>
-<div class="d-flex">
-    <a class="btn btn-warning me-2">Edit</a>
-    <button class="btn btn-danger me-2">Hapus</button>
-</div>
 @endpush
 
 @endsection
