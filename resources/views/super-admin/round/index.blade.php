@@ -45,22 +45,18 @@
     $('#mytable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('check-point.datatable') }}",
+        ajax: "{{ route('round.datatable') }}",
         columns: [{
                 data: 'DT_RowIndex',
                 name: 'No'
             },
             {
                 data: 'nama',
-                name: 'Nama CheckPoint'
+                name: 'Nama Rute'
             },
             {
-                data: 'kode',
-                name: 'Nama CheckPoint'
-            },
-            {
-                data: 'lokasi',
-                name: 'Nama CheckPoint'
+                data: 'jumlah',
+                name: 'Jumlah Checkpoint'
             },
             {
                 data: 'status',

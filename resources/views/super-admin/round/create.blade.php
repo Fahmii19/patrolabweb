@@ -22,53 +22,63 @@
         <div class="card-body">
             <div class="d-flex justify-content-end">
                 <button onclick="window.history.back()" class="btn btn-warning">
-                    << Kembali</button>
+                    << Kembali
+                </button>
             </div>
         </div>
     </div>
+    
     <div class="row">
         <div class="col-sm-12 col-xl-6 col-lg-12 col-md-6">
             <div class="card">
                 <div class="card-body row switch-showcase height-equal">
-                    <div class="mb-3">
-                        <label for="id_area" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
-                        <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="myselect0">
-                            <option value="" selected disabled>--Pilih--</option>
-                            @foreach ($wilayah as $item)
-                            <option value="{{ $item->id }}" {{ old('id_wilayah') == $item->id ? 'selected' : '' }}>{{ $item->nama }}
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('id_wilayah')
-                        <span class="text-danger d-block">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_area" class="form-label">Nama Project <span class="text-danger">*</span></label>
-                        <select class="form-select @error('id_project') is-invalid @enderror" name="id_project" onchange="get_area(this.value)" id="select-project">
-                            <option value="" selected disabled>--Pilih--</option>
-                        </select>
-                        <span class="text-danger d-block" id="project-alert"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_area" class="form-label">Nama Area <span class="text-danger">*</span></label>
-                        <select class="form-select @error('id_area') is-invalid @enderror" name="id_area" id="select-area">
-                            <option value="" selected disabled>--Pilih--</option>
-                        </select>
-                        <span class="text-danger d-block" id="area-alert"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Rute <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" id="nama" value="{{old('nama')}}" placeholder="Masukkan Nama CheckPoint">
-                        @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
-                    </div>
-                    <div class="mb-3">
-                        <button class="btn btn-primary">Simpan</button>
-                    </div>
+                    <form action="{{route('round.store')}}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="id_area" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
+                            <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="myselect0">
+                                <option value="" selected disabled>--Pilih--</option>
+                                @foreach ($wilayah as $item)
+                                <option value="{{ $item->id }}" {{ old('id_wilayah') == $item->id ? 'selected' : '' }}>{{ $item->nama }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('id_wilayah')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_area" class="form-label">Nama Project <span class="text-danger">*</span></label>
+                            <select class="form-select @error('id_project') is-invalid @enderror" name="id_project" onchange="get_area(this.value)" id="select-project">
+                                <option value="" selected disabled>--Pilih--</option>
+                            </select>
+                            <span class="text-danger d-block" id="project-alert"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_area" class="form-label">Nama Area <span class="text-danger">*</span></label>
+                            <select class="form-select @error('id_area') is-invalid @enderror" name="id_area" id="select-area">
+                                <option value="" selected disabled>--Pilih--</option>
+                            </select>
+                            <span class="text-danger d-block" id="area-alert"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nama Rute <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="rute" id="name" value="{{old('nama')}}" placeholder="Masukkan Nama Rute">
+                            @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <input type="checkbox" class="form-check-input @error('status') is-invalid @enderror" name="status" id="roundStatus" value="aktif">
+                            <label for="roundStatus">Aktif</label>
+                            @error('status') <span class="text-danger d-block">{{$message}}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
                 </div>
-
             </div>
         </div>
+
         <div class="col-sm-12 col-xl-6 col-lg-12 col-md-6">
             <div class="card">
                 <div class="card-body row switch-showcase height-equal">
@@ -150,7 +160,7 @@
             url: "{{ url('/super-admin/project-by-wilayah-select') }}/" + id_wilayah,
             method: 'get',
             data: {
-                id_project: "{{ old('id_project') ? implode(',',old('id_project')) : '' }}"
+                id_project: "{{ old('id_project') }}"
             },
             //menghapus checkbox sebelumnya jika di select form lain
             beforeSend: function() {
@@ -179,7 +189,7 @@
             url: "{{ url('/super-admin/area-by-project') }}/" + id_project,
             method: 'get',
             data: {
-                id_area: "{{ old('id_area') ? implode(',',old('id_area')) : '' }}"
+                id_area: "{{ old('id_area') }}"
             },
             //menghapus checkbox sebelumnya jika di select form lain
             beforeSend: function() {
