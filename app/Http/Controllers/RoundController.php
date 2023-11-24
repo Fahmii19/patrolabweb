@@ -120,11 +120,21 @@ class RoundController extends Controller
         ->addIndexColumn()
         ->escapeColumns('active')
         ->addColumn('nama', '{{$rute}}')
-        ->addColumn('jumlah', '0')
+        ->addColumn('jumlah', function($data){
+            $checkpoint = Round::find($data->id)->checkpoint;
+            return $checkpoint->count();
+        })
         ->addColumn('status', '{{$status}}')
         ->addColumn('id_area', '{{$area["name"]}}')
         ->addColumn('id_project', '{{$project["nama_project"]}}')
         ->addColumn('id_wilayah', '{{$wilayah["nama"]}}')
+        ->addColumn('action', function (Round $round) {
+            $data = [
+                'editurl' => route('round.edit', $round->id),
+                'deleteurl' => route('round.destroy', $round->id)
+            ];
+            return $data;
+        })
 
         ->toJson();
     }
