@@ -31,8 +31,7 @@
                         <th class="text-nowrap">Nama Area</th>
                         <th class="text-nowrap">Lokasi Image</th>
                         <th class="text-nowrap">Nama Project</th>
-                        <th class="text-nowrap">Nama Aset</th>
-
+                        <th>Action</th>
                     </tr>
                 </thead>
             </table>
@@ -40,43 +39,54 @@
     </div>
 </div>
 <!-- Container-fluid Ends-->
+<div id="actionbase" class="d-none">
+    <div class="d-flex">
+        <a class="btn btn-warning me-2">Edit</a>
+        <form method="post" class="d-inline">
+            @csrf
+            @method('delete')
+            <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
+        </form>
+    </div>
+</div>
+
 @push('js')
 <script>
     $('#mytable').addClass('w-100').DataTable({
-        scrollX: true
-        , processing: true
-        , serverSide: true
-        , ajax: "{{ route('area.datatable') }}"
-        , columns: [{
-                data: 'DT_RowIndex'
-                , name: 'No'
-            }
-            , {
-                data: 'code'
-                , name: 'Kode area'
-            }
-            , {
-                data: 'name'
-                , name: 'Nama area'
-            }
-            , {
-                data: 'img_location'
-                , name: 'Lokasi Image'
-                , orderable: false
-                , searchable: false
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('area.datatable') }}",
+        columns: [{
+            data: 'DT_RowIndex',
+            name: 'No',
+        }, {
+            data: 'code',
+            name: 'Kode area',
+        }, {
+            data: 'name',
+            name: 'Nama area',
+        }, {
+            data: 'img_location',
+            name: 'Lokasi Image',
+            orderable: false,
+            searchable: false,
+        }, {
+            data: 'project_name',
+            name: 'Nama Project'
+        }, {
+            name: "Action",
+            render: function(data, type, row) {
+                let html = $('#actionbase').clone()
+                html = html.find('.d-flex')
+                html.find('a').attr('href', row.action.editurl)
+                let form = html.find('form').attr('action', row.action.deleteurl)
+                    .attr('id', 'delete_form' + row.id)
+                form.find('button').attr('form-id', '#delete_form' + row.id)
+                return html.html()
             },
-
-            {
-                data: 'project_name'
-                , name: 'Nama Project'
-            }
-            , {
-                data: 'asset_code'
-                , name: 'Kode Aset'
-            }
-
-
-        ]
+            orderable: false,
+            searchable: false,
+        }]
     });
     active_menu("#data_master", "#area")
 

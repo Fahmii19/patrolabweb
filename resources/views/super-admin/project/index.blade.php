@@ -27,10 +27,10 @@
                 <table class="table table-hover table-bordered" id="mytable">
                     <thead class="bg-light">
                         <tr>
-                            <th class="text-nowrap" style="width:50px">No</th>
-                            <th class="text-nowrap">Nama Project</th>
-                            <th class="text-nowrap">Kode Wilayah</th>
-                            <th class="text-nowrap" style="width: 100px">Action</th>
+                            <th style="width:40px">No</th>
+                            <th>Nama Project</th>
+                            <th>Kode Wilayah</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,11 +59,11 @@
             </div>
         </div>
     </div>
-    
+
     <div id="actionbase" class="d-none">
         <div class="d-flex">
             <a class="btn btn-warning me-2">Edit</a>
-            <form method="post">
+            <form method="post" class="d-inline">
                 @csrf
                 @method('delete')
                 <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
@@ -96,7 +96,9 @@
                             .attr('id', 'delete_form' + row.id)
                         form.find('button').attr('form-id', '#delete_form' + row.id)
                         return html.html()
-                    }
+                    },
+                    orderable: false,
+                    searchable: false,
                 }]
             });
             active_menu("#data_master", "#project")
