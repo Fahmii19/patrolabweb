@@ -82,6 +82,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('/project-by-wilayah/{id}', [ProjectModelController::class, 'by_wilayah'])->name('project-by-wilayah');
     Route::get('/project-by-wilayah-select/{id}', [ProjectModelController::class, 'by_wilayah_select'])->name('project-by-wilayah-select');
     Route::get('/area-by-project/{id}', [AreaController::class, 'by_project'])->name('area-by-project');
+    Route::get('/checkpoint-by-round/{id}', [CheckPointController::class, 'by_round'])->name('checkpoint-by-round');
 
     //Route Data Table
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
