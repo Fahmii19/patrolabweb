@@ -56,23 +56,6 @@
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        <div class="mb-3">
-                            <label for="asset_id" class="form-label">Nama Aset <span class="text-danger">*</span></label>
-                            <select class="form-select" name="asset_id" id="myselect1">
-                                <option selected value="" disabled>Pilih Aset</option>
-                                @foreach ($asset as $item)
-                                <option value="{{ $item->id }}" {{ old('asset_id') == $item->id ? 'selected' : '' }}>{{ $item->nama }}</option>
-                                @endforeach
-                            </select>
-                            @error('asset_id')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-
-
-
                     </div>
                 </div>
                 <button type="submit" class="btn btn-success">Simpan</button>
