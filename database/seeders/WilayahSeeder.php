@@ -17,14 +17,26 @@ class WilayahSeeder extends Seeder
     public function run()
     {
         Wilayah::create([
-            'kode' => 'WIL001',
-            'nama' => 'RIAU',
+            'kode' => 'kowil01',
+            'nama' => 'Wilayah 01',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         Wilayah::create([
-            'kode' => 'WIL002',
-            'nama' => 'JAKARTA',
+            'kode' => 'kowil02',
+            'nama' => 'Wilayah 02',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Wilayah::create([
+            'kode' => 'kowil03',
+            'nama' => 'Wilayah 03',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Wilayah::create([
+            'kode' => 'kowil04',
+            'nama' => 'Wilayah 04',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

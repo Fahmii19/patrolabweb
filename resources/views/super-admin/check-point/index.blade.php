@@ -27,16 +27,28 @@
                 <thead>
                     <tr>
                         <th style="max-width: 40px;">No</th>
-                        <th>Nama CheckPoint</th>
-                        {{-- <th>Kode</th> --}}
-                        <th>Lattitude</th>
+                        <th>CheckPoint</th>
+                        <th>Kode</th>
+                        <th>Lokasi</th>
                         <th>Status</th>
-                        {{-- <th>Danger Status</th> --}}
-                        {{-- <th>Nama Round</th> --}}
+                        <th>Danger Status</th>
+                        <th>Nama Round</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
             </table>
         </div>
+    </div>
+</div>
+
+<div id="actionbase" class="d-none">
+    <div class="d-flex">
+        <a class="btn btn-warning me-2">Edit</a>
+        <form method="post" class="d-inline">
+            @csrf
+            @method('delete')
+            <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
+        </form>
     </div>
 </div>
 
@@ -66,57 +78,61 @@
         serverSide: true,
         ajax: "{{ route('check-point.datatable') }}",
         columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            },
-            {
-                data: 'name',
-                name: 'Nama CheckPoint'
-            },
-            // {
-            //     data: 'qr_code',
-            //     render: function(data, type, row) {
-            //         let html = $('<div><span class="badge badge-success"></span></div>')
-            //         html.find('span').attr('onclick', 'view_qr(\'' + row.qr_code + '\')')
-            //             .text(row.qr_code)
+            data: 'DT_RowIndex',
+            name: 'No'
+        }, {
+            data: 'name',
+            name: 'CheckPoint'
+        }, {
+            data: 'qr_code',
+            render: function(data, type, row) {
+                let html = $('<div><span class="badge badge-success"></span></div>')
+                html.find('span').attr('onclick', 'view_qr(\'' + row.qr_code + '\')')
+                    .text(row.qr_code)
 
-            //         return html.html()
-            //     }
-            // },
-            {
-                data: 'location_long_lat',
-                name: 'Location Coordinat'
-            },
-            {
-                data: 'status',
-                render: function(data, type, row) {
-                    if (row.status == 'aktif') {
-                        return '<span class="badge badge-success">' + row.status + '</span>'
-                    } else {
-                        return '<span class="badge badge-danger">' + row.status + '</span>'
-                    }
+                return html.html()
+            }
+        }, {
+            data: 'location',
+            name: 'Location'
+        }, {
+            data: 'status',
+            render: function(data, type, row) {
+                if (row.status == 'aktif') {
+                    return '<span class="badge badge-success">' + row.status + '</span>'
+                } else {
+                    return '<span class="badge badge-danger">' + row.status + '</span>'
                 }
+            }
+        }, {
+            data: 'danger_status',
+            render: function(data, type, row) {
+                if (row.danger_status == 'low') {
+                    return '<span class="badge badge-success">' + row.danger_status + '</span>'
+                } else if (row.danger_status == 'middle') {
+                    return '<span class="badge badge-warning">' + row.danger_status + '</span>'
+                }
+                else {
+                    return '<span class="badge badge-danger">' + row.danger_status + '</span>'
+                }
+            }
+        }, {
+            data: 'round',
+            name: 'Nama Round'
+        }, {
+            name: "Action",
+            render: function(data, type, row) {
+                let html = $('#actionbase').clone()
+                html = html.find('.d-flex')
+                html.find('a').attr('href', row.action.editurl)
+                let form = html.find('form').attr('action', row.action.deleteurl)
+                    .attr('id', 'delete_form' + row.id)
+                form.find('button').attr('form-id', '#delete_form' + row.id)
+                return html.html()
             },
-            // {
-            //     data: 'danger_status',
-            //     // name: 'Danger Status'
-
-            //     render: function(data, type, row) {
-            //         if (row.danger_status == 'LOW') {
-            //             return '<span class="badge badge-success">' + row.danger_status + '</span>'
-            //         } else if (row.danger_status == 'MIDDLE') {
-            //             return '<span class="badge badge-warning">' + row.danger_status + '</span>'
-            //         }
-            //         else {
-            //             return '<span class="badge badge-danger">' + row.danger_status + '</span>'
-            //         }
-            //     }
-            // },
-            // {
-            //     data: 'id_round',
-            //     name: 'Nama Round'
-            // },
-        ]
+            orderable: false,
+            searchable: false,
+        }]
     });
     active_menu("#menu-checkpoint", "#sub-list-checkpoint")
 </script>

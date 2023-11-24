@@ -33,10 +33,22 @@
                         <th>Area</th>
                         <th>Project</th>
                         <th>Wilayah</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
             </table>
         </div>
+    </div>
+</div>
+
+<div id="actionbase" class="d-none">
+    <div class="d-flex">
+        <a class="btn btn-warning me-2">Edit</a>
+        <form method="post" class="d-inline">
+            @csrf
+            @method('delete')
+            <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
+        </form>
     </div>
 </div>
 <!-- Container-fluid Ends-->
@@ -47,34 +59,44 @@
         serverSide: true,
         ajax: "{{ route('round.datatable') }}",
         columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            }, {
-                data: 'nama',
-                name: 'Nama Rute'
-            }, {
-                data: 'jumlah',
-                name: 'Jumlah Checkpoint'
-            }, {
-                data: 'status',
-                render: function(data, type, row) {
-                    if (row.status == 'aktif') {
-                        return '<span class="badge badge-success">' + row.status + '</span>'
-                    } else {
-                        return '<span class="badge badge-danger">' + row.status + '</span>'
-                    }
+            data: 'DT_RowIndex',
+            name: 'No'
+        }, {
+            data: 'nama',
+            name: 'Nama Rute'
+        }, {
+            data: 'jumlah',
+            name: 'Jumlah Checkpoint'
+        }, {
+            data: 'status',
+            render: function(data, type, row) {
+                if (row.status == 'aktif') {
+                    return '<span class="badge badge-success">' + row.status + '</span>'
+                } else {
+                    return '<span class="badge badge-danger">' + row.status + '</span>'
                 }
-            }, {
-                data: 'id_area',
-                name: 'Nama Area'
-            }, {
-                data: 'id_project',
-                name: 'Nama Project'
-            }, {
-                data: 'id_wilayah',
-                name: 'Nama Wilayah'
             }
-        ]
+        }, {
+            data: 'id_area',
+            name: 'Nama Area'
+        }, {
+            data: 'id_project',
+            name: 'Nama Project'
+        }, {
+            data: 'id_wilayah',
+            name: 'Nama Wilayah'
+        }, {
+            name: "action",
+            render: function(data, type, row) {
+                let html = $('#actionbase').clone()
+                html = html.find('.d-flex')
+                html.find('a').attr('href', row.action.editurl)
+                let form = html.find('form').attr('action', row.action.deleteurl)
+                .attr('id', 'delete_form' + row.id)
+                form.find('button').attr('form-id', '#delete_form' + row.id)
+                return html.html()
+            }
+        }]
     });
     active_menu("#menu-round", "#sub-round-list")
 </script>

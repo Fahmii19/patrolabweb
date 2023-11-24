@@ -66,9 +66,9 @@
                             <input type="text" class="form-control @error('nama') is-invalid @enderror" name="rute" id="name" value="{{old('nama')}}" placeholder="Masukkan Nama Rute">
                             @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
-                        <div class="mb-3">
-                            <input type="checkbox" class="form-check-input @error('status') is-invalid @enderror" name="status" id="roundStatus" value="aktif">
-                            <label for="roundStatus">Aktif</label>
+                        <div class="mb-3 align-middle">
+                            <input type="checkbox" class="form-check-input fs-5 mt-0 me-2 @error('status') is-invalid @enderror" name="status" id="roundStatus" value="aktif">
+                            <label for="roundStatus" class="align-middle mb-0">Aktif</label>
                             @error('status') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                         <div class="mb-3">
@@ -83,62 +83,28 @@
             <div class="card">
                 <div class="card-body row switch-showcase height-equal">
                     <div class="mb-3">
-                        <label for="id_area" class="form-label">Pilih Check Point <span class="text-danger">*</span></label>
-                        <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="">
+                        <label for="id_rute" class="form-label">Pilih Round<span class="text-danger">*</span></label>
+                        <select class="form-select @error('id_round') is-invalid @enderror" name="id_round" onchange="get_checkpoint(this.value)" id="id_rute">
                             <option value="" selected disabled>--Pilih--</option>
-
+                            @foreach ($round as $item)
+                                <option value="{{ $item->id }}" {{ old('id_round') == $item->id ? 'selected' : '' }}>{{ $item->rute }}
+                                </option>
+                            @endforeach
                         </select>
-                        <div class="table-responsive">
-                            <table class="table">
+                        <div class="table-responsive mt-3">
+                            <table class="table" id="tableCheckpoint">
                                 <thead>
                                     <tr>
-                                        <th scope="col">No</th>
+                                        <th scope="col" style="width:40px;">No</th>
                                         <th scope="col">Check Point</th>
-                                        <th scope="col">Area</th>
-                                        <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Will 1</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Will 2</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Will 3</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">4</th>
-                                        <td>Will 4</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
+                                    {{-- <tr>
                                         <th scope="row">5</th>
                                         <td>Will 5</td>
                                         <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
@@ -206,6 +172,31 @@
                 area_base.html('<option value="" selected disabled>--Pilih--</option>')
                 area_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data area di project ini')
                 //console.log(response)
+            }
+        })
+    }
+
+    function get_checkpoint(id_round) {
+        const area_table = $('#tableCheckpoint tbody')
+        console.log(area_table);
+        console.log(id_round);
+        $.ajax({
+            url: "{{ url('/super-admin/checkpoint-by-round') }}/" + id_round,
+            method: 'get',
+            data: {
+                id_area: "{{ old('id_round') }}"
+            },
+            success: function(response) {
+                console.log(response);
+                let data = response.data
+                area_table.html(data)
+            },
+            error: function(response) {
+                area_table.html(`
+                    <tr class="text-center">
+                        <td colspan="2">Tidak ada checkpoint</td>
+                    </tr>
+                `)
             }
         })
     }

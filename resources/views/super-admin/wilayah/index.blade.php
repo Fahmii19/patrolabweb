@@ -30,7 +30,7 @@ $section = 'wilayah';
             <table id="mytable" class="display" style="width:100%">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th style="max-width: 40px;">No</th>
                         <th>Kode Wilayah</th>
                         <th>Nama Wilayah</th>
                         <th>Aksi</th>

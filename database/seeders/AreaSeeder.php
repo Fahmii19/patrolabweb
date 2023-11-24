@@ -16,9 +16,25 @@ class AreaSeeder extends Seeder
     public function run()
     {
         Area::create([
-            'kode' => 'AREA001',
-            'nama' => 'ZAMRUD',
-            'id_project' => 1,
+            'code' => 'korea01',
+            'name' => 'Area 01',
+            'project_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Area::create([
+            'code' => 'korea02',
+            'name' => 'Area 02',
+            'project_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Area::create([
+            'code' => 'korea03',
+            'name' => 'Area 03',
+            'project_id' => 2,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

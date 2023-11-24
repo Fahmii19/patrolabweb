@@ -37,8 +37,6 @@ class AreaController extends Controller
     {
         $data['title'] = "Tambah Data Area";
         $data['project'] = ProjectModel::all();
-        $data['asset'] = Aset::all();
-        // dd($data['asset']);
         return view('super-admin.area.create', $data);
     }
 
@@ -60,15 +58,10 @@ class AreaController extends Controller
                 'name' => ['required', 'string'],
                 'img_location' => 'required|file|image|mimes:jpeg,png,jpg|max:6048', // Validasi file gambar
                 'project_id' => ['required', 'numeric'],
-                'asset_id' => ['required', 'numeric']
             ]);
 
             // Inisialisasi nama file
             $filename = null;
-
-
-            // dd($request->all());
-
 
             if ($request->hasFile('img_location')) {
                 $file = $request->file('img_location');
@@ -76,7 +69,7 @@ class AreaController extends Controller
                 $filename = $currentDateTime . '_' . $file->getClientOriginalName();
 
                 // Pindahkan file ke direktori publik
-                $file->move(public_path('gambar'), $filename);
+                $file->move(public_path('gambar/area'), $filename);
             }
 
 
@@ -148,7 +141,7 @@ class AreaController extends Controller
     public function datatable()
     {
         // $data = Area::all();
-        $data = Area::with(['project', 'asset'])->get();
+        $data = Area::with('project')->get();
         // $data = Area::with(['project', 'asset'])->orderBy('id', 'desc')->first();
         // dd($data->project->nama_project);
 
@@ -160,23 +153,22 @@ class AreaController extends Controller
             ->addColumn('name', '{{$name}}')
             ->addColumn('img_location', function ($row) {
                 // Cek jika file gambar ada
-                if ($row->img_location && file_exists(public_path('gambar/' . $row->img_location))) {
-                    $url = asset('gambar/' . $row->img_location);
+                if ($row->img_location && file_exists(public_path('gambar/area/' . $row->img_location))) {
+                    $url = asset('gambar/area/' . $row->img_location);
                 } else {
                     // Jika tidak ada, gunakan gambar default
-                    $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
+                    // Pastikan gambar no-image.png tersedia di folder public/gambar
+                    $url = asset('gambar/no-image.png'); 
                 }
                 return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
             })
-            ->addColumn('project_id', function (Area $area) {
-                return $area->project ? $area->project->name : '-';
-            })
-            ->rawColumns(['img_location'])
-            ->addColumn('project_name', function ($row) {
-                return $row->project ? $row->project->nama_project : '-';
-            })
-            ->addColumn('asset_code', function ($row) {
-                return $row->asset ? $row->asset->nama : '-';
+            ->addColumn('project_name', '{{$data["project"]["nama_project"]}}')
+            ->addColumn('action', function (Area $area) {
+                $data = [
+                    'editurl' => route('area.edit', $area->id),
+                    'deleteurl' => route('area.destroy', $area->id)
+                ];
+                return $data;
             })
             ->toJson();
     }

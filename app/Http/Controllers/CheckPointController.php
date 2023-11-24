@@ -7,6 +7,8 @@ use Throwable;
 use App\Models\Area;
 use App\Models\Wilayah;
 use App\Models\CheckPoint;
+use App\Models\CheckpointAset;
+use App\Models\Round;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -34,8 +36,7 @@ class CheckPointController extends Controller
     public function create()
     {
         $data['title'] = "Tambah Area CheckPoint";
-        $data['wilayah'] = Wilayah::all();
-        $data['area'] = Area::all();
+        $data['round'] = Round::all();
         return view('super-admin.check-point.create', $data);
     }
 
@@ -50,19 +51,20 @@ class CheckPointController extends Controller
             try {
                 DB::beginTransaction();
                 $validator = Validator::make($request->all(), [
-                    'id_wilayah' => 'required|numeric',
-                    'id_project' => 'required|numeric',
-                    'id_area' => 'required|numeric',
-                    'nama' => 'required',
-                    'lokasi' => 'required',
+                    'round_id' => 'required|numeric',
+                    'nama' => 'required|string',
+                    'lokasi' => 'required|string',
+                    'danger_status' => 'required',
                 ]);
 
                 if ($validator->fails()) {
                     return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
                 }
-                $nama_area = Area::find($request->id_area)->nama;
+
                 $data = $validator->validated();
-                $data['kode'] = str_replace(' ','',$nama_area.$request->nama);
+                $currentTime = date('His');
+                $capitalizeName = strtoupper($request->nama);
+                $data['kode'] = str_replace(' ','',$currentTime.$capitalizeName);
                 $data['status'] = 'aktif';
 
                 CheckPoint::create($data);
@@ -123,18 +125,52 @@ class CheckPointController extends Controller
 
     public function datatable()
     {
-        $data = CheckPoint::all();
+        $data = CheckPoint::with('round')->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('name', '{{$nama}}')
-            // ->addColumn('qr_code', '{{$qr_code}}')
-            ->addColumn('location_long_lat', '{{$lokasi}}')
+            ->addColumn('qr_code', '{{$kode}}')
+            ->addColumn('location', '{{$lokasi}}')
             ->addColumn('status', '{{$status}}')
-            // ->addColumn('danger_status', '{{$danger_status}}')
-            // ->addColumn('id_round', function (CheckPoint $checkpoints) {
-            //     return $checkpoints->round->name ?? '-';
-            // })
+            ->addColumn('danger_status', '{{$danger_status}}')
+            ->addColumn('round', '{{$round["rute"]}}')
+            ->addColumn('action', function (CheckPoint $checkpoint) {
+                $data = [
+                    'editurl' => route('check-point.edit', $checkpoint->id),
+                    'deleteurl' => route('check-point.destroy', $checkpoint->id)
+                ];
+                return $data;
+            })
             ->toJson();
+    }
+
+    public function by_round(Request $request, $id)
+    {
+        $old = [];
+        if ($request->id_round) {
+            $old = $request->id_round;
+        }
+
+        $data = Round::find($id)->checkpoint;
+        if ($data->count() <= 0) {
+            return response()->json([
+                "status" => "false",
+                "messege" => "gagal mengambil data checkpoint",
+                "data" => []
+            ], 404);
+        }
+        $html = '';
+        for ($i=0; $i < $data->count(); $i++) {
+            $html .= '<tr>'.
+                '<th scope="row">'. $i + 1 .'</th>' .
+                '<td>'. $data[$i]['nama'] . '</td>' .
+            '</tr>';
+        }
+        return response()->json([
+            "status" => "true",
+            "messege" => "berhasil mengambil data checkpoint",
+            "data" => [$html]
+        ], 200);
     }
 }
