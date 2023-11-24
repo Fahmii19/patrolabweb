@@ -30,7 +30,7 @@
                             <th class="text-nowrap" style="width:50px">No</th>
                             <th class="text-nowrap">Nama Project</th>
                             <th class="text-nowrap">Kode Wilayah</th>
-                            <th class="text-nowrap" style="width: 100px">Tindakan</th>
+                            <th class="text-nowrap" style="width: 100px">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,6 +59,7 @@
             </div>
         </div>
     </div>
+    
     <div id="actionbase" class="d-none">
         <div class="d-flex">
             <a class="btn btn-warning me-2">Edit</a>
@@ -100,9 +101,5 @@
             });
             active_menu("#data_master", "#project")
         </script>
-        <div class="d-flex">
-            <a class="btn btn-warning me-2">Edit</a>
-            <button class="btn btn-danger me-2">Hapus</button>
-        </div>
     @endpush
 @endsection
