@@ -135,6 +135,13 @@ class CheckPointController extends Controller
             ->addColumn('status', '{{$status}}')
             ->addColumn('danger_status', '{{$danger_status}}')
             ->addColumn('round', '{{$round["rute"]}}')
+            ->addColumn('action', function (CheckPoint $checkpoint) {
+                $data = [
+                    'editurl' => route('check-point.edit', $checkpoint->id),
+                    'deleteurl' => route('check-point.destroy', $checkpoint->id)
+                ];
+                return $data;
+            })
             ->toJson();
     }
 

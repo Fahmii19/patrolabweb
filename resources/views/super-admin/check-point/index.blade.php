@@ -41,6 +41,17 @@
     </div>
 </div>
 
+<div id="actionbase" class="d-none">
+    <div class="d-flex">
+        <a class="btn btn-warning me-2">Edit</a>
+        <form method="post" class="d-inline">
+            @csrf
+            @method('delete')
+            <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
+        </form>
+    </div>
+</div>
+
 <!-- Modal Body -->
 <!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
 <div class="modal fade" id="qr_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
@@ -105,10 +116,22 @@
                     return '<span class="badge badge-danger">' + row.danger_status + '</span>'
                 }
             }
-        },
-        {
+        }, {
             data: 'round',
             name: 'Nama Round'
+        }, {
+            name: "Action",
+            render: function(data, type, row) {
+                let html = $('#actionbase').clone()
+                html = html.find('.d-flex')
+                html.find('a').attr('href', row.action.editurl)
+                let form = html.find('form').attr('action', row.action.deleteurl)
+                    .attr('id', 'delete_form' + row.id)
+                form.find('button').attr('form-id', '#delete_form' + row.id)
+                return html.html()
+            },
+            orderable: false,
+            searchable: false,
         }]
     });
     active_menu("#menu-checkpoint", "#sub-list-checkpoint")
