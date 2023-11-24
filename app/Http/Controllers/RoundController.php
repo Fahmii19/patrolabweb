@@ -121,10 +121,9 @@ class RoundController extends Controller
         ->addColumn('nama', '{{$rute}}')
         ->addColumn('jumlah', '0')
         ->addColumn('status', '{{$status}}')
-        ->addColumn('nama', '{{$rute}}')
-        ->addColumn('id_area', '{{$area->name}}')
-        ->addColumn('id_project', '{{$project->nama_project}}')
-        ->addColumn('id_wilayah', '{{$wilayah->nama}}')
+        ->addColumn('id_area', '{{$area["name"]}}')
+        ->addColumn('id_project', '{{$project["nama_project"]}}')
+        ->addColumn('id_wilayah', '{{$wilayah["nama"]}}')
 
         ->toJson();
     }
