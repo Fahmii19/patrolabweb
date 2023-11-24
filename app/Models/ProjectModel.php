@@ -13,12 +13,12 @@ class ProjectModel extends Model
 
     public function data_wilayah()
     {
-        return $this->belongsTo(Wilayah::class, 'city_id');
+        return $this->belongsTo(Wilayah::class, 'wilayah', 'id');
     }
 
     public function areas()
     {
-        return $this->hasMany(Area::class, 'id_project');
+        return $this->hasMany(Area::class, 'project_id', 'id');
     }
 
     public function data_guards()

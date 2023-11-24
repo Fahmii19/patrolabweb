@@ -32,14 +32,17 @@
                         <div class="col">
 
                             <div class="mb-3">
-                                <label for="namaWilayah" class="form-label">Kode Wilayah <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('namaWilayah') is-invalid @enderror"
-                                    name="namaWilayah" id="namaWilayah" value="{{ old('namaWilayah') }}"
-                                    placeholder="Masukkan kode wilayah">
-                                @error('namaWilayah')
-                                    <span class="text-danger d-block">{{ $message }}</span>
-                                @enderror
+                                <label for="idWilayah" class="form-label">Kode Wilayah <span class="text-danger">*</span></label>
+                                <select class="form-select @error('idWilayah') is-invalid @enderror" name="idWilayah" onchange="get_project(this.value)" id="myselect0">
+                                <option value="" selected disabled>--Pilih--</option>
+                                @foreach ($wilayah as $item)
+                                <option value="{{ $item->id }}" {{ old('idWilayah') == $item->id ? 'selected' : '' }}>{{ $item->kode }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('idWilayah')
+                                <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
                             </div>
 
                             <div class="mb-3">
@@ -64,7 +67,7 @@
 
     @push('js')
         <script>
-            active_menu("#data_master", "#project")
+            active_menu("#data_master", "#project");
         </script>
     @endpush
 

@@ -40,7 +40,7 @@
 <div id="actionbase" class="d-none">
     <div class="d-flex">
         <a class="btn btn-warning me-2">Edit</a>
-        <form method="post">
+        <form method="post" class="d-inline">
             @csrf
             @method('delete')
             <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
@@ -94,10 +94,6 @@
     active_menu("#data_master", "#asset")
 
 </script>
-<div class="d-flex">
-    <a class="btn btn-warning me-2">Edit</a>
-    <button class="btn btn-danger me-2">Hapus</button>
-</div>
 @endpush
 
 @endsection

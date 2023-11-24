@@ -199,7 +199,7 @@ class AreaController extends Controller
         $html = '<option value="" selected disabled>--Pilih--</option>';
         foreach ($data as $item) {
             $selected = $item->id == $old ? 'selected' : '';
-            $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->nama . '</option>';
+            $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->name . '</option>';
         }
         return response()->json([
             "status" => "true",

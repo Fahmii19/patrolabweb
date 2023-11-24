@@ -23,11 +23,11 @@
             <div class="d-flex mb-3 justify-content-end">
                 <a href="{{route('round.create')}}" class="btn btn-success">Tambah Round</a>
             </div>
-            <table id="#mytable" class="display" style="width:100%">
+            <table id="mytable" class="display" style="width:100%">
                 <thead>
                     <tr>
                         <th style="max-width: 40px;">No</th>
-                        <th>Nama</th>
+                        <th>Nama Rute</th>
                         <th>Jumlah Check Point</th>
                         <th>Status</th>
                         <th>Area</th>
@@ -45,24 +45,17 @@
     $('#mytable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('check-point.datatable') }}",
+        ajax: "{{ route('round.datatable') }}",
         columns: [{
                 data: 'DT_RowIndex',
                 name: 'No'
-            },
-            {
+            }, {
                 data: 'nama',
-                name: 'Nama CheckPoint'
-            },
-            {
-                data: 'kode',
-                name: 'Nama CheckPoint'
-            },
-            {
-                data: 'lokasi',
-                name: 'Nama CheckPoint'
-            },
-            {
+                name: 'Nama Rute'
+            }, {
+                data: 'jumlah',
+                name: 'Jumlah Checkpoint'
+            }, {
                 data: 'status',
                 render: function(data, type, row) {
                     if (row.status == 'aktif') {
@@ -71,16 +64,13 @@
                         return '<span class="badge badge-danger">' + row.status + '</span>'
                     }
                 }
-            },
-            {
+            }, {
                 data: 'id_area',
                 name: 'Nama Area'
-            },
-            {
+            }, {
                 data: 'id_project',
                 name: 'Nama Project'
-            },
-            {
+            }, {
                 data: 'id_wilayah',
                 name: 'Nama Wilayah'
             }
@@ -88,7 +78,6 @@
     });
     active_menu("#menu-round", "#sub-round-list")
 </script>
-
 @endpush
 
 @endsection

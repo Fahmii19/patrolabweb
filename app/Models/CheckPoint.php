@@ -9,7 +9,7 @@ class CheckPoint extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $table = 'checkpoint';
+    protected $table = 'check_points';
 
     public function round()
     {

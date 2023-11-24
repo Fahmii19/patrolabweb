@@ -88,6 +88,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('wilayah-datatable', [WilayahController::class, 'datatable'])->name('wilayah.datatable');
     Route::get('area-datatable', [AreaController::class, 'datatable'])->name('area.datatable');
     Route::get('check-point-datatable', [CheckPointController::class, 'datatable'])->name('check-point.datatable');
+    Route::get('round-datatable', [RoundController::class, 'datatable'])->name('round.datatable');
     Route::get('aset-location-datatable', [AsetLocationController::class, 'datatable'])->name('aset-location.datatable');
     Route::get('ai-master-datatable', [AiMasterDataController::class, 'datatable'])->name('ai-master.datatable');
     Route::get('aset-datatable', [AsetController::class, 'datatable'])->name('aset.datatable');
