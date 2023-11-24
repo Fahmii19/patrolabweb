@@ -15,20 +15,41 @@ class ProjectSeeder extends Seeder
      */
     public function run()
     {
+        // ProjectModel::create([
+        //     'nama_project' => 'PERTAGAS',
+        //     'wilayah' => 1,
+        //     'created_at' => now(),
+        //     'updated_at' => now(),
+        // ]);
+        // ProjectModel::create([
+        //     'nama_project' => 'PERTAMINA',
+        //     'wilayah' => 1,
+        //     'created_at' => now(),
+        //     'updated_at' => now(),
+        // ]);
+        // ProjectModel::create([
+        //     'nama_project' => 'PARKIR 1',
+        //     'wilayah' => 2,
+        //     'created_at' => now(),
+        //     'updated_at' => now(),
+        // ]);
+
         ProjectModel::create([
-            'nama_project' => 'PERTAGAS',
+            'nama_project' => 'Proyek 01',
             'wilayah' => 1,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
         ProjectModel::create([
-            'nama_project' => 'PERTAMINA',
+            'nama_project' => 'Proyek 02',
             'wilayah' => 1,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
         ProjectModel::create([
-            'nama_project' => 'PARKIR 1',
+            'nama_project' => 'Proyek 03',
             'wilayah' => 2,
             'created_at' => now(),
             'updated_at' => now(),
