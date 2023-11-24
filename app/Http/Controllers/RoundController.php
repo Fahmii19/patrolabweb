@@ -26,6 +26,7 @@ class RoundController extends Controller
         $data['title'] = 'Tambah Round';
         $data['wilayah'] = Wilayah::all();
         $data['area'] = Area::all();
+        $data['round'] = Round::all();
         return view('super-admin.round.create', $data);
     }
 

@@ -20,8 +20,14 @@ class Round extends Model
     {
         return $this->belongsTo(ProjectModel::class, 'id_project', 'id');
     }
+
     public function area()
     {
         return $this->belongsTo(Area::class, 'id_area', 'id');
+    }
+
+    public function checkpoint()
+    {
+        return $this->hasMany(CheckPoint::class, 'round_id', 'id');
     }
 }
