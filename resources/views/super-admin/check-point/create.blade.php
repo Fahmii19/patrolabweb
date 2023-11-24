@@ -29,35 +29,17 @@
                 <div class="row row-cols-1 row-cols-lg-2">
                     <div class="col">
                         <div class="mb-3">
-                            <label for="id_area" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
-                            <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="myselect0">
+                            <label for="idRound" class="form-label">Nama Round <span class="text-danger">*</span></label>
+                            <select class="form-select @error('round_id') is-invalid @enderror" name="round_id" id="idRound" required>
                                 <option value="" selected disabled>--Pilih--</option>
-                                @foreach ($wilayah as $item)
-                                <option value="{{ $item->id }}" {{ old('id_wilayah') == $item->id ? 'selected' : '' }}>{{ $item->nama }}
+                                @foreach ($round as $item)
+                                    <option value="{{ $item->id }}" {{ old('round_id') == $item->id ? 'selected' : '' }}>{{ $item->rute }}
                                 </option>
                                 @endforeach
                             </select>
-                            @error('id_wilayah')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_area" class="form-label">Nama Project <span class="text-danger">*</span></label>
-                            <select class="form-select @error('id_project') is-invalid @enderror" name="id_project" onchange="get_area(this.value)" id="select-project">
-                                <option value="" selected disabled>--Pilih--</option>
-                            </select>
-                            @error('id_project')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                            <span class="text-danger d-block" id="project-alert"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_area" class="form-label">Nama Area <span class="text-danger">*</span></label>
-                            <select class="form-select @error('id_area') is-invalid @enderror" name="id_area" id="select-area">
-                                <option value="" selected disabled>--Pilih--</option>
-                            </select>
-                            @error('id_area')
-                            <span class="text-danger d-block">{{ $message }}</span>
+
+                            @error('round_id')
+                                <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                             <span class="text-danger d-block" id="area-alert"></span>
                         </div>
@@ -71,6 +53,25 @@
                             <input type="text" class="form-control @error('lokasi') is-invalid @enderror" name="lokasi" id="lokasi" value="{{old('lokasi')}}" placeholder="Masukkan Lokasi CheckPoint">
                             @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
+                        <div class="mb-3">
+                            <label for="dangerStatus" class="form-label">Danger Status <span class="text-danger">*</span></label>
+                            <select class="form-select @error('danger_status') is-invalid @enderror" name="danger_status" id="dangerStatus">
+                                <option value="" disabled selected> --Pilih-- </option>
+                                <option value="low" {{ old('danger_status') == 'low' ? 'selected' : '' }}>Low</option>
+                                <option value="middle" {{ old('danger_status') == 'middle' ? 'selected' : '' }}>Middle</option>
+                                <option value="high" {{ old('danger_status') == 'highh' ? 'selected' : '' }}>High</option>
+                            </select>
+                            @error('danger_status')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        @if( old('status'))
+                            <div class="mb-3 align-middle">
+                                <input type="checkbox" class="form-check-input fs-5 mt-0 me-2 @error('status') is-invalid @enderror" name="status" id="checkPointStatus" value="aktif" checked>
+                                <label for="checkPointStatus" class="align-middle mb-0">Aktif</label>
+                                @error('status') <span class="text-danger d-block">{{$message}}</span> @enderror
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <button type="submit" class="btn btn-success">Simpan</button>
