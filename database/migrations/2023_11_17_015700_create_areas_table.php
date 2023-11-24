@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('img_location')->nullable();
             $table->foreignId('project_id');
-            $table->foreignId('asset_id');
             $table->timestamps();
         });
     }

@@ -19,10 +19,9 @@ return new class extends Migration
             $table->string('nama');
             $table->string('kode')->unique();
             $table->string('lokasi');
+            $table->foreignId('round_id');
             $table->enum('status',['aktif','non aktif']);
-            $table->string('id_area');
-            $table->string('id_project');
-            $table->string('id_wilayah');
+            $table->enum('danger_status', ['low', 'middle', 'high']);
             $table->timestamps();
         });
     }
