@@ -14,8 +14,7 @@ return new class extends Migration
             $table->foreignId('id_project');
             $table->foreignId('id_area');
             $table->string('rute');
-            $table->string('waktu_mulai');
-            $table->string('waktu_selesai');
+            $table->enum('status',['aktif','tidak aktif']);
             $table->timestamps();
         });
     }

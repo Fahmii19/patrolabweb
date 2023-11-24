@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('areas', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->string('name')->nullable();
+            $table->string('name');
             $table->string('img_location')->nullable();
-            $table->foreignId('project_id')->nullable();
+            $table->foreignId('project_id');
+            $table->foreignId('asset_id');
             $table->timestamps();
         });
     }
