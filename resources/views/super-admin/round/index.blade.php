@@ -49,7 +49,7 @@
             @method('delete')
             <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
         </form>
-        <a href="{{route('round.detail')}}" class="btn btn-success me-2">Detail</a>
+        <a href="{{route('round.detail')}}" class="btn btn-primary me-2">Detail</a>
     </div>
 </div>
 <!-- Container-fluid Ends-->
