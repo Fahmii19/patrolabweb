@@ -37,8 +37,11 @@
                     <div class="form-group w-100">
                         <div class="Typeahead Typeahead--twitterUsers">
                             <div class="u-posRelative">
-                                <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text" placeholder="Search Cuba .." name="q" title="" autofocus>
-                                <div class="spinner-border Typeahead-spinner" role="status"><span class="sr-only">Loading...</span></div><i class="close-search" data-feather="x"></i>
+                                <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text"
+                                    placeholder="Search Cuba .." name="q" title="" autofocus>
+                                <div class="spinner-border Typeahead-spinner" role="status"><span
+                                        class="sr-only">Loading...</span></div><i class="close-search"
+                                    data-feather="x"></i>
                             </div>
                             <div class="Typeahead-menu"></div>
                         </div>
@@ -54,7 +57,8 @@
                     <div class="toggle-sidebar">
                         <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
                     </div>
-                    <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i></div>
+                    <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle"
+                            data-feather="align-center"></i></div>
                 </div>
                 <div class="left-header col horizontal-wrapper ps-0">
                     <ul class="horizontal-menu">
@@ -66,10 +70,12 @@
                         <li class="language-nav">
                             <div class="translate_wrapper">
                                 <div class="current_lang">
-                                    <div class="lang"><i class="flag-icon flag-icon-id"></i><span class="lang-txt">ID </span></div>
+                                    <div class="lang"><i class="flag-icon flag-icon-id"></i><span class="lang-txt">ID
+                                        </span></div>
                                 </div>
                                 <div class="more_lang">
-                                    <div class="lang selected" data-value="en"><i class="flag-icon flag-icon-us"></i><span class="lang-txt">English<span>
+                                    <div class="lang selected" data-value="en"><i
+                                            class="flag-icon flag-icon-us"></i><span class="lang-txt">English<span>
                                                 (US)</span></span></div>
                                 </div>
                             </div>
@@ -94,9 +100,11 @@
                             <ul class="profile-dropdown onhover-show-div">
                                 <li><a href="{{ url('#') }}"><i data-feather="user"></i><span>Account
                                         </span></a></li>
-                                <li><a href="{{ url('#') }}"><i data-feather="settings"></i><span>Settings</span></a></li>
+                                <li><a href="{{ url('#') }}"><i
+                                            data-feather="settings"></i><span>Settings</span></a></li>
                                 <li>
-                                    <form action="{{ route('logout') }}" method="POST" onclick="logout('#form_logout')" id="form_logout">
+                                    <form action="{{ route('logout') }}" method="POST"
+                                        onclick="logout('#form_logout')" id="form_logout">
                                         @csrf
                                         <i data-feather="log-in"> </i><span>Logout</span>
                                     </form>
