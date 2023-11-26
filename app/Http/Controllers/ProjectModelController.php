@@ -125,7 +125,7 @@ class ProjectModelController extends Controller
     }
 
     public function datatable()
-    {   
+    {
 
         $data = ProjectModel::with('data_wilayah')->get();
         return DataTables::of($data)
@@ -133,7 +133,7 @@ class ProjectModelController extends Controller
             ->escapeColumns('active')
             ->addColumn('nama_project', '{{$nama_project}}')
             ->addColumn('wilayah', '{{$data["data_wilayah"]["nama"]}}')
-            ->addColumn('created_at', function($data){
+            ->addColumn('created_at', function ($data) {
                 $createdAt = Carbon::parse($data->created_at);
                 return $createdAt->format('m/d/Y H:i:s');
             })
