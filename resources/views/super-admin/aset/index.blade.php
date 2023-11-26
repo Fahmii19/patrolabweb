@@ -29,7 +29,10 @@
                         <th style="max-width: 40px;">No</th>
                         <th>Kode</th>
                         <th>Nama</th>
+                        <th>Teks Pendek</th>
+                        <th>Tipe Master</th>
                         <th>Status</th>
+                        <th>Gambar</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -59,24 +62,40 @@
                 , name: 'No'
             }
             , {
-                data: 'kode'
-                , name: 'kode'
+                data: 'code'
+                , name: 'code'
             }
             , {
-                data: 'nama'
-                , name: 'nama'
+                data: 'name'
+                , name: 'name'
+            }
+            , {
+                data: 'short_desc'
+                , name: 'short_desc'
+
+            }
+            , {
+                data: 'asset_master_type'
+                , name: 'asset_master_type'
+
             }
             , {
                 data: 'status'
                 , render: function(data, type, row) {
-                    if (row.status == 'aktif') {
-
+                    if (row.status == 'ACTIVED') {
                         return '<span class="badge badge-success">' + row.status + '</span>'
                     } else {
                         return '<span class="badge badge-danger">' + row.status + '</span>'
                     }
                 }
             }
+            , {
+                data: 'image'
+                , name: 'Gambar'
+                , orderable: false
+                , searchable: false
+            , }
+
             , {
                 name: "Action"
                 , render: function(data, type, row) {

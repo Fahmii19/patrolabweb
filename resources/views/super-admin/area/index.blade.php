@@ -28,9 +28,10 @@
                     <tr>
                         <th class="text-nowrap" style="max-width: 40px;">No</th>
                         <th class="text-nowrap">Kode Area</th>
-                        <th class="text-nowrap">Nama Area</th>
                         <th class="text-nowrap">Lokasi Image</th>
-                        <th class="text-nowrap">Nama Project</th>
+                        {{-- <th class="text-nowrap">Nama Area</th>
+                        <th class="text-nowrap">Status</th>
+                        <th class="text-nowrap">Nama Project</th> --}}
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -53,40 +54,39 @@
 @push('js')
 <script>
     $('#mytable').addClass('w-100').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('area.datatable') }}",
-        columns: [{
-            data: 'DT_RowIndex',
-            name: 'No',
-        }, {
-            data: 'code',
-            name: 'Kode area',
-        }, {
-            data: 'name',
-            name: 'Nama area',
-        }, {
-            data: 'img_location',
-            name: 'Lokasi Image',
-            orderable: false,
-            searchable: false,
-        }, {
-            data: 'project_name',
-            name: 'Nama Project'
-        }, {
-            name: "Action",
-            render: function(data, type, row) {
-                let html = $('#actionbase').clone()
-                html = html.find('.d-flex')
-                html.find('a').attr('href', row.action.editurl)
-                let form = html.find('form').attr('action', row.action.deleteurl)
-                    .attr('id', 'delete_form' + row.id)
-                form.find('button').attr('form-id', '#delete_form' + row.id)
-                return html.html()
+        processing: true
+        , serverSide: true
+        , ajax: "{{ route('area.datatable') }}"
+        , columns: [{
+                data: 'DT_RowIndex'
+                , name: 'No'
+            , }
+            , {
+                data: 'code'
+                , name: 'code'
+            }
+            , {
+                data: 'name'
+                , name: 'name'
             },
-            orderable: false,
-            searchable: false,
-        }]
+
+
+
+            {
+                name: "Action"
+                , render: function(data, type, row) {
+                    let html = $('#actionbase').clone()
+                    html = html.find('.d-flex')
+                    html.find('a').attr('href', row.action.editurl)
+                    let form = html.find('form').attr('action', row.action.deleteurl)
+                        .attr('id', 'delete_form' + row.id)
+                    form.find('button').attr('form-id', '#delete_form' + row.id)
+                    return html.html()
+                }
+                , orderable: false
+                , searchable: false
+            , }
+        ]
     });
     active_menu("#data_master", "#area")
 
