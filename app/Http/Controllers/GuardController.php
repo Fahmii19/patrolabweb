@@ -109,6 +109,8 @@ class GuardController extends Controller
     {
         $title = 'Detail Guard';
 
+        // dd($guard);
+
         // Mengirim data Guard dan title ke view sebagai variabel terpisah
         return view('super-admin.guard-page.show', compact('guard', 'title'));
     }

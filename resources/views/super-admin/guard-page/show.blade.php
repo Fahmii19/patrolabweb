@@ -4,7 +4,7 @@
 @component('components.dashboard.headpage')
 @slot('title') {{ $title }} @endslot
 @slot('bread')
-<li class="breadcrumb-item">Pleton Management</li>
+<li class="breadcrumb-item">Guard Management</li>
 <li class="breadcrumb-item">{{ $title }}</li>
 @endslot
 @endcomponent
@@ -14,15 +14,14 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-end mb-3">
-                <a href="{{ route('pleton.index') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ route('guard.index') }}" class="btn btn-warning">Kembali</a>
             </div>
 
             <div class="row">
                 <div class="col-md-12">
-                    <h5 class="card-title">Detail Pleton</h5>
-                    <p>Nama Pleton: {{ $pleton->nama }}</p>
-                    <p>Kode Pleton: {{ $pleton->no_badge }}</p>
-                    <!-- Tampilkan informasi lainnya sesuai kebutuhan -->
+                    <h5 class="card-title">Detail Guard</h5>
+                    <p>Nama Guard: {{ $guard->nama }}</p>
+                    <p>Kode Guard: {{ $guard->no_badge }}</p>
                 </div>
             </div>
         </div>
@@ -33,7 +32,7 @@
 
 @push('js')
 <script>
-    active_menu("#menu-pleton", "#sub-list-pleton")
+    active_menu("#menu-guard", "#sub-list-guard")
 
 </script>
 @endpush
