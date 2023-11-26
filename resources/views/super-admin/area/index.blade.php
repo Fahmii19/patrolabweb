@@ -28,10 +28,10 @@
                     <tr>
                         <th class="text-nowrap" style="max-width: 40px;">No</th>
                         <th class="text-nowrap">Kode Area</th>
-                        <th class="text-nowrap">Lokasi Image</th>
-                        {{-- <th class="text-nowrap">Nama Area</th>
+                        <th class="text-nowrap">Nama Area</th>
                         <th class="text-nowrap">Status</th>
-                        <th class="text-nowrap">Nama Project</th> --}}
+                        <th class="text-nowrap">Gambar</th>
+                        <th class="text-nowrap">Nama Project</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -67,12 +67,25 @@
             }
             , {
                 data: 'name'
-                , name: 'name'
+                , name: 'Nama Area'
             },
 
-
+            {
+                data: 'status'
+                , name: 'Status'
+            },
 
             {
+                data: 'image'
+                , name: 'Gambar'
+                , orderable: false
+                , searchable: false
+            , }, {
+                data: 'project'
+                , name: 'Nama Project'
+            }
+
+            , {
                 name: "Action"
                 , render: function(data, type, row) {
                     let html = $('#actionbase').clone()
