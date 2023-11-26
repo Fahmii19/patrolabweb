@@ -43,12 +43,13 @@
 
 <div id="actionbase" class="d-none">
     <div class="d-flex">
-        <a class="btn btn-warning me-2">Edit</a>
+        <a class="btn btn-warning me-2" id="btnEdit">Edit</a>
         <form method="post" class="d-inline">
             @csrf
             @method('delete')
             <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
         </form>
+        <a href="{{route('round.detail')}}" class="btn btn-success me-2">Detail</a>
     </div>
 </div>
 <!-- Container-fluid Ends-->
@@ -90,7 +91,7 @@
             render: function(data, type, row) {
                 let html = $('#actionbase').clone()
                 html = html.find('.d-flex')
-                html.find('a').attr('href', row.action.editurl)
+                html.find('#btnEdit').attr('href', row.action.editurl)
                 let form = html.find('form').attr('action', row.action.deleteurl)
                 .attr('id', 'delete_form' + row.id)
                 form.find('button').attr('form-id', '#delete_form' + row.id)
