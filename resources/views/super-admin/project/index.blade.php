@@ -29,7 +29,8 @@
                         <tr>
                             <th style="width:40px">No</th>
                             <th>Nama Project</th>
-                            <th>Kode Wilayah</th>
+                            <th>Nama Wilayah</th>
+                            <th>Waktu</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -86,6 +87,9 @@
                 }, {
                     data: 'wilayah',
                     name: 'Nama Wilayah'
+                }, {
+                    data: 'created_at',
+                    name: 'Waktu'
                 }, {
                     name: "Action",
                     render: function(data, type, row) {

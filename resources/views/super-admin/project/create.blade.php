@@ -32,11 +32,11 @@
                         <div class="col">
 
                             <div class="mb-3">
-                                <label for="idWilayah" class="form-label">Kode Wilayah <span class="text-danger">*</span></label>
+                                <label for="idWilayah" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
                                 <select class="form-select @error('idWilayah') is-invalid @enderror" name="idWilayah" onchange="get_project(this.value)" id="myselect0">
                                 <option value="" selected disabled>--Pilih--</option>
                                 @foreach ($wilayah as $item)
-                                <option value="{{ $item->id }}" {{ old('idWilayah') == $item->id ? 'selected' : '' }}>{{ $item->kode }}
+                                <option value="{{ $item->id }}" {{ old('idWilayah') == $item->id ? 'selected' : '' }}>{{ $item->nama }}
                                 </option>
                                 @endforeach
                             </select>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Throwable;
 use App\Models\ProjectModel;
 use App\Models\Wilayah;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -131,8 +132,10 @@ class ProjectModelController extends Controller
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('nama_project', '{{$nama_project}}')
-            ->addColumn('wilayah', function (ProjectModel $project) {
-                return $project->data_wilayah->kode;
+            ->addColumn('wilayah', '{{$data["data_wilayah"]["nama"]}}')
+            ->addColumn('created_at', function($data){
+                $createdAt = Carbon::parse($data->created_at);
+                return $createdAt->format('m/d/Y H:i:s');
             })
             ->addColumn('action', function (ProjectModel $project) {
                 $data = [
