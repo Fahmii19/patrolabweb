@@ -63,17 +63,8 @@ class RoundController extends Controller
     public function show($id)
     {
         $data['title'] = 'Detail Round';
-        $data['round'] = Round::find($id);
+        $data['round'] = Round::all();
         return view('super-admin.round.show', $data);
-    }
-
-    public function detail()
-    {
-        // $data['title'] = 'Detail Round';
-        // $data['round'] = Round::all();
-        // return view('super-admin.round.show', $data);
-        // print_r($data);
-        print_r("asd");
     }
 
     public function edit($id)

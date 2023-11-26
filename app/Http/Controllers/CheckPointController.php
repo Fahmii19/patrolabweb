@@ -152,8 +152,9 @@ class CheckPointController extends Controller
             $old = $request->id_round;
         }
 
-        $data = Round::find($id)->checkpoint;
-        if ($data->count() <= 0) {
+        $round = Round::with(['wilayah', 'project', 'area'])->find($id);
+        $checkpoint = Round::find($id)->checkpoint;
+        if ($checkpoint->count() <= 0) {
             return response()->json([
                 "status" => "false",
                 "messege" => "gagal mengambil data checkpoint",
@@ -161,12 +162,16 @@ class CheckPointController extends Controller
             ], 404);
         }
         $html = '';
-        for ($i=0; $i < $data->count(); $i++) {
+        for ($i=0; $i < $checkpoint->count(); $i++) {
             $html .= '<tr>'.
                 '<th scope="row">'. $i + 1 .'</th>' .
-                '<td>'. $data[$i]['nama'] . '</td>' .
+                '<td>'. $checkpoint[$i]['nama'] . '</td>' .
+                '<td>'. $round['wilayah']['nama'] . '</td>' .
+                '<td>'. $round['project']['nama_project'] . '</td>' .
+                '<td>'. $round['area']['name'] . '</td>' .
             '</tr>';
         }
+
         return response()->json([
             "status" => "true",
             "messege" => "berhasil mengambil data checkpoint",
