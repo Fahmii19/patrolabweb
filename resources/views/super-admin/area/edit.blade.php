@@ -70,13 +70,29 @@
 
 
                             <!-- Bidang Gambar -->
+                            <!-- Bidang Gambar -->
                             <div class="mb-3">
-                                <label for="image" class="form-label">Gambar Area</label>
-                                <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location" id="img_location">
+                                <label for="img_location" class="form-label">Gambar Area</label>
+                                <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location[]" id="img_location" multiple>
                                 @error('img_location') <span class="text-danger d-block">{{$message}}</span> @enderror
+
                                 <!-- Tampilkan gambar saat ini atau gambar default -->
-                                <img src="{{ $area->img_location ? asset('gambar/area/' . $area->img_location) : asset('gambar/no-image.png') }}" width="100" height="100" class="img-thumbnail mt-2">
+                                <div class="existing-images mt-3">
+                                    @foreach(explode(',', $area->img_location) as $index => $image)
+                                    <div class="img-container d-inline-block mr-2">
+                                        <img src="{{ $image ? asset('gambar/area/' . $image) : asset('gambar/no-image.png') }}" width="100" height="100" class="img-thumbnail">
+                                        <!-- Checkbox untuk menghapus gambar -->
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="delete_images[]" id="deleteImage{{ $index }}" value="{{ $image }}">
+                                            <label class="form-check-label" for="deleteImage{{ $index }}">Hapus</label>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
                             </div>
+
+
+
                         </div>
                     </div>
                     <button type="submit" class="btn btn-success">Simpan</button>

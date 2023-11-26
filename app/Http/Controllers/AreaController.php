@@ -54,28 +54,33 @@ class AreaController extends Controller
         try {
             DB::beginTransaction();
 
-            // Validasi input, termasuk file gambar
-            $validatedData = $request->validate([
-                'code' => ['required', 'unique:areas,code'],
-                'name' => ['required', 'string'],
-                'img_location' => 'required|file|image|mimes:jpeg,png,jpg|max:6048', // Validasi file gambar
-                'project_id' => ['required', 'numeric'],
-            ]);
+            // Validasi input
+            // $validatedData = $request->validate([
+            //     'code' => ['required', 'unique:areas,code'],
+            //     'name' => ['required', 'string'],
+            //     'img_location' => 'required',
+            //     'project_id' => ['required', 'numeric'],
+            // ]);
+
+            $filenames = [];
 
             // Menangani upload gambar
             if ($request->hasFile('img_location')) {
-                $file = $request->file('img_location');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('gambar/area'), $filename);
-            } else {
-                $filename = null; // Atau setel default jika diperlukan
+                foreach ($request->file('img_location') as $file) {
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path('gambar/area'), $filename);
+                    $filenames[] = $filename;
+                }
             }
+
+            // Gabungkan nama file menjadi string jika ada lebih dari satu gambar
+            $imgLocation = implode(',', $filenames);
 
             // Membuat data area
             Area::create([
                 'code' => $request->code,
                 'name' => $request->name,
-                'img_location' => $filename,
+                'img_location' => $imgLocation,
                 'project_id' => $request->project_id,
                 'status' => $request->status // Menyimpan status
             ]);
@@ -88,6 +93,7 @@ class AreaController extends Controller
             return redirect()->back()->with('error', 'Data area gagal disimpan: ' . $e->getMessage());
         }
     }
+
 
 
 
@@ -126,46 +132,68 @@ class AreaController extends Controller
      * @param  \App\Models\Area  $area
      * @return \Illuminate\Http\Response
      */
+
     public function update(Request $request, Area $area)
     {
-        //
         try {
             DB::beginTransaction();
 
-            // Validasi input, termasuk file gambar
-            $validatedData = $request->validate([
-                'code' => ['required', 'unique:areas,code,' . $area->id],
-                'name' => ['required', 'string'],
-                'img_location' => 'file|image|mimes:jpeg,png,jpg|max:6048', // Validasi file gambar
-                'project_id' => ['required', 'numeric'],
-            ]);
+            // Validasi input
+            // $validatedData = $request->validate([
+            //     'code' => ['required', 'unique:areas,code,' . $area->id],
+            //     'name' => ['required', 'string'],
+            //     'img_location.*' => 'file|image|mimes:jpeg,png,jpg|max:6048', // Validasi untuk setiap file gambar
+            //     'project_id' => ['required', 'numeric'],
+            //     // Tambahkan validasi untuk status jika diperlukan
+            // ]);
 
-            // Menangani upload gambar
-            if ($request->hasFile('img_location')) {
-                $file = $request->file('img_location');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('gambar/area'), $filename);
-            } else {
-                $filename = $area->img_location; // Atau setel default jika diperlukan
+            $currentImages = explode(',', $area->img_location);
+            $filenames = [];
+
+            // Menangani gambar yang dihapus
+            if ($request->has('delete_images')) {
+                foreach ($request->delete_images as $deleteImage) {
+                    if (($key = array_search($deleteImage, $currentImages)) !== false) {
+                        // Hapus file dari server
+                        if (file_exists(public_path('gambar/area/' . $deleteImage))) {
+                            unlink(public_path('gambar/area/' . $deleteImage));
+                        }
+                        unset($currentImages[$key]);
+                    }
+                }
             }
 
-            // Membuat data area
+            // Menangani upload gambar baru
+            if ($request->hasFile('img_location')) {
+                foreach ($request->file('img_location') as $file) {
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path('gambar/area'), $filename);
+                    $currentImages[] = $filename;
+                }
+            }
+
+            // Gabungkan nama file yang ada dan baru menjadi string
+            $imgLocation = implode(',', $currentImages);
+
+            // Update data area
             $area->update([
                 'code' => $request->code,
                 'name' => $request->name,
-                'img_location' => $filename,
+                'img_location' => $imgLocation,
                 'project_id' => $request->project_id,
                 'status' => $request->status // Menyimpan status
             ]);
 
             DB::commit();
-            return redirect()->route('area.index')->with('success', 'Data area berhasil disimpan');
+            return redirect()->route('area.index')->with('success', 'Data area berhasil diperbarui');
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('AreaController store error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Data area gagal disimpan: ' . $e->getMessage());
+            Log::error('AreaController update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Data area gagal diperbarui: ' . $e->getMessage());
         }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -175,7 +203,30 @@ class AreaController extends Controller
      */
     public function destroy(Area $area)
     {
-        //
+
+        try {
+            DB::beginTransaction();
+
+            // Hapus gambar dari server jika ada
+            if ($area->img_location) {
+                $images = explode(',', $area->img_location);
+                foreach ($images as $image) {
+                    if (file_exists(public_path('gambar/area/' . $image))) {
+                        unlink(public_path('gambar/area/' . $image));
+                    }
+                }
+            }
+
+            // Hapus data area
+            $area->delete();
+
+            DB::commit();
+            return redirect()->route('area.index')->with('success', 'Data area berhasil dihapus');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('AreaController destroy error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Data area gagal dihapus: ' . $e->getMessage());
+        }
     }
 
     public function datatable()
@@ -208,16 +259,50 @@ class AreaController extends Controller
             })
 
             ->addColumn('image', function ($row) {
-                if ($row->img_location && file_exists(public_path('gambar/area/' . $row->img_location))) {
-                    // dd($row->img_location);
-                    $url = asset('gambar/area/' . $row->img_location);
-                } else {
-                    // Jika tidak ada, gunakan gambar default
-                    $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
+                $images = explode(',', $row->img_location); // Misalnya jika img_location adalah string nama file yang dipisah dengan koma
+                $imgHtml = '';
+
+                foreach ($images as $index => $image) {
+                    if ($image && file_exists(public_path('gambar/area/' . $image))) {
+                        $url = asset('gambar/area/' . $image);
+                    } else {
+                        $url = asset('gambar/no-image.png'); // Gambar default
+                    }
+                    $imgHtml .= '<a href="#!" data-toggle="modal" data-target="#imageModal' . $row->id . '_' . $index . '"><img src="' . $url . '" border="0" width="50" class="img-rounded mr-1" align="center" /></a>';
+
+                    // Modal untuk setiap gambar
+                    $imgHtml .= '
+            <div class="modal fade" id="imageModal' . $row->id . '_' . $index . '" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <img src="' . $url . '" class="img-fluid">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ';
                 }
-                return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
+
+                return $imgHtml;
             })
             ->rawColumns(['image'])
+
+
+            // ->addColumn('image', function ($row) {
+            //     if ($row->img_location && file_exists(public_path('gambar/area/' . $row->img_location))) {
+            //         // dd($row->img_location);
+            //         $url = asset('gambar/area/' . $row->img_location);
+            //     } else {
+            //         // Jika tidak ada, gunakan gambar default
+            //         $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
+            //     }
+            //     return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
+            // })
+            // ->rawColumns(['image'])
 
             ->addColumn('action', function (Area $area) {
                 $data = [
