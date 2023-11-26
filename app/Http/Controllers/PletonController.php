@@ -21,8 +21,8 @@ class PletonController extends Controller
      */
     public function index()
     {
-        // $pletonData = Pleton::withCount('guards')->get();
-        // dd($pletonData);
+        $pletonData = Pleton::withCount('guards')->get();
+        dd($pletonData);
 
         $data['title'] = "Daftar Pleton";
         return view('super-admin.pleton-page.index', $data);

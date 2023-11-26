@@ -45,6 +45,20 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select @error('status') is-invalid @enderror" name="status" id="status">
+                                <option value="" disabled selected>Pilih Status</option>
+                                <option value="ACTIVED" {{ old('status') == 'ACTIVED' ? 'selected' : '' }}>ACTIVED</option>
+
+                                <option value="INACTIVED" {{ old('status') == 'INACTIVED' ? 'selected' : '' }}>INACTIVED</option>
+
+                            </select>
+                            @error('status')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
                             <label for="project_id" class="form-label">Nama Project <span class="text-danger">*</span></label>
                             <select class="form-select" name="project_id" id="myselect0">
                                 <option selected value="" disabled>Pilih Project</option>

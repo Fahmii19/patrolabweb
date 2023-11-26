@@ -37,6 +37,8 @@ class AreaController extends Controller
     {
         $data['title'] = "Tambah Data Area";
         $data['project'] = ProjectModel::all();
+        $data['asset'] = Aset::all();
+        // dd($data['asset']);
         return view('super-admin.area.create', $data);
     }
 
@@ -53,37 +55,32 @@ class AreaController extends Controller
             DB::beginTransaction();
 
             // Validasi input, termasuk file gambar
-            $this->validate($request, [
-                'code' => ['required', 'unique:areas'],
+            $validatedData = $request->validate([
+                'code' => ['required', 'unique:areas,code'],
                 'name' => ['required', 'string'],
                 'img_location' => 'required|file|image|mimes:jpeg,png,jpg|max:6048', // Validasi file gambar
                 'project_id' => ['required', 'numeric'],
             ]);
 
-            // Inisialisasi nama file
-            $filename = null;
-
+            // Menangani upload gambar
             if ($request->hasFile('img_location')) {
                 $file = $request->file('img_location');
-                $currentDateTime = date('Ymd_His');
-                $filename = $currentDateTime . '_' . $file->getClientOriginalName();
-
-                // Pindahkan file ke direktori publik
+                $filename = time() . '_' . $file->getClientOriginalName();
                 $file->move(public_path('gambar/area'), $filename);
+            } else {
+                $filename = null; // Atau setel default jika diperlukan
             }
 
-
-            // Membuat data area dengan filename gambar
-            $action = Area::create([
+            // Membuat data area
+            Area::create([
                 'code' => $request->code,
                 'name' => $request->name,
                 'img_location' => $filename,
                 'project_id' => $request->project_id,
-                'asset_id' => $request->asset_id
+                'status' => $request->status // Menyimpan status
             ]);
 
             DB::commit();
-
             return redirect()->route('area.index')->with('success', 'Data area berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollback();
@@ -91,6 +88,7 @@ class AreaController extends Controller
             return redirect()->back()->with('error', 'Data area gagal disimpan: ' . $e->getMessage());
         }
     }
+
 
 
     /**
@@ -140,36 +138,34 @@ class AreaController extends Controller
 
     public function datatable()
     {
-        // $data = Area::all();
-        $data = Area::with('project')->get();
-        // $data = Area::with(['project', 'asset'])->orderBy('id', 'desc')->first();
-        // dd($data->project->nama_project);
-
-        // dd($data);
+        $data = Area::with(['project'])->get();
+        dd($data);
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('code', '{{$code}}')
-            ->addColumn('name', '{{$name}}')
-            ->addColumn('img_location', function ($row) {
-                // Cek jika file gambar ada
-                if ($row->img_location && file_exists(public_path('gambar/area/' . $row->img_location))) {
-                    $url = asset('gambar/area/' . $row->img_location);
-                } else {
-                    // Jika tidak ada, gunakan gambar default
-                    // Pastikan gambar no-image.png tersedia di folder public/gambar
-                    $url = asset('gambar/no-image.png'); 
-                }
-                return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
+            ->addColumn('code', function ($row) {
+                return $row->code;
             })
-            ->addColumn('project_name', '{{$data["project"]["nama_project"]}}')
-            ->addColumn('action', function (Area $area) {
-                $data = [
-                    'editurl' => route('area.edit', $area->id),
-                    'deleteurl' => route('area.destroy', $area->id)
-                ];
-                return $data;
+            ->addColumn('name', function ($row) {
+                return $row->name;
             })
+            // ->addColumn('img_location', function ($row) {
+            //     // Cek jika file gambar ada
+            //     if ($row->img_location && file_exists(public_path('gambar/' . $row->img_location))) {
+            //         $url = asset('gambar/' . $row->img_location);
+            //     } else {
+            //         // Jika tidak ada, gunakan gambar default
+            //         $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
+            //     }
+            //     return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
+            // })
+            // ->addColumn('project_id', function (Area $area) {
+            //     return $area->project ? $area->project->name : '-';
+            // })
+            // ->rawColumns(['img_location'])
+            // ->addColumn('project_name', function ($row) {
+            //     return $row->project ? $row->project->nama_project : '-';
+            // })
             ->toJson();
     }
 
@@ -191,7 +187,7 @@ class AreaController extends Controller
         $html = '<option value="" selected disabled>--Pilih--</option>';
         foreach ($data as $item) {
             $selected = $item->id == $old ? 'selected' : '';
-            $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->name . '</option>';
+            $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->nama . '</option>';
         }
         return response()->json([
             "status" => "true",
