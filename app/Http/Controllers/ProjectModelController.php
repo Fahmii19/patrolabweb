@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Throwable;
 use App\Models\ProjectModel;
 use App\Models\Wilayah;
+use App\Models\Branch;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,7 @@ class ProjectModelController extends Controller
     {
         $data['title'] = 'Tambah Project';
         $data['wilayah'] = Wilayah::all();
+        $data['branches'] = Branch::all();
         return view('super-admin.project.create', $data);
     }
 
@@ -34,31 +36,45 @@ class ProjectModelController extends Controller
     {
         try {
             DB::beginTransaction();
+
+            // Validasi data input
             $validator = Validator::make($request->all(), [
-                'namaProyek' => 'required|string|max:255', // Tambahkan aturan validasi yang diperlukan
-                'idWilayah' => 'required|numeric', // Tambahkan aturan validasi yang diperlukan
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|max:255',
+                'wilayah_id' => 'required|numeric',
+                'branch_id' => 'required|numeric',
+                'address' => 'required|string',
+                'location_long_lat' => 'required|string',
+                'status' => 'required|string',
             ]);
 
             if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+                return redirect()->back()->withErrors($validator->errors())->withInput();
             }
 
+            // Data yang telah divalidasi
             $data = $validator->validated();
 
-            // Sesuaikan nama field dengan skema tabel Anda
+            // Membuat record baru di database
             ProjectModel::create([
-                'nama_project' => $data['namaProyek'],
-                'wilayah' => $data['idWilayah'],
+                'name' => $data['name'],
+                'code' => $data['code'],
+                'wilayah_id' => $data['wilayah_id'],
+                'branch_id' => $data['branch_id'],
+                'address' => $data['address'],
+                'location_long_lat' => $data['location_long_lat'],
+                'status' => $data['status'],
             ]);
 
             DB::commit();
             return redirect()->route('project-model.index')->with('success', 'Data Berhasil Ditambahkan');
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             DB::rollback();
-            Log::debug('ProjectModelController store() ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::error('ProjectModelController@store: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi Kesalahan: ' . $e->getMessage());
         }
     }
+
 
 
     public function show($id)
@@ -125,27 +141,37 @@ class ProjectModelController extends Controller
     }
 
     public function datatable()
-    {   
+    {
+        $data = ProjectModel::with('data_wilayah', 'data_branch')->get();
+        // dd($data);
 
-        $data = ProjectModel::with('data_wilayah')->get();
         return DataTables::of($data)
             ->addIndexColumn()
-            ->escapeColumns('active')
-            ->addColumn('nama_project', '{{$nama_project}}')
-            ->addColumn('wilayah', '{{$data["data_wilayah"]["nama"]}}')
-            ->addColumn('created_at', function($data){
-                $createdAt = Carbon::parse($data->created_at);
-                return $createdAt->format('m/d/Y H:i:s');
+            ->escapeColumns([])
+            ->addColumn('name', function ($data) {
+                return $data->name;
             })
+            ->addColumn('wilayah', function ($row) {
+                return $row->data_wilayah ? $row->data_wilayah->nama : '-';
+            })
+            ->addColumn('branch', function ($row) {
+                return $row->data_branch ? $row->data_branch->name : '-';
+            })
+
+            ->addColumn('created_at', function ($data) {
+                return Carbon::parse($data->created_at)->format('m/d/Y H:i:s');
+            })
+
             ->addColumn('action', function (ProjectModel $project) {
-                $data = [
+                return [
                     'editurl' => route('project-model.edit', $project->id),
                     'deleteurl' => route('project-model.destroy', $project->id)
                 ];
-                return $data;
             })
+            ->rawColumns(['name'])
             ->toJson();
     }
+
 
     public function by_wilayah(Request $request, $id)
     {

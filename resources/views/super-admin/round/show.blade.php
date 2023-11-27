@@ -29,7 +29,7 @@
     </div>
     
     <div class="row">
-        <div class="col-sm-12 col-xl-6 col-lg-12 col-md-6">
+        <div class="col-sm-12">
             <div class="card">
                 <div class="card-body row switch-showcase height-equal">
                     <div class="mb-3">
@@ -41,12 +41,16 @@
                                 </option>
                             @endforeach
                         </select>
+                        <span class="mt-2 d-block" id="round-alert"></span>
                         <div class="table-responsive mt-3">
                             <table class="table" id="tableCheckpoint">
                                 <thead>
                                     <tr>
                                         <th scope="col" style="width:40px;">No</th>
                                         <th scope="col">Check Point</th>
+                                        <th scope="col">Wilayah</th>
+                                        <th scope="col">Project</th>
+                                        <th scope="col">Area</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -69,30 +73,36 @@
 @push('js')
 <script>
     function get_checkpoint(id_round) {
-        const area_table = $('#tableCheckpoint tbody')
-        console.log(area_table);
-        console.log(id_round);
+        const area_table = $('#tableCheckpoint tbody');
+        const select_alert = $('#round-alert');
         $.ajax({
             url: "{{ url('/super-admin/checkpoint-by-round') }}/" + id_round,
             method: 'get',
             data: {
                 id_area: "{{ old('id_round') }}"
             },
+            beforeSend: function() {
+                console.log('ambil');
+                select_alert.text('Mengambil data checkpoint');
+            },
             success: function(response) {
-                console.log(response);
-                let data = response.data
-                area_table.html(data)
+                let data = response.data;
+                area_table.html(data);
+                select_alert.text('');
+                console.log('dapet');
             },
             error: function(response) {
                 area_table.html(`
                     <tr class="text-center">
-                        <td colspan="2">Tidak ada checkpoint</td>
+                        <td colspan="5">Tidak ada checkpoint</td>
                     </tr>
-                `)
+                `);
+                console.log('error');
+                select_alert.text('');
             }
         })
     }
-    active_menu("#menu-round", "#sub-round-create")
+    active_menu("#menu-round")
 </script>
 
 @endpush

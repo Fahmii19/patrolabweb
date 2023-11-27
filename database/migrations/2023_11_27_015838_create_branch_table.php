@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateBranchTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('branch', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_project');
-            $table->unsignedBigInteger('wilayah');
-            $table->timestamps(); // Menciptakan kolom created_at dan updated_at
+            $table->string('code', 255);
+            $table->string('name', 255);
+            $table->enum('status', ['ACTIVED', 'INACTIVED']);
+            $table->timestamps();
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('branch');
     }
-};
+}

@@ -40,9 +40,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="img_location" class="form-label">Lokasi Image <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location" id="img_location">
+                            <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location[]" id="img_location" multiple>
                             @error('img_location') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
+
+
 
                         <div class="mb-3">
                             <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
