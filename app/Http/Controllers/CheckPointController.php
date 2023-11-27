@@ -48,34 +48,33 @@ class CheckPointController extends Controller
      */
     public function store(Request $request)
     {
-            try {
-                DB::beginTransaction();
-                $validator = Validator::make($request->all(), [
-                    'round_id' => 'required|numeric',
-                    'nama' => 'required|string',
-                    'lokasi' => 'required|string',
-                    'danger_status' => 'required',
-                ]);
+        try {
+            DB::beginTransaction();
+            $validator = Validator::make($request->all(), [
+                'round_id' => 'required|numeric',
+                'nama' => 'required|string',
+                'lokasi' => 'required|string',
+                'danger_status' => 'required',
+            ]);
 
-                if ($validator->fails()) {
-                    return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
-                }
-
-                $data = $validator->validated();
-                $currentTime = date('His');
-                $capitalizeName = strtoupper($request->nama);
-                $data['kode'] = str_replace(' ','',$currentTime.$capitalizeName);
-                $data['status'] = 'aktif';
-
-                CheckPoint::create($data);
-                DB::commit();
-                return redirect()->route('check-point.index')->with('success', 'Data Berhasil Ditambahkan');
-            } catch (Throwable $e) {
-                DB::rollback();
-                Log::debug('CheckPointController store() ' . $e->getMessage());
-                return redirect()->back()->with('error', $e->getMessage());
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
 
+            $data = $validator->validated();
+            $currentTime = date('His');
+            $capitalizeName = strtoupper($request->nama);
+            $data['kode'] = str_replace(' ','',$currentTime.$capitalizeName);
+            $data['status'] = 'ACTIVED';
+
+            CheckPoint::create($data);
+            DB::commit();
+            return redirect()->route('check-point.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (Throwable $e) {
+            DB::rollback();
+            Log::debug('CheckPointController store() ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -95,9 +94,12 @@ class CheckPointController extends Controller
      * @param  \App\Models\CheckPoint  $checkPoint
      * @return \Illuminate\Http\Response
      */
-    public function edit(CheckPoint $checkPoint)
+    public function edit($id)
     {
-        //
+        $data['title'] = "Edit Data Checkpoint";
+        $data['round'] = Round::all();
+        $data['checkpoint'] = CheckPoint::findOrFail($id);
+        return view('super-admin.check-point.edit', $data);
     }
 
     /**
@@ -107,9 +109,38 @@ class CheckPointController extends Controller
      * @param  \App\Models\CheckPoint  $checkPoint
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CheckPoint $checkPoint)
+    public function update(Request $request, $id)
     {
-        //
+        try{
+            $validator = Validator::make($request->all(), [
+                'round_id' => 'required|numeric',
+                'nama' => 'required|string',
+                'lokasi' => 'required|string',
+                'danger_status' => 'required',
+                'status' => 'nullable|in:ACTIVED,INACTIVED',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            }
+
+            $data = $validator->validated();
+            $data['status'] = $data['status'] ?? 'INACTIVED';
+
+            $checkpoint = CheckPoint::find($id);
+            $action = $checkpoint->update($data);
+            DB::commit();
+
+            if ($action) {
+                return redirect()->route('check-point.index')->with('success', 'checkpoint berhasil diupdate');
+            }
+            DB::rollback();
+            return redirect()->back()->with('error', 'checkpoint gagal diupdate');
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::debug('CheckpointController update ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -118,9 +149,18 @@ class CheckPointController extends Controller
      * @param  \App\Models\CheckPoint  $checkPoint
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CheckPoint $checkPoint)
+    public function destroy($id) 
     {
-        //
+        try {
+            DB::beginTransaction();
+            CheckPoint::find($id)->delete();
+            DB::commit();
+            return redirect()->route('check-point.index')->with('success', 'Data Berhasil Dihapus');
+        } catch (Throwable $e) {
+            DB::rollback();
+            Log::debug('CheckPoint destroy() ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function datatable()
@@ -154,28 +194,40 @@ class CheckPointController extends Controller
 
         $round = Round::with(['wilayah', 'project', 'area'])->find($id);
         $checkpoint = Round::find($id)->checkpoint;
-        if ($checkpoint->count() <= 0) {
-            return response()->json([
-                "status" => "false",
-                "messege" => "gagal mengambil data checkpoint",
-                "data" => []
-            ], 404);
-        }
-        $html = '';
-        for ($i=0; $i < $checkpoint->count(); $i++) {
-            $html .= '<tr>'.
-                '<th scope="row">'. $i + 1 .'</th>' .
-                '<td>'. $checkpoint[$i]['nama'] . '</td>' .
-                '<td>'. $round['wilayah']['nama'] . '</td>' .
-                '<td>'. $round['project']['nama_project'] . '</td>' .
-                '<td>'. $round['area']['name'] . '</td>' .
-            '</tr>';
-        }
 
-        return response()->json([
-            "status" => "true",
-            "messege" => "berhasil mengambil data checkpoint",
-            "data" => [$html]
-        ], 200);
+        return response()->json($checkpoint);
+
+        // if ($checkpoint->count() <= 0) {
+        //     return response()->json([
+        //         "status" => "false",
+        //         "messege" => "gagal mengambil data checkpoint",
+        //         "data" => []
+        //     ], 404);
+        // }
+        // $html = '';
+        // for ($i=0; $i < $checkpoint->count(); $i++) {
+        //     $html .= '<tr>'.
+        //         '<th scope="row">'. $i + 1 .'</th>' .
+        //         '<td>'. $checkpoint[$i]['nama'] . '</td>' .
+        //         '<td>'. $round['wilayah']['nama'] . '</td>' .
+        //         '<td>'. $round['project']['nama_project'] . '</td>' .
+        //         '<td>'. $round['area']['name'] . '</td>' .
+        //         '<td>
+        //             <form method="post" class="d-inline"> 
+        //             ' . csrf_field() . '  
+        //             ' . method_field("delete") . ' 
+        //             <button onclick="hapus_round(event)" class="btn btn-danger me-2" type="button">
+        //                 Hapus dari round
+        //             </button>
+        //             </form>
+        //         </td>' .
+        //     '</tr>';
+        // }
+
+        // return response()->json([
+        //     "status" => "true",
+        //     "messege" => "berhasil mengambil data checkpoint",
+        //     "data" => [$html]
+        // ], 200);
     }
 }

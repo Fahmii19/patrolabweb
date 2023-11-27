@@ -14,14 +14,14 @@ return new class extends Migration
     public function up()
     {
 
-        Schema::create('check_points', function (Blueprint $table) {
+        Schema::create('checkpoint', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
             $table->string('kode')->unique();
             $table->string('lokasi');
-            $table->foreignId('round_id');
-            $table->enum('status',['aktif','non aktif']);
-            $table->enum('danger_status', ['low', 'middle', 'high']);
+            $table->foreignId('round_id')->nullable();
+            $table->enum('status',['ACTIVED','INACTIVED']);
+            $table->enum('danger_status', ['LOW', 'MIDDLE', 'HIGH']);
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('check_points');
+        Schema::dropIfExists('checkpoint');
     }
 };

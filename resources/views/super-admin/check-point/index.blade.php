@@ -98,21 +98,23 @@
         }, {
             data: 'status',
             render: function(data, type, row) {
-                if (row.status == 'aktif') {
+                if(row.status == 'ACTIVED') {
                     return '<span class="badge badge-success">' + row.status + '</span>'
-                } else {
+                } 
+                if(row.status == 'INACTIVED'){
                     return '<span class="badge badge-danger">' + row.status + '</span>'
                 }
             }
         }, {
             data: 'danger_status',
             render: function(data, type, row) {
-                if (row.danger_status == 'low') {
+                if (row.danger_status == 'LOW') {
                     return '<span class="badge badge-success">' + row.danger_status + '</span>'
-                } else if (row.danger_status == 'middle') {
+                } 
+                if (row.danger_status == 'MIDDLE') {
                     return '<span class="badge badge-warning">' + row.danger_status + '</span>'
                 }
-                else {
+                if (row.danger_status == 'HIGH') {
                     return '<span class="badge badge-danger">' + row.danger_status + '</span>'
                 }
             }
