@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name', 255);
             $table->enum('status', ['ACTIVED', 'INACTIVED']);
             $table->unsignedBigInteger('branch_id');
-            $table->unsignedInteger('city_id');
             $table->unsignedInteger('wilayah_id');
             $table->timestamps();
         });

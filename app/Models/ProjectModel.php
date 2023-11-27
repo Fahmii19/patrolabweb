@@ -13,7 +13,13 @@ class ProjectModel extends Model
 
     public function data_wilayah()
     {
-        return $this->belongsTo(Wilayah::class, 'wilayah', 'id');
+        return $this->belongsTo(Wilayah::class, 'wilayah_id', 'id');
+    }
+
+    // relation to branch
+    public function data_branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
 
     public function areas()
@@ -23,7 +29,7 @@ class ProjectModel extends Model
 
     public function data_guards()
     {
-        return $this->belongsToMany(Guard::class,'pivot_guard_projects','id_guard','id_project');
+        return $this->belongsToMany(Guard::class, 'pivot_guard_projects', 'id_guard', 'id_project');
     }
 
     public function checkpoints()
@@ -50,5 +56,4 @@ class ProjectModel extends Model
     {
         return $this->hasMany(incomingvehicle::class, 'id_project');
     }
-    
 }
