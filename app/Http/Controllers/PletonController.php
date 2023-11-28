@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Throwable;
 // use App\Models\Guard;
+use App\Models\Area;
 use App\Models\Pleton;
 use App\Models\Guard;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class PletonController extends Controller
     public function index()
     {
         $pletonData = Pleton::withCount('guards')->get();
-        dd($pletonData);
+        // dd($pletonData);
 
         $data['title'] = "Daftar Pleton";
         return view('super-admin.pleton-page.index', $data);
@@ -35,14 +36,8 @@ class PletonController extends Controller
      */
     public function create()
     {
-        // dd("hahahahaha");
         $data['title'] = 'Tambah Pleton';
-        $data['pletons'] = Pleton::all();
-        // $data['guards'] = Guard::all();
-        // $data['guards'] = Guard::get();
-        // dd($data);
-        $data['guards'] = Guard::whereNull('pleton_id')->get();
-        // dd($data);
+        $data['area'] = Area::all();
         return view('super-admin.pleton-page.create', $data);
     }
 
@@ -57,29 +52,33 @@ class PletonController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                'id_pleton' => 'required',
-                'id_guard' => 'required'
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|max:255',
+                'status' => 'required|in:ACTIVED,INACTIVED',
+                'area_id' => 'required|integer|exists:areas,id'
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
-            $validator->validated();
+            $validatedData = $validator->validated();
 
-            $guard = Guard::find($request->id_guard);
-            // dd($guard);
+            $pleton = new Pleton();
+            $pleton->name = $validatedData['name'];
+            $pleton->code = $validatedData['code'];
+            $pleton->status = $validatedData['status'];
+            $pleton->area_id = $validatedData['area_id'];
+            $pleton->save();
 
-            $data['pleton_id'] = $request->id_pleton;
-            // dd($data);
-            $guard->update($data);
             DB::commit();
-            return redirect()->route('pleton.index')->with('success', 'Data Berhasil Ditambah');
+            return redirect()->route('pleton.index')->with('success', 'Pleton berhasil ditambahkan.');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('PletonController update() ' . $e->getMessage());
+            Log::debug('PletonController store() ' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -89,9 +88,8 @@ class PletonController extends Controller
      */
     public function show($id)
     {
-        // Mengambil data Pleton berdasarkan ID
-        $pleton = Pleton::findOrFail($id);
-        $title = "Detail Pleton"; // Judul halaman
+        $pleton = Pleton::with('area')->findOrFail($id);
+        $title = "Detail Pleton";
 
         // Mengirim data ke view
         return view('super-admin.pleton-page.show', compact('pleton', 'title'));
@@ -106,16 +104,16 @@ class PletonController extends Controller
      */
     public function edit($id)
     {
-        $pleton = Pleton::findOrFail($id); // Find the Pleton by ID or fail
-        $guards = Guard::all(); // Assuming you need a list of guards for a dropdown
+        $pleton = Pleton::findOrFail($id);
+        $areas = Area::all(); // Get all areas
 
-        // Pass the necessary data to the view
         return view('super-admin.pleton-page.edit', [
             'title' => 'Edit Pleton',
             'pleton' => $pleton,
-            'guards' => $guards
+            'areas' => $areas // Pass areas to the view
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -128,9 +126,10 @@ class PletonController extends Controller
     {
         // Validasi request
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255',
-            'no_badge' => 'required|string|max:255|unique:pleton,no_badge,' . $id,
-            // Tambahkan aturan validasi lainnya jika diperlukan
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:255|unique:pleton,code,' . $id,
+            'status' => 'required|in:ACTIVED,INACTIVED',
+            'area_id' => 'required|exists:areas,id' // Ensure area_id exists in areas table
         ]);
 
         // Cek jika validasi gagal
@@ -142,14 +141,16 @@ class PletonController extends Controller
 
         // Mencari dan memperbarui Pleton
         $pleton = Pleton::findOrFail($id);
-        $pleton->nama = $request->nama;
-        $pleton->no_badge = $request->no_badge;
-        // Update field lainnya jika ada
+        $pleton->name = $request->name;
+        $pleton->code = $request->code;
+        $pleton->status = $request->status;
+        $pleton->area_id = $request->area_id;
         $pleton->save();
 
         // Redirect ke halaman sebelumnya dengan pesan sukses
         return redirect()->route('pleton.index')->with('success', 'Pleton berhasil diperbarui.');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -172,18 +173,23 @@ class PletonController extends Controller
 
     public function datatable()
     {
-        $data = Pleton::withCount('guards')->get();
+        $data = Pleton::with('area')->get();
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('nama', function ($pleton) {
-                return $pleton->nama;
+            ->addColumn('name', function ($pleton) {
+                return $pleton->name;
             })
-            ->addColumn('no_badge', function ($pleton) {
-                return $pleton->no_badge;
+            ->addColumn('code', function ($pleton) {
+                return $pleton->code;
             })
-            ->addColumn('guards_count', function ($pleton) {
-                return $pleton->guards_count;
+            ->addColumn('status', function ($pleton) {
+                return $pleton->status;
+            })
+            ->addColumn('area', function ($pleton) {
+                // dd($pleton->area);
+                // Assuming 'name' is the field you want to display from the Area model
+                return $pleton->area->name ?? 'N/A'; // Use a fallback if the area is not set
             })
             ->addColumn('action', function ($pleton) {
                 return [

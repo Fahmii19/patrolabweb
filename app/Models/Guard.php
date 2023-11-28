@@ -9,7 +9,7 @@ class Guard extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $table = 'guards';
+    protected $table = 'guard';
 
     public function user()
     {

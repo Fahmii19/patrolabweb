@@ -20,9 +20,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <h5 class="card-title">Detail Pleton</h5>
-                    <p>Nama Pleton: {{ $pleton->nama }}</p>
-                    <p>Kode Pleton: {{ $pleton->no_badge }}</p>
-                    <p>Jumlah Anggota: {{ $pleton->guards_count }}</p>
+                    <p>Nama Pleton: {{ $pleton->name }}</p>
+                    <p>Kode Pleton: {{ $pleton->code }}</p>
+                    <p>Status Pleton: {{ $pleton->status }}</p>
+                    <p>Area: {{ $pleton->area->name ?? 'Tidak diketahui' }}</p>
                     <!-- Tampilkan informasi lainnya sesuai kebutuhan -->
                 </div>
             </div>
@@ -34,7 +35,7 @@
 
 @push('js')
 <script>
-    active_menu("#menu-pleton", "#sub-list-pleton")
+    active_menu("#menu-guard", "#sub-list-pleton")
 
 </script>
 @endpush
