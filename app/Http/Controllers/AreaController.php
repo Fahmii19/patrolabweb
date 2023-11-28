@@ -38,7 +38,6 @@ class AreaController extends Controller
         $data['title'] = "Tambah Data Area";
         $data['project'] = ProjectModel::all();
         $data['asset'] = Aset::all();
-        // dd($data['asset']);
         return view('super-admin.area.create', $data);
     }
 
@@ -60,6 +59,7 @@ class AreaController extends Controller
             //     'name' => ['required', 'string'],
             //     'img_location' => 'required',
             //     'project_id' => ['required', 'numeric'],
+            //     'deskripsi' => ['required', 'string'], // Ubah ini
             // ]);
 
             $filenames = [];
@@ -82,7 +82,8 @@ class AreaController extends Controller
                 'name' => $request->name,
                 'img_location' => $imgLocation,
                 'project_id' => $request->project_id,
-                'status' => $request->status // Menyimpan status
+                'status' => $request->status,
+                'deskripsi' => $request->deskripsi // Tambahkan ini
             ]);
 
             DB::commit();
@@ -93,6 +94,7 @@ class AreaController extends Controller
             return redirect()->back()->with('error', 'Data area gagal disimpan: ' . $e->getMessage());
         }
     }
+
 
 
 

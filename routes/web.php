@@ -3,6 +3,7 @@
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AreaController;
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\AsetController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GuardController;
@@ -57,6 +58,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'user' => UserController::class,
         'wilayah' => WilayahController::class,
         'area' => AreaController::class,
+        'branch' => BranchController::class,
         'check-point' => CheckPointController::class,
         'guard' => GuardController::class,
         'pleton' => PletonController::class,
@@ -89,6 +91,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
     Route::get('wilayah-datatable', [WilayahController::class, 'datatable'])->name('wilayah.datatable');
     Route::get('area-datatable', [AreaController::class, 'datatable'])->name('area.datatable');
+    Route::get('branch-datatable', [BranchController::class, 'datatable'])->name('branch.datatable');
     Route::get('check-point-datatable', [CheckPointController::class, 'datatable'])->name('check-point.datatable');
     Route::get('round-datatable', [RoundController::class, 'datatable'])->name('round.datatable');
     Route::get('aset-location-datatable', [AsetLocationController::class, 'datatable'])->name('aset-location.datatable');

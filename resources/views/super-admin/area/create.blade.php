@@ -45,6 +45,17 @@
                         </div>
 
 
+                        <div class="mb-3">
+                            <label for="deskripsi" class="form-label">Deskripsi Lengkap</label>
+                            <textarea class="form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="deskripsi" placeholder="Masukkan deskripsi lengkap">{{ old('deskripsi') }}</textarea>
+                            @error('deskripsi')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
+
+
 
                         <div class="mb-3">
                             <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
@@ -65,13 +76,15 @@
                             <select class="form-select" name="project_id" id="myselect0">
                                 <option selected value="" disabled>Pilih Project</option>
                                 @foreach ($project as $item)
-                                <option value="{{ $item->id }}" {{ old('project_id') == $item->id ? 'selected' : '' }}>{{ $item->nama_project }}</option>
+                                <option value="{{ $item->id }}" {{ old('project_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                 @endforeach
                             </select>
                             @error('project_id')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
+
+
                     </div>
                 </div>
                 <button type="submit" class="btn btn-success">Simpan</button>

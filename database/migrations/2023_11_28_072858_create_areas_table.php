@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('code', 255)->nullable(); // varchar(255) nullable
             $table->string('img_location', 255)->nullable(); // varchar(255) nullable
             $table->string('name', 255)->nullable(); // varchar(255) nullable
+            $table->string('deskripsi', 255)->nullable(); // varchar(255) nullable
             $table->enum('status', ['ACTIVED', 'INACTIVED'])->nullable(); // enum nullable
             $table->unsignedBigInteger('project_id')->nullable(); // bigint nullable
         });
