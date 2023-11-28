@@ -104,12 +104,6 @@
                             <small id="auto-fill-info" class="form-text"></small>
                         </div>
 
-
-
-
-
-
-
                         <!-- Status -->
                         <div class="mb-3">
                             <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
@@ -122,23 +116,16 @@
                             @enderror
                         </div>
 
-                        <!-- Branch ID -->
-                        {{-- <div class="mb-3">
-                            <label for="branch_id" class="form-label">ID Cabang <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control @error('branch_id') is-invalid @enderror" name="branch_id" id="branch_id" value="{{ old('branch_id') }}" placeholder="Masukkan ID cabang">
-                        @error('branch_id')
-                        <span class="text-danger d-block">{{ $message }}</span>
-                        @enderror
-                    </div> --}}
+
+                    </div>
                 </div>
+
+                <button type="submit" class="btn btn-success">Simpan</button>
+            </form>
+
+
         </div>
-
-        <button type="submit" class="btn btn-success">Simpan</button>
-        </form>
-
-
     </div>
-</div>
 </div>
 
 @push('js')

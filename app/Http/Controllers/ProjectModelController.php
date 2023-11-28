@@ -80,15 +80,18 @@ class ProjectModelController extends Controller
     public function show($id)
     {
         $data['title'] = 'Detail Project Model';
-        $data['project_model'] = ProjectModel::find($id);
+        $data['project_model'] = ProjectModel::with('data_wilayah', 'data_branch')->findOrFail($id);
         return view('super-admin.project.show', $data);
     }
+
 
     public function edit($id)
     {
         $data['title'] = 'Edit Project Model';
         $data['project_model'] = ProjectModel::find($id);
-        // dd($data['project_model']);
+        $data['wilayah'] = Wilayah::all();
+        $data['branches'] = Branch::all();
+
         return view('super-admin.project.edit', $data);
     }
 
@@ -96,9 +99,16 @@ class ProjectModelController extends Controller
     {
         try {
             DB::beginTransaction();
+
+            // Updated validation rules to match form field names
             $validator = Validator::make($request->all(), [
-                'namaProyek' => 'required|string|max:255', // Sesuaikan aturan validasi
-                'namaWilayah' => 'required|integer', // Sesuaikan aturan validasi
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|max:255',
+                'wilayah_id' => 'required|integer',
+                'branch_id' => 'required|integer',
+                'address' => 'required|string|max:255',
+                'location_long_lat' => 'nullable|string',
+                'status' => 'required|string|in:ACTIVED,INACTIVED',
             ]);
 
             if ($validator->fails()) {
@@ -110,10 +120,15 @@ class ProjectModelController extends Controller
                 return redirect()->back()->with('error', 'Project tidak ditemukan');
             }
 
-            // Update data project
+            // Update project data
             $project->update([
-                'nama_project' => $request->namaProyek,
-                'wilayah' => $request->namaWilayah,
+                'name' => $request->name,
+                'code' => $request->code,
+                'wilayah_id' => $request->wilayah_id,
+                'branch_id' => $request->branch_id,
+                'address' => $request->address,
+                'location_long_lat' => $request->location_long_lat,
+                'status' => $request->status,
             ]);
 
             DB::commit();
@@ -124,6 +139,7 @@ class ProjectModelController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
 
 
     public function destroy($id)
@@ -165,7 +181,8 @@ class ProjectModelController extends Controller
             ->addColumn('action', function (ProjectModel $project) {
                 return [
                     'editurl' => route('project-model.edit', $project->id),
-                    'deleteurl' => route('project-model.destroy', $project->id)
+                    'deleteurl' => route('project-model.destroy', $project->id),
+                    'detailurl' => route('project-model.show', $project->id)
                 ];
             })
             ->rawColumns(['name'])
