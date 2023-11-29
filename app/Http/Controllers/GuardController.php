@@ -37,8 +37,8 @@ class GuardController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Guard';
-        $data['pleton'] = Pleton::all();
-        $data['shift'] = Shift::all();
+        $data['pletons'] = Pleton::all();
+        $data['shifts'] = Shift::all();
         $data['wilayah'] = Wilayah::all();
         $data['area'] = Area::all();
         // dd($data['area']);
@@ -56,34 +56,35 @@ class GuardController extends Controller
     {
         // Validasi input form
         $validatedData = $request->validate([
-            'no_badge' => 'required|numeric',
-            'nama' => 'required|string|max:255',
-            'ttl' => 'required|date',
-            'jenis_kelamin' => 'required|in:laki-laki,perempuan',
-            'email' => 'required|email|unique:guards,email',
-            'wa' => 'required|numeric',
-            'alamat' => 'required|string|max:255',
-            'password' => 'required|string|min:8',
-            'id_wilayah' => 'required|numeric', // Tambahkan validasi untuk id_wilayah
-            'id_area' => 'required|numeric', // Tambahkan validasi untuk id_area
+            'badge_number' => 'required|string|max:255|unique:guard,badge_number',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:guard,email',
+            'gender' => 'required|in:MALE,FEMALE',
+            'dob' => 'required|date',
+            'address' => 'required|string|max:255',
+            'wa' => 'required|string',
+            'pleton_id' => 'required|numeric|exists:pleton,id',
+            'shift_id' => 'required|numeric|exists:shift,id',
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Membuat instance baru dari Guard dengan data yang divalidasi
-            $guard = Guard::create([
-                'no_badge' => $validatedData['no_badge'],
-                'nama' => $validatedData['nama'],
-                'ttl' => $validatedData['ttl'],
-                'jenis_kelamin' => $validatedData['jenis_kelamin'],
+            // Create a new Guard instance with validated data
+            $guard = new Guard([
+                'badge_number' => $validatedData['badge_number'],
+                'name' => $validatedData['name'],
                 'email' => $validatedData['email'],
+                'gender' => $validatedData['gender'],
+                'dob' => $validatedData['dob'],
+                'address' => $validatedData['address'],
                 'wa' => $validatedData['wa'],
-                'alamat' => $validatedData['alamat'],
-                'password' => bcrypt($validatedData['password']),
-                'id_wilayah' => $validatedData['id_wilayah'],
-                'id_area' => $validatedData['id_area'],
+                'pleton_id' => $validatedData['pleton_id'],
+                'shift_id' => $validatedData['shift_id'],
+                // Password handling, if necessary
             ]);
+
+            $guard->save();
 
             DB::commit();
 
@@ -91,7 +92,7 @@ class GuardController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            // Mengembalikan user ke form dengan pesan error
+            // Return to the form with an error message
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage())->withInput();
         }
     }
@@ -109,7 +110,9 @@ class GuardController extends Controller
     {
         $title = 'Detail Guard';
 
-        // dd($guard);
+        // Eager load any additional relationships needed for the view
+        $guard->load('pleton', 'shift');
+
 
         // Mengirim data Guard dan title ke view sebagai variabel terpisah
         return view('super-admin.guard-page.show', compact('guard', 'title'));
@@ -126,9 +129,11 @@ class GuardController extends Controller
     public function edit(Guard $guard)
     {
         $data['title'] = 'Edit Guard';
-        $data['wilayah'] = Wilayah::all();
-        $data['area'] = Area::all();
+        $data['pletons'] = Pleton::all();
+        $data['shifts'] = Shift::all();
         $data['guard'] = $guard;
+
+        // dd($data);
         return view('super-admin.guard-page.edit', $data);
     }
 
@@ -143,34 +148,32 @@ class GuardController extends Controller
     {
         // Validasi input form
         $validatedData = $request->validate([
-            'no_badge' => 'required|numeric',
-            'nama' => 'required|string|max:255',
-            'ttl' => 'required|date',
-            'jenis_kelamin' => 'required|in:laki-laki,perempuan',
-            'email' => 'required|email|unique:guards,email,' . $guard->id,
-            'wa' => 'required|numeric',
-            'alamat' => 'required|string|max:255',
-            'id_wilayah' => 'required|numeric',
-            'id_area' => 'required|numeric',
+            'badge_number' => 'required|string|max:255|unique:guard,badge_number,' . $guard->id,
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:guard,email,' . $guard->id,
+            'gender' => 'required|in:MALE,FEMALE',
+            'dob' => 'required|date',
+            'address' => 'required|string|max:255',
+            'wa' => 'required|string',
+            'pleton_id' => 'required|numeric|exists:pleton,id',
+            'shift_id' => 'required|numeric|exists:shift,id',
             'password' => 'nullable|string|min:8',
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Update instance Guard dengan data yang divalidasi
+            // Update Guard instance with validated data
             $guard->update([
-                'no_badge' => $validatedData['no_badge'],
-                'nama' => $validatedData['nama'],
-                'ttl' => $validatedData['ttl'],
-                'jenis_kelamin' => $validatedData['jenis_kelamin'],
+                'badge_number' => $validatedData['badge_number'],
+                'name' => $validatedData['name'],
                 'email' => $validatedData['email'],
+                'gender' => $validatedData['gender'],
+                'dob' => $validatedData['dob'],
+                'address' => $validatedData['address'],
                 'wa' => $validatedData['wa'],
-                'alamat' => $validatedData['alamat'],
-                'id_wilayah' => $validatedData['id_wilayah'],
-                'id_area' => $validatedData['id_area'],
-                // Perbarui password hanya jika password baru disediakan
-                'password' => $validatedData['password'] ? bcrypt($validatedData['password']) : $guard->password,
+                'pleton_id' => $validatedData['pleton_id'],
+                'shift_id' => $validatedData['shift_id'],
             ]);
 
             DB::commit();
@@ -179,10 +182,10 @@ class GuardController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            // Mengembalikan user ke form dengan pesan error
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage())->withInput();
         }
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -219,25 +222,41 @@ class GuardController extends Controller
 
     public function datatable()
     {
-        $data = Guard::all();
+        $data = Guard::with('shift', 'pleton')->get(); // Assuming relationships with Pleton and Shift
+
         // dd($data);
+
         return DataTables::of($data)
             ->addIndexColumn()
-            ->escapeColumns('active')
-            ->addColumn('no_badge', '{{$no_badge}}')
-            ->addColumn('nama', '{{$nama}}')
-            ->addColumn('email', '{{$email}}')
-            ->addColumn('created_at', function (Guard $guard) {
-                return date('d M y', strtotime($guard->created_at));
+            ->addColumn('badge_number', function (Guard $guard) {
+                return $guard->badge_number;
+            })
+            ->addColumn('name', function (Guard $guard) {
+                return $guard->name;
+            })
+            ->addColumn('email', function (Guard $guard) {
+                return $guard->email;
+            })
+            ->addColumn('gender', function (Guard $guard) {
+                return $guard->gender;
+            })
+            ->addColumn('dob', function (Guard $guard) {
+                return $guard->dob ? date('d M Y', strtotime($guard->dob)) : '';
+            })
+            ->addColumn('pleton', function (Guard $guard) {
+                return $guard->pleton->name ?? 'N/A'; // Displaying the name of the Pleton
+            })
+            ->addColumn('shift', function (Guard $guard) {
+                return $guard->shift->name ?? 'N/A'; // Displaying the name of the Shift
             })
             ->addColumn('action', function (Guard $guard) {
-                $data = [
+                return [
                     'showurl' => route('guard.show', $guard->id),
                     'editurl' => route('guard.edit', $guard->id),
                     'deleteurl' => route('guard.destroy', $guard->id)
                 ];
-                return $data;
             })
+            ->rawColumns(['action'])
             ->toJson();
     }
 }

@@ -11,6 +11,8 @@ class Guard extends Model
     protected $guarded = ['id'];
     protected $table = 'guard';
 
+    protected $dates = ['dob'];
+
     public function user()
     {
         return $this->hasOne(User::class, 'guard_id');
@@ -28,12 +30,12 @@ class Guard extends Model
         return $this->belongsTo(Pleton::class, 'pleton_id', 'id');
     }
 
-    public function projects()
-    {
-        return $this->belongsToMany(ProjectModel::class, 'pivot_guard_projects', 'id_guard', 'id_project');
-    }
+    // public function projects()
+    // {
+    //     return $this->belongsToMany(ProjectModel::class, 'pivot_guard_projects', 'id_guard', 'id_project');
+    // }
 
-    protected $with = ['projects'];
+    // protected $with = ['projects'];
 
     public function selfpatrols()
     {
