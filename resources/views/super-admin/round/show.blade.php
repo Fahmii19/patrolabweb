@@ -32,6 +32,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body row switch-showcase height-equal">
+                    <h2 class="fs-5 mb-4">Daftar Checkpoint</h2>
                     <div class="mb-3">
                         <label for="id_rute" class="form-label">Pilih Round<span class="text-danger">*</span></label>
                         <select class="form-select @error('id_round') is-invalid @enderror" name="id_round" onchange="get_checkpoint(this.value)" id="id_rute">
@@ -66,6 +67,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <h2 class="fs-5 mb-4">Checkpoint Tanpa Round</h2>
+
                     <table id="mytable" class="display" style="width:100%">
                         <thead>
                             <tr>

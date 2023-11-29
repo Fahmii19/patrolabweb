@@ -210,7 +210,7 @@ class CheckPointController extends Controller
                 '<th scope="row">'. $i + 1 .'</th>'.
                 '<td>'. $checkpoint[$i]['nama'] . '</td>'.
                 '<td>'. $round['wilayah']['nama'] . '</td>'.
-                '<td>'. $round['project']['nama_project'] . '</td>'.
+                '<td>'. $round['project']['name'] . '</td>'.
                 '<td>'. $round['area']['name'] . '</td>'.
                 '<td><span class="badge '.$badge.'">'. $checkpoint[$i]['status'] . '</span></td>'.
                 '<td>'.

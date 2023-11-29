@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Throwable;
 use App\Models\Area;
+use App\Models\ProjectModel;
 use App\Models\Round;
 use App\Models\Wilayah;
 use Illuminate\Http\Request;
@@ -25,8 +26,6 @@ class RoundController extends Controller
     {
         $data['title'] = 'Tambah Round';
         $data['wilayah'] = Wilayah::all();
-        $data['area'] = Area::all();
-        $data['round'] = Round::all();
         return view('super-admin.round.create', $data);
     }
 
@@ -70,6 +69,9 @@ class RoundController extends Controller
     {
         $data['title'] = 'Edit Round';
         $data['round'] = Round::find($id);
+        $data['wilayah'] = Wilayah::all();
+        $data['project'] = Wilayah::find($data['round']->id_wilayah)->projects;
+        $data['area'] = ProjectModel::find($data['round']->id_project)->areas;
         return view('super-admin.round.edit', $data);
     }
 
@@ -77,16 +79,21 @@ class RoundController extends Controller
     {
         try {
             DB::beginTransaction();
+
             $validator = Validator::make($request->all(), [
-                'rute' => 'required',
-                'waktu_mulai' => 'required',
-                'waktu_selesai' => 'required',
+                'id_wilayah' => 'required|numeric',
+                'id_project' => 'required|numeric',
+                'id_area' => 'required|numeric',
+                'rute' => 'required|string',
+                'status' => 'nullable|in:ACTIVED,INACTIVED',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+            
             $data = $validator->validated();
+            $data['status'] = $data['status'] ?? 'INACTIVED';
 
             Round::find($id)->update($data);
             DB::commit();
