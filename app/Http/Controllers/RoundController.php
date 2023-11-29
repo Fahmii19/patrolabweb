@@ -40,7 +40,6 @@ class RoundController extends Controller
                 'id_project' => 'required|numeric',
                 'id_area' => 'required|numeric',
                 'rute' => 'required|string',
-                'status' => 'nullable|in:aktif,"non aktif"',
             ]);
 
             if ($validator->fails()) {
@@ -48,7 +47,7 @@ class RoundController extends Controller
             }
 
             $data = $validator->validated();
-            $data['status'] = $data['status'] ?? 'non aktif';
+            $data['status'] = 'ACTIVED';
 
             Round::create($data);
             DB::commit();
