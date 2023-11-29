@@ -25,9 +25,9 @@
                     << Kembali
                 </button>
             </div>
-            <form action="{{route('check-point.update')}}" method="POST">
+            <form action="{{route('check-point.store')}}" method="POST">
                 @csrf
-                @method('put')
+                @method('post')
                 <div class="row row-cols-2">
                     <div class="col">
                         <div class="mb-3">

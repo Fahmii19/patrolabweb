@@ -210,7 +210,7 @@ class ProjectModelController extends Controller
             $html .= '<label class="col">
             <input class="form-check-input me-1" type="checkbox" value="' . $item->id . '"
                 name="id_project[]" ' . $checked . '>
-            <span>' . $item->nama_project . '</span>
+            <span>' . $item->name . '</span>
         </label>';
         }
         return response()->json([
@@ -239,7 +239,7 @@ class ProjectModelController extends Controller
             $html = '<option value="" selected disabled>--Pilih--</option>';
             foreach ($data as $item) {
                 $selected = $item->id == $old ? 'selected' : '';
-                $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->nama_project . '</option>';
+                $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->name . '</option>';
             }
             return response()->json([
                 "status" => "true",

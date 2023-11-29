@@ -125,7 +125,7 @@ class RoundController extends Controller
         })
         ->addColumn('status', '{{$status}}')
         ->addColumn('id_area', '{{$area["name"]}}')
-        ->addColumn('id_project', '{{$project["nama_project"]}}')
+        ->addColumn('id_project', '{{$project["name"]}}')
         ->addColumn('id_wilayah', '{{$wilayah["nama"]}}')
         ->addColumn('action', function (Round $round) {
             $data = [
