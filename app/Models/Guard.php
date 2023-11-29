@@ -9,7 +9,9 @@ class Guard extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $table = 'guards';
+    protected $table = 'guard';
+
+    protected $dates = ['dob'];
 
     public function user()
     {
@@ -28,12 +30,12 @@ class Guard extends Model
         return $this->belongsTo(Pleton::class, 'pleton_id', 'id');
     }
 
-    public function projects()
-    {
-        return $this->belongsToMany(ProjectModel::class, 'pivot_guard_projects', 'id_guard', 'id_project');
-    }
+    // public function projects()
+    // {
+    //     return $this->belongsToMany(ProjectModel::class, 'pivot_guard_projects', 'id_guard', 'id_project');
+    // }
 
-    protected $with = ['projects'];
+    // protected $with = ['projects'];
 
     public function selfpatrols()
     {

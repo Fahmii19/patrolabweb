@@ -15,4 +15,11 @@ class Pleton extends Model
     {
         return $this->hasMany(Guard::class, 'pleton_id', 'id');
     }
+
+
+    // area
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'area_id', 'id');
+    }
 }

@@ -1,9 +1,7 @@
 @extends('layouts.admin')
 @section('content')
 @component('components.dashboard.headpage')
-@slot('title')
-{{ $title }}
-@endslot
+@slot('title') {{ $title }} @endslot
 @slot('bread')
 <li class="breadcrumb-item">Guard Management</li>
 <li class="breadcrumb-item">{{ $title }}</li>
@@ -20,10 +18,11 @@
                 <thead>
                     <tr>
                         <th style="max-width: 40px;">No</th>
-                        <th class="text-nowrap">No Badge</th>
+                        <th class="text-nowrap">Badge Number</th>
                         <th class="text-nowrap">Nama</th>
                         <th class="text-nowrap">Email</th>
-                        <th class="text-nowrap">Created At</th>
+                        <th class="text-nowrap">Gender</th>
+                        <th class="text-nowrap">DOB</th>
                         <th class="text-nowrap">Aksi</th>
                     </tr>
                 </thead>
@@ -36,7 +35,6 @@
         <form method="post" class="d-flex">
             @csrf
             @method('delete')
-
             <a id="show" class="btn btn-primary me-2">Detail</a>
             <a id="edit" class="btn btn-warning me-2">Edit</a>
             <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
@@ -46,7 +44,7 @@
 <!-- Container-fluid Ends-->
 @push('js')
 <script>
-    $('#mytable').addClass('w-100').DataTable({
+    $('#mytable').DataTable({
         scrollX: true
         , processing: true
         , serverSide: true
@@ -54,45 +52,48 @@
         , columns: [{
                 data: 'DT_RowIndex'
                 , name: 'No'
+                , orderable: false
+                , searchable: false
             }
             , {
-                data: 'no_badge'
-                , name: 'no_badge'
+                data: 'badge_number'
+                , name: 'badge_number'
             }
             , {
-                data: 'nama'
-                , name: 'nama'
+                data: 'name'
+                , name: 'name'
             }
             , {
                 data: 'email'
                 , name: 'email'
             }
             , {
-                data: 'created_at'
-                , name: 'created_at'
+                data: 'gender'
+                , name: 'gender'
+            }
+            , {
+                data: 'dob'
+                , name: 'dob'
+                , render: function(data) {
+                    return data ? new Date(data).toLocaleDateString() : '';
+                }
             }
             , {
                 name: "Action"
                 , render: function(data, type, row) {
-                    console.log(row)
-                    let html = $('#actionbase').clone()
-                    html = html.find('.d-flex')
-                    html.find('#show').attr('href', row.action.showurl)
-                    html.find('#edit').attr('href', row.action.editurl)
-                    let form = html.find('form').attr('action', row.action.deleteurl)
-                        .attr('id', 'delete_form' + row.id)
-                    form.find('button').attr('form-id', '#delete_form' + row.id)
-                    return html.html()
+                    let html = $('#actionbase').clone();
+                    html = html.find('.d-flex');
+                    html.find('#show').attr('href', row.action.showurl);
+                    html.find('#edit').attr('href', row.action.editurl);
+                    let form = html.find('form').attr('action', row.action.deleteurl).attr('id', 'delete_form' + row.id);
+                    form.find('button').attr('form-id', '#delete_form' + row.id);
+                    return html.html();
                 }
             }
         ]
     });
 
 </script>
-<!-- <div class="d-flex">
-    <a class="btn btn-warning me-2">Edit</a>
-    <button class="btn btn-danger me-2">Hapus</button>
-</div> -->
 <script>
     active_menu("#menu-guard", "#sub-list-guard")
 

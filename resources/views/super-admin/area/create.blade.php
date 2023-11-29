@@ -40,8 +40,35 @@
                         </div>
                         <div class="mb-3">
                             <label for="img_location" class="form-label">Lokasi Image <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location" id="img_location">
+                            <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location[]" id="img_location" multiple>
                             @error('img_location') <span class="text-danger d-block">{{$message}}</span> @enderror
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="deskripsi" class="form-label">Deskripsi Lengkap</label>
+                            <textarea class="form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="deskripsi" placeholder="Masukkan deskripsi lengkap">{{ old('deskripsi') }}</textarea>
+                            @error('deskripsi')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
+
+
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select @error('status') is-invalid @enderror" name="status" id="status">
+                                <option value="" disabled selected>Pilih Status</option>
+                                <option value="ACTIVED" {{ old('status') == 'ACTIVED' ? 'selected' : '' }}>ACTIVED</option>
+
+                                <option value="INACTIVED" {{ old('status') == 'INACTIVED' ? 'selected' : '' }}>INACTIVED</option>
+
+                            </select>
+                            @error('status')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
@@ -49,13 +76,15 @@
                             <select class="form-select" name="project_id" id="myselect0">
                                 <option selected value="" disabled>Pilih Project</option>
                                 @foreach ($project as $item)
-                                <option value="{{ $item->id }}" {{ old('project_id') == $item->id ? 'selected' : '' }}>{{ $item->nama_project }}</option>
+                                <option value="{{ $item->id }}" {{ old('project_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                 @endforeach
                             </select>
                             @error('project_id')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
+
+
                     </div>
                 </div>
                 <button type="submit" class="btn btn-success">Simpan</button>

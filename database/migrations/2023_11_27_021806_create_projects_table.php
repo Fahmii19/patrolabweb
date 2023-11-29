@@ -6,26 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_project');
-            $table->unsignedBigInteger('wilayah');
-            $table->timestamps(); // Menciptakan kolom created_at dan updated_at
+            $table->string('address', 255);
+            $table->string('code', 255);
+            $table->string('location_long_lat', 255);
+            $table->string('name', 255);
+            $table->enum('status', ['ACTIVED', 'INACTIVED']);
+            $table->unsignedBigInteger('branch_id');
+            $table->unsignedInteger('wilayah_id');
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('projects');

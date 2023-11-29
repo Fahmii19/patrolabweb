@@ -1,5 +1,5 @@
-@extends('layouts.admin')
-@section('content')
+    @extends('layouts.admin')
+    @section('content')
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
@@ -29,32 +29,14 @@
                         <tr>
                             <th style="width:40px">No</th>
                             <th>Nama Project</th>
-                            <th>Nama Wilayah</th>
+                            <th>Nama Region</th>
+                            <th>Nama Branch</th>
                             <th>Waktu</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($project_model as $item)
-                            <tr>
-                                <td class="text-nowrap">{{ $loop->iteration }}</td>
-                                <td class="text-nowrap">{{ $item->nama_project }}</td>
-                                <td class="text-nowrap">{{ $item->wilayah }}</td>
-                                <td class="text-nowrap">
-                                    <div class="d-flex">
-                                        <a href="{{ route('project-model.edit', $item->id) }}"
-                                            class="btn btn-warning me-2">Edit</a>
-                                        <form action="{{ route('project-model.destroy', $item->id) }}" method="post"
-                                            id="delete_form{{ $item->id }}">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="button" class="btn btn-danger"
-                                                onclick="delete_item('delete_form{{ $item->id }}')">Hapus</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
+
                     </tbody>
                 </table>
             </div>
@@ -71,41 +53,76 @@
             </form>
         </div>
     </div>
+
     <!-- Container-fluid Ends-->
     @push('js')
-        <script>
+    <script>
+        active_menu("#data_master", "#project")
+
+    </script>
+
+    <script>
+        function delete_item(formId) {
+            if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+                document.getElementById(formId).submit();
+            }
+        }
+
+
+        $(document).ready(function() {
             $('#mytable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('project.datatable') }}",
-                columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'No'
-                }, {
-                    data: 'nama_project',
-                    name: 'Nama Project'
-                }, {
-                    data: 'wilayah',
-                    name: 'Nama Wilayah'
-                }, {
-                    data: 'created_at',
-                    name: 'Waktu'
-                }, {
-                    name: "Action",
-                    render: function(data, type, row) {
-                        let html = $('#actionbase').clone()
-                        html = html.find('.d-flex')
-                        html.find('a').attr('href', row.action.editurl)
-                        let form = html.find('form').attr('action', row.action.deleteurl)
-                            .attr('id', 'delete_form' + row.id)
-                        form.find('button').attr('form-id', '#delete_form' + row.id)
-                        return html.html()
-                    },
-                    orderable: false,
-                    searchable: false,
-                }]
+                processing: true
+                , serverSide: true
+                , ajax: "{{ route('project.datatable') }}"
+                , columns: [{
+                        data: 'DT_RowIndex'
+                        , name: 'DT_RowIndex'
+                    }
+                    , {
+                        data: 'name'
+                        , name: 'name'
+                    }
+                    , {
+                        data: 'wilayah'
+                        , name: 'wilayah'
+                    }
+
+                    , {
+                        data: 'branch'
+                        , name: 'branch'
+                    }
+
+                    , {
+                        data: 'created_at'
+                        , name: 'created_at'
+                    }
+                    , {
+                        data: 'action'
+                        , name: 'action'
+                        , orderable: false
+                        , searchable: false
+                        , render: function(data, type, full, meta) {
+                            return `
+                           <div class="d-flex">
+                               <a href="${data.detailurl}" class="btn btn-primary me-2">Detail</a>
+                               <a href="${data.editurl}" class="btn btn-warning me-2">Edit</a>
+                     <form action="${data.deleteurl}" method="post" id="delete_form${meta.row}">
+                         @csrf
+                         @method('delete')
+                         <button type="button" class="btn btn-danger" onclick="delete_item('delete_form${meta.row}')">Hapus</button>
+                     </form>
+
+                           </div>
+                           `;
+                        }
+                    }
+
+                ]
             });
-            active_menu("#data_master", "#project")
-        </script>
+        });
+
+    </script>
+
+
     @endpush
-@endsection
+    @endsection

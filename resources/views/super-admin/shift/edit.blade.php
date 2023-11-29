@@ -43,7 +43,7 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label for="start_time" class="form-label">Mulai <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('start_time') is-invalid @enderror" name="start_time" id="start_time" placeholder="Masukkan Mulai" value="{{ old('start_time', $shift->start_time) }}">
+                                    <input type="time" class="form-control @error('start_time') is-invalid @enderror" name="start_time" id="start_time" placeholder="Masukkan Mulai" value="{{ old('start_time', $shift->start_time) }}">
                                     @error('start_time')<span class="text-danger d-block">{{ $message }}</span>@enderror
                                 </div>
                             </div>
@@ -51,7 +51,7 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <label for="end_time" class="form-label">Selesai <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('end_time') is-invalid @enderror" name="end_time" id="end_time" placeholder="Masukkan Selesai" value="{{ old('end_time', $shift->end_time) }}">
+                                    <input type="time" class="form-control @error('end_time') is-invalid @enderror" name="end_time" id="end_time" placeholder="Masukkan Selesai" value="{{ old('end_time', $shift->end_time) }}">
                                     @error('end_time')<span class="text-danger d-block">{{ $message }}</span>@enderror
                                 </div>
                             </div>
@@ -63,6 +63,9 @@
                     </div>
                 </div>
             </form>
+
+
+
 
 
         </div>

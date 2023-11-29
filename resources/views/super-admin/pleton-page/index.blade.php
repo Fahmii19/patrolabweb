@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+
 @section('content')
 @component('components.dashboard.headpage')
 @slot('title')
@@ -9,6 +10,7 @@
 <li class="breadcrumb-item">{{ $title }}</li>
 @endslot
 @endcomponent
+
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="card">
@@ -22,11 +24,13 @@
                         <th style="max-width: 40px;">No</th>
                         <th class="text-nowrap">Nama Pleton</th>
                         <th class="text-nowrap">Kode Pleton</th>
-                        <th class="text-nowrap">Jumlah Member</th>
+                        <th class="text-nowrap">Status</th>
+                        <th class="text-nowrap">Area ID</th>
                         <th class="text-nowrap">Aksi</th>
                     </tr>
                 </thead>
             </table>
+
         </div>
     </div>
 </div>
@@ -43,57 +47,60 @@
     </div>
 </div>
 <!-- Container-fluid Ends-->
+
 @push('js')
 <script>
-    $('#mytable').addClass('w-100').DataTable({
-        scrollX: true
-        , processing: true
-        , serverSide: true
-        , ajax: "{{ route('pleton.datatable') }}"
-        , columns: [{
-                data: 'DT_RowIndex'
-                , name: 'DT_RowIndex'
-                , orderable: false
-                , searchable: false
-            }
-            , {
-                data: 'nama'
-                , name: 'nama'
-            }
-            , {
-                data: 'no_badge'
-                , name: 'no_badge'
-            }
-            , {
-                data: 'guards_count'
-                , name: 'guards_count'
-            }
-            , {
-                name: "Action"
-                , render: function(data, type, row) {
-                    let html = $('#actionbase').clone();
-                    html = html.find('.d-flex');
-                    html.find('#show').attr('href', row.action.showurl);
-                    html.find('#edit').attr('href', row.action.editurl);
-                    let form = html.find('form').attr('action', row.action.deleteurl)
-                        .attr('id', 'delete_form' + row.id);
-                    form.find('button').attr('form-id', '#delete_form' + row.id);
-                    return html.html();
+    $(document).ready(function() {
+        $('#mytable').DataTable({
+            scrollX: true
+            , processing: true
+            , serverSide: true
+            , ajax: "{{ route('pleton.datatable') }}"
+            , columns: [{
+                    data: 'DT_RowIndex'
+                    , name: 'DT_RowIndex'
+                    , orderable: false
+                    , searchable: false
                 }
-            }
-
-
-        ]
+                , {
+                    data: 'name'
+                    , name: 'name'
+                }
+                , {
+                    data: 'code'
+                    , name: 'code'
+                }
+                , {
+                    data: 'status'
+                    , name: 'status'
+                }
+                , {
+                    data: 'area'
+                    , name: 'area'
+                }
+                , {
+                    name: "Action"
+                    , render: function(data, type, row) {
+                        let html = $('#actionbase').clone();
+                        html = html.find('.d-flex');
+                        html.find('#show').attr('href', row.action.showurl);
+                        html.find('#edit').attr('href', row.action.editurl);
+                        let form = html.find('form').attr('action', row.action.deleteurl)
+                            .attr('id', 'delete_form' + row.id);
+                        form.find('button').attr('form-id', '#delete_form' + row.id);
+                        return html.html();
+                    }
+                }
+            ]
+        });
     });
 
 </script>
-<!-- <div class="d-flex">
-    <a class="btn btn-warning me-2">Edit</a>
-    <button class="btn btn-danger me-2">Hapus</button>
-</div> -->
+
 <script>
     active_menu("#menu-guard", "#sub-list-pleton")
 
 </script>
 @endpush
+
 @endsection

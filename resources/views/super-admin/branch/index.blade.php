@@ -9,7 +9,7 @@
             <div class="col-6">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Master Asset</li>
+                    <li class="breadcrumb-item">Branch Project</li>
                     <li class="breadcrumb-item">{{ $title }}</li>
                 </ol>
             </div>
@@ -21,25 +21,24 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex mb-3 justify-content-end">
-                <a href="{{route('aset.create')}}" class="btn btn-success">Tambah Aset</a>
+                <a href="{{ route('branch.create') }}" class="btn btn-success">Tambah Branch</a>
             </div>
             <table id="mytable" class="display" style="width:100%">
                 <thead>
                     <tr>
-                        <th style="max-width: 40px;">No</th>
-                        <th>Kode</th>
-                        <th>Nama</th>
-                        <th>Teks Pendek</th>
-                        <th>Tipe Master</th>
-                        <th>Status</th>
-                        <th>Gambar</th>
-                        <th>Aksi</th>
+                        <th class="text-nowrap" style="max-width: 40px;">No</th>
+                        <th class="text-nowrap">Kode Branch</th>
+                        <th class="text-nowrap">Nama Branch</th>
+                        <th class="text-nowrap">Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
 </div>
+<!-- Container-fluid Ends-->
+<!-- Bagian action template -->
 <div id="actionbase" class="d-none">
     <div class="d-flex">
         <a class="btn btn-warning me-2">Edit</a>
@@ -50,52 +49,33 @@
         </form>
     </div>
 </div>
-<!-- Container-fluid Ends-->
+
+
+
 @push('js')
 <script>
-    $('#mytable').DataTable({
+    // Konfigurasi DataTables
+    $('#mytable').addClass('w-100').DataTable({
         processing: true
         , serverSide: true
-        , ajax: "{{ route('aset.datatable') }}"
+        , ajax: "{{ route('branch.datatable') }}"
         , columns: [{
                 data: 'DT_RowIndex'
                 , name: 'No'
-            }
+            , }
             , {
                 data: 'code'
-                , name: 'code'
+                , name: 'Kode Branch'
             }
             , {
                 data: 'name'
-                , name: 'name'
-            }
-            , {
-                data: 'short_desc'
-                , name: 'short_desc'
+                , name: 'Nama Branch'
+            },
 
-            }
-            , {
-                data: 'asset_master_type'
-                , name: 'asset_master_type'
-
-            }
-            , {
+            {
                 data: 'status'
-                , render: function(data, type, row) {
-                    if (row.status == 'ACTIVED') {
-                        return '<span class="badge badge-success">' + row.status + '</span>'
-                    } else {
-                        return '<span class="badge badge-danger">' + row.status + '</span>'
-                    }
-                }
+                , name: 'Status Branch'
             }
-            , {
-                data: 'image'
-                , name: 'Gambar'
-                , orderable: false
-                , searchable: false
-            , }
-
             , {
                 name: "Action"
                 , render: function(data, type, row) {
@@ -107,10 +87,13 @@
                     form.find('button').attr('form-id', '#delete_form' + row.id)
                     return html.html()
                 }
-            }
+                , orderable: false
+                , searchable: false
+            , }
         ]
     });
-    active_menu("#data_master", "#asset")
+
+    active_menu("#data_master", "#branch");
 
 </script>
 @endpush

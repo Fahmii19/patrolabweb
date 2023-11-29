@@ -26,9 +26,9 @@
                             <li><a href="{{ route('user.index') }}" id="user">User</a></li>
                             <li><a href="{{ route('aset.index') }}" id="asset">Asset</a></li>
                             <li><a href="{{ route('area.index') }}" id="area">Areas</a></li>
+                            <li><a href="{{ route('branch.index') }}" id="branch">Branch</a></li>
                             <li><a href="{{ route('project-model.index') }}" id="project">Projects</a></li>
                             <li><a href="{{ route('wilayah.index') }}" id="wilayah">Region</a></li>
-                            <li><a href="{{ route('hak-akses.index') }}" id="hak_akses">Permission</a></li>
                             <li><a href="{{ route('shift.index') }}" id="shift">Shift</a></li>
                         </ul>
                     </li>

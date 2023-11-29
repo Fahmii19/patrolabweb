@@ -29,24 +29,88 @@
                     @method('PUT')
                     <div class="row row-cols-1 row-cols-lg-2">
                         <div class="col">
+                            <!-- Project Name -->
                             <div class="mb-3">
-                                <label for="namaProyek" class="form-label">Nama Proyek <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('namaProyek') is-invalid @enderror" name="namaProyek" id="namaProyek" value="{{ old('namaProyek', $project_model->nama_project) }}" placeholder="Masukkan nama proyek">
-                                @error('namaProyek') <span class="text-danger d-block">{{$message}}</span> @enderror
+                                <label for="name" class="form-label">Nama Proyek <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ old('name', $project_model->name) }}" placeholder="Masukkan nama proyek">
+                                @error('name')
+                                <span class="text-danger d-block">{{ $message }}</span>
+                                @enderror
                             </div>
 
-                            <!-- Anda harus menyesuaikan bagian ini berdasarkan bagaimana Anda ingin menampilkan wilayah -->
+                            <!-- Code -->
                             <div class="mb-3">
-                                <label for="namaWilayah" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('namaWilayah') is-invalid @enderror" name="namaWilayah" id="namaWilayah" value="{{ old('namaWilayah', $project_model->wilayah) }}" placeholder="Masukkan nama wilayah">
-                                @error('namaWilayah') <span class="text-danger d-block">{{$message}}</span> @enderror
+                                <label for="code" class="form-label">Kode <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{ old('code', $project_model->code) }}" placeholder="Masukkan kode">
+                                @error('code')
+                                <span class="text-danger d-block">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Wilayah ID -->
+                            <div class="mb-3">
+                                <label for="wilayah_id" class="form-label">Wilayah ID <span class="text-danger">*</span></label>
+                                <select class="form-select @error('wilayah_id') is-invalid @enderror" name="wilayah_id">
+                                    <option value="" disabled>--Pilih--</option>
+                                    @foreach ($wilayah as $item)
+                                    <option value="{{ $item->id }}" {{ old('wilayah_id', $project_model->wilayah_id) == $item->id ? 'selected' : '' }}>{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('wilayah_id')
+                                <span class="text-danger d-block">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Branch -->
+                            <div class="mb-3">
+                                <label for="branch_id" class="form-label">Branch <span class="text-danger">*</span></label>
+                                <select class="form-select @error('branch_id') is-invalid @enderror" name="branch_id">
+                                    <option value="" disabled>--Pilih Branch--</option>
+                                    @foreach ($branches as $branch)
+                                    <option value="{{ $branch->id }}" {{ old('branch_id', $project_model->branch_id) == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('branch_id')
+                                <span class="text-danger d-block">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <!-- Address -->
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Alamat <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('address') is-invalid @enderror" name="address" id="address" value="{{ old('address', $project_model->address) }}" placeholder="Masukkan alamat">
+                                @error('address')
+                                <span class="text-danger d-block">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Location Longitude and Latitude -->
+                            <div class="mb-3">
+                                <label for="location_long_lat" class="form-label">Longitude dan Latitude</label>
+                                <input type="text" class="form-control @error('location_long_lat') is-invalid @enderror" name="location_long_lat" id="location_long_lat" value="{{ old('location_long_lat', $project_model->location_long_lat) }}" placeholder="Longitude, Latitude">
+                                @error('location_long_lat')
+                                <span class="text-danger d-block">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Status -->
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                <select class="form-select @error('status') is-invalid @enderror" name="status">
+                                    <option value="ACTIVED" {{ old('status', $project_model->status) == 'ACTIVED' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="INACTIVED" {{ old('status', $project_model->status) == 'INACTIVED' ? 'selected' : '' }}>Tidak Aktif</option>
+                                </select>
+                                @error('status')
+                                <span class="text-danger d-block">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </div>
+
                     <button type="submit" class="btn btn-success">Simpan</button>
                 </form>
-
-
             </div>
         </div>
     </div>
@@ -59,9 +123,5 @@
 
 </script>
 @endpush
-
-
-
-
 
 @endsection

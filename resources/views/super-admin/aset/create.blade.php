@@ -25,7 +25,8 @@
                 <button onclick="window.history.back()" class="btn btn-warning">
                     << Kembali</button>
             </div>
-            <form action="{{ route('aset.store') }}" method="POST">
+            <form action="{{ route('aset.store') }}" method="POST" enctype="multipart/form-data">
+
                 @csrf
                 <div class="row row-cols-1 row-cols-lg-2">
                     <div class="col">
@@ -47,13 +48,42 @@
                             <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                             <select class="form-control @error('status') is-invalid @enderror" name="status" id="status">
                                 <option value="" disabled selected>Pilih status aset</option>
-                                <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                <option value="tidak aktif" {{ old('status') == 'tidak aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                                <option value="ACTIVED" {{ old('status') == 'ACTIVED' ? 'selected' : '' }}>ACTIVED</option>
+                                <option value="INACTIVED" {{ old('status') == 'INACTIVED' ? 'selected' : '' }}>INACTIVED</option>
                             </select>
                             @error('status')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        <div class="mb-3">
+                            <label for="short_desc" class="form-label">Deskripsi Singkat</label>
+                            <textarea class="form-control @error('short_desc') is-invalid @enderror" name="short_desc" id="short_desc" placeholder="Masukkan deskripsi singkat">{{ old('short_desc') }}</textarea>
+                            @error('short_desc')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="asset_master_type" class="form-label">Tipe Aset</label>
+                            <select class="form-control @error('asset_master_type') is-invalid @enderror" name="asset_master_type" id="asset_master_type">
+                                <option value="" disabled selected>Pilih tipe aset</option>
+                                <option value="PATROL" {{ old('asset_master_type') == 'PATROL' ? 'selected' : '' }}>Patrol</option>
+                                <option value="CLIENT" {{ old('asset_master_type') == 'CLIENT' ? 'selected' : '' }}>Client</option>
+                            </select>
+                            @error('asset_master_type')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Gambar Aset</label>
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" name="image" id="image">
+                            @error('image')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
 
 
                     </div>
