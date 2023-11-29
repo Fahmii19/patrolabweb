@@ -25,15 +25,10 @@
                     << Kembali
                 </button>
             </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-6">
-            <div class="card">
-                <div class="card-body row switch-showcase height-equal">
-                    <form action="{{route('round.store')}}" method="POST">
-                        @csrf
+            <form action="{{route('round.store')}}" method="POST">
+                @csrf
+                <div class="row row-cols-2">
+                    <div class="col">
                         <div class="mb-3">
                             <label for="id_area" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
                             <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="myselect0">
@@ -66,17 +61,12 @@
                             <input type="text" class="form-control @error('nama') is-invalid @enderror" name="rute" id="name" value="{{old('nama')}}" placeholder="Masukkan Nama Rute">
                             @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
-                        <div class="mb-3 align-middle">
-                            <input type="checkbox" class="form-check-input fs-5 mt-0 me-2 @error('status') is-invalid @enderror" name="status" id="roundStatus" value="aktif">
-                            <label for="roundStatus" class="align-middle mb-0">Aktif</label>
-                            @error('status') <span class="text-danger d-block">{{$message}}</span> @enderror
-                        </div>
                         <div class="mb-3">
                             <button class="btn btn-primary">Simpan</button>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -142,28 +132,7 @@
         })
     }
 
-    function get_checkpoint(id_round) {
-        const area_table = $('#tableCheckpoint tbody')
-        $.ajax({
-            url: "{{ url('/super-admin/checkpoint-by-round') }}/" + id_round,
-            method: 'get',
-            data: {
-                id_area: "{{ old('id_round') }}"
-            },
-            success: function(response) {
-                console.log(response);
-                let data = response.data
-                area_table.html(data)
-            },
-            error: function(response) {
-                area_table.html(`
-                    <tr class="text-center">
-                        <td colspan="2">Tidak ada checkpoint</td>
-                    </tr>
-                `)
-            }
-        })
-    }
+    
     active_menu("#menu-round", "#sub-round-create")
 </script>
 
