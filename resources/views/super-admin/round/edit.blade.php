@@ -25,8 +25,9 @@
                     << Kembali
                 </button>
             </div>
-            <form action="{{route('round.store')}}" method="POST">
+            <form action="{{route('round.update', $round->id)}}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="row row-cols-2">
                     <div class="col">
                         <div class="mb-3">
@@ -34,7 +35,7 @@
                             <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="selectWilayah">
                                 <option value="" selected disabled>--Pilih--</option>
                                 @foreach ($wilayah as $item)
-                                <option value="{{ $item->id }}" {{ old('id_wilayah') == $item->id ? 'selected' : '' }}>{{ $item->nama }}
+                                <option value="{{ $item->id }}" {{ $round->id_wilayah == $item->id ? 'selected' : '' }}>{{ $item->nama }}
                                 </option>
                                 @endforeach
                             </select>
@@ -46,6 +47,10 @@
                             <label for="selectProject" class="form-label">Nama Project <span class="text-danger">*</span></label>
                             <select class="form-select @error('id_project') is-invalid @enderror" name="id_project" onchange="get_area(this.value)" id="selectProject">
                                 <option value="" selected disabled>--Pilih--</option>
+                                @foreach ($project as $item)
+                                <option value="{{ $item->id }}" {{ $round->id_project == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                </option>
+                                @endforeach
                             </select>
                             <span class="text-danger d-block" id="project-alert"></span>
                         </div>
@@ -53,13 +58,22 @@
                             <label for="selectArea" class="form-label">Nama Area <span class="text-danger">*</span></label>
                             <select class="form-select @error('id_area') is-invalid @enderror" name="id_area" id="selectArea">
                                 <option value="" selected disabled>--Pilih--</option>
+                                @foreach ($area as $item)
+                                <option value="{{ $item->id }}" {{ $round->id_area == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                </option>
+                                @endforeach
                             </select>
                             <span class="text-danger d-block" id="area-alert"></span>
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama Rute <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="rute" id="name" value="{{old('nama')}}" placeholder="Masukkan Nama Rute">
+                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="rute" id="name" value="{{$round->rute}}" placeholder="Masukkan Nama Rute">
                             @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
+                        </div>
+                        <div class="mb-3 align-middle">
+                            <input type="checkbox" class="form-check-input fs-5 mt-0 me-2 @error('status') is-invalid @enderror" name="status" id="checkPointStatus" value="ACTIVED" checked>
+                            <label for="checkPointStatus" class="align-middle mb-0">Aktif</label>
+                            @error('status') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-primary">Simpan</button>
@@ -96,14 +110,12 @@
             error: function(response) {
                 project_base.html('<option value="" selected disabled>--Pilih--</option>')
                 project_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data project di wilayah ini')
-                //console.log(response)
             }
         })
     }
 
     function get_area(id_project) {
         let area_base = $('#selectArea')
-        //let project_item = $('#project_item').clone().removeAttr('id')
         let area_alert = $('#area-alert')
         $.ajax({
             url: "{{ url('/super-admin/area-by-project') }}/" + id_project,
@@ -124,12 +136,13 @@
             error: function(response) {
                 area_base.html('<option value="" selected disabled>--Pilih--</option>')
                 area_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data area di project ini')
+                //console.log(response)
             }
         })
     }
 
     
-    active_menu("#menu-round", "#sub-round-create")
+    active_menu("#menu-round")
 </script>
 
 @endpush
