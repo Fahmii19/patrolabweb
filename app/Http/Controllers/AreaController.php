@@ -257,7 +257,8 @@ class AreaController extends Controller
             })
 
             ->addColumn('project', function ($row) {
-                return $row->project ? $row->project->nama_project : '-';
+                // dd($row->project);
+                return $row->project ? $row->project->name : '-';
             })
 
             ->addColumn('image', function ($row) {

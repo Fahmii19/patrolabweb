@@ -1,9 +1,7 @@
 @extends('layouts.admin')
 @section('content')
 @component('components.dashboard.headpage')
-@slot('title')
-{{ $title }}
-@endslot
+@slot('title') {{ $title }} @endslot
 @slot('bread')
 <li class="breadcrumb-item">Guard Management</li>
 <li class="breadcrumb-item">{{ $title }}</li>
@@ -19,45 +17,23 @@
             </div>
             <form action="{{ route('guard.update', $guard->id) }}" method="post">
                 @csrf
-                @method('put') {{-- Gunakan method PUT untuk operasi update --}}
+                @method('put')
                 <div class="row row-cols-1 row-cols-lg-2">
                     <div class="col">
-                        <!-- Kolom no_badge -->
+                        <!-- Kolom badge_number -->
                         <div class="mb-3">
-                            <label for="no_badge" class="form-label">Nomor Badge <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('no_badge') is-invalid @enderror" name="no_badge" id="no_badge" placeholder="Masukkan Nomor Badge" value="{{ old('no_badge', $guard->no_badge) }}">
-                            @error('no_badge')
+                            <label for="badge_number" class="form-label">Nomor Badge <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('badge_number') is-invalid @enderror" name="badge_number" id="badge_number" placeholder="Masukkan Nomor Badge" value="{{ old('badge_number', $guard->badge_number) }}">
+                            @error('badge_number')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        <!-- Kolom nama -->
+                        <!-- Kolom name -->
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" id="nama" placeholder="Masukkan Nama" value="{{ old('nama', $guard->nama) }}">
-                            @error('nama')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Kolom ttl (Tempat Tanggal Lahir) -->
-                        <div class="mb-3">
-                            <label for="ttl" class="form-label">Tempat Tanggal Lahir <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control @error('ttl') is-invalid @enderror" name="ttl" id="ttl" value="{{ old('ttl', $guard->ttl) }}">
-                            @error('ttl')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Kolom jenis_kelamin -->
-                        <div class="mb-3">
-                            <label for="jenis_kelamin" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
-                            <select class="form-select @error('jenis_kelamin') is-invalid @enderror" name="jenis_kelamin" id="jenis_kelamin">
-                                <option value="" selected disabled>--Pilih--</option>
-                                <option value="laki-laki" {{ old('jenis_kelamin', $guard->jenis_kelamin) == 'laki-laki' ? 'selected' : '' }}>Laki-Laki</option>
-                                <option value="perempuan" {{ old('jenis_kelamin', $guard->jenis_kelamin) == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
-                            </select>
-                            @error('jenis_kelamin')
+                            <label for="name" class="form-label">Nama <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Masukkan Nama" value="{{ old('name', $guard->name) }}">
+                            @error('name')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
@@ -65,69 +41,84 @@
                         <!-- Kolom email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Masukkan Email" value="{{ old('email', $guard->email) }}">
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Masukkan Email" value="{{ old('email', $guard->email) }}">
                             @error('email')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        <!-- Kolom wa (Whatsapp) -->
+                        <!-- Kolom gender -->
                         <div class="mb-3">
-                            <label for="wa" class="form-label">Nomor Whatsapp <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('wa') is-invalid @enderror" name="wa" id="wa" placeholder="Masukkan Nomor Whatsapp" value="{{ old('wa', $guard->wa) }}">
-                            @error('wa')
+                            <label for="gender" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
+                            <select class="form-select @error('gender') is-invalid @enderror" name="gender" id="gender">
+                                <option value="" selected disabled>--Pilih--</option>
+                                <option value="MALE" {{ old('gender', $guard->gender) == 'MALE' ? 'selected' : '' }}>Laki-Laki</option>
+                                <option value="FEMALE" {{ old('gender', $guard->gender) == 'FEMALE' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('gender')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Kolom dob -->
+                        <div class="mb-3">
+                            <label for="dob" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control @error('dob') is-invalid @enderror" name="dob" id="dob" value="{{ old('dob', $guard->dob->format('Y-m-d')) }}">
+                            @error('dob')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
 
                     <div class="col">
-                        {{-- Select option wilayah --}}
+                        <!-- Kolom address -->
                         <div class="mb-3">
-                            <label for="id_wilayah" class="form-label">Wilayah <span class="text-danger">*</span></label>
-                            <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" id="id_wilayah">
-                                <option value="" selected disabled>--Pilih--</option>
-                                @foreach ($wilayah as $item)
-                                <option value="{{ $item->id }}" {{ old('id_wilayah', $guard->id_wilayah) == $item->id ? 'selected' : '' }}>{{ $item->nama }}</option>
+                            <label for="address" class="form-label">Alamat <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('address') is-invalid @enderror" name="address" id="address" placeholder="Masukkan Alamat" value="{{ old('address', $guard->address) }}">
+                            @error('address')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Kolom wa -->
+                        <div class="mb-3">
+                            <label for="wa" class="form-label">Nomor WhatsApp <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('wa') is-invalid @enderror" name="wa" id="wa" placeholder="Masukkan Nomor WhatsApp" value="{{ old('wa', $guard->wa) }}">
+                            @error('wa')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
+                        <!-- Kolom pleton_id -->
+                        <div class="mb-3">
+                            <label for="pleton_id" class="form-label">Pleton <span class="text-danger">*</span></label>
+                            <select class="form-select @error('pleton_id') is-invalid @enderror" name="pleton_id" id="pleton_id">
+                                <option value="" selected disabled>--Pilih Pleton--</option>
+                                @foreach ($pletons as $pleton)
+                                <option value="{{ $pleton->id }}" {{ old('pleton_id', $guard->pleton_id) == $pleton->id ? 'selected' : '' }}>{{ $pleton->name }}</option>
                                 @endforeach
                             </select>
-                            @error('id_wilayah')
+                            @error('pleton_id')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        {{-- Select option area --}}
+                        <!-- Kolom shift_id -->
                         <div class="mb-3">
-                            <label for="id_area" class="form-label">Area <span class="text-danger">*</span></label>
-                            <select class="form-select @error('id_area') is-invalid @enderror" name="id_area" id="id_area">
-                                <option value="" selected disabled>--Pilih--</option>
-                                @foreach ($area as $item)
-                                <option value="{{ $item->id }}" {{ old('id_area', $guard->id_area) == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                            <label for="shift_id" class="form-label">Shift <span class="text-danger">*</span></label>
+                            <select class="form-select @error('shift_id') is-invalid @enderror" name="shift_id" id="shift_id">
+                                <option value="" selected disabled>--Pilih Shift--</option>
+                                @foreach ($shifts as $shift)
+                                <option value="{{ $shift->id }}" {{ old('shift_id', $guard->shift_id) == $shift->id ? 'selected' : '' }}>{{ $shift->name }}</option>
                                 @endforeach
                             </select>
-                            @error('id_area')
+                            @error('shift_id')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        <!-- Kolom alamat -->
-                        <div class="mb-3">
-                            <label for="alamat" class="form-label">Alamat <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('alamat') is-invalid @enderror" name="alamat" id="alamat" placeholder="Masukkan Alamat" value="{{ old('alamat', $guard->alamat) }}">
-                            @error('alamat')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
 
-                        <!-- Kolom password -->
-                        <!-- Password biasanya tidak ditampilkan kembali dalam formulir perbarui -->
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password (isi untuk mengubah) <span class="text-danger">*</span></label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="password" placeholder="Masukkan Password Baru">
-                            @error('password')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
                     </div>
                 </div>
 
@@ -135,49 +126,15 @@
                     <button class="btn btn-primary">Simpan</button>
                 </div>
             </form>
-
-
         </div>
     </div>
 </div>
 <!-- Container-fluid Ends-->
 @push('js')
 <script>
-    function get_project(id_wilayah) {
-        let project_base = $('#data_roject')
-        let project_item = $('#project_item').clone().removeAttr('id')
-
-        $.ajax({
-            url: "{{ url('/super-admin/project-by-wilayah') }}/" + id_wilayah
-            , method: 'get'
-            , data: {
-                id_project: "{{ old('id_project') ? implode(',',old('id_project')) : '' }}"
-            },
-            //menghapus checkbox sebelumnya jika di select form lain
-            beforeSend: function() {
-                project_base.html('<span>Mengambil data <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>')
-            },
-
-            success: function(response) {
-                let data = response.data
-                project_base.html(data)
-            }
-            , error: function(response) {
-                project_base.html('<span>Tidak ada data project di wilayah ini</span>')
-            }
-        })
-    }
+    // JavaScript scripts as required
+    active_menu("#menu-guard", "#sub-list-guard")
 
 </script>
-@if (old('id_wilayah'))
-<script>
-    get_project({
-        {
-            old('id_wilayah')
-        }
-    })
-
-</script>
-@endif
 @endpush
 @endsection

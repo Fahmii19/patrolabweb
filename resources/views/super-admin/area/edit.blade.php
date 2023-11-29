@@ -59,7 +59,7 @@
                                 <select class="form-select @error('project_id') is-invalid @enderror" name="project_id" id="project_id">
                                     <option value="" disabled selected>Pilih Project</option>
                                     @foreach ($projects as $project)
-                                    <option value="{{ $project->id }}" {{ old('project_id', $area->project_id) == $project->id ? 'selected' : '' }}>{{ $project->nama_project }}</option>
+                                    <option value="{{ $project->id }}" {{ old('project_id', $area->project_id) == $project->id ? 'selected' : '' }}>{{ $project->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('project_id')
