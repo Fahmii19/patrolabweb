@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /public/gambar/area
+/public/gambar/asset
 /storage/*.key
 /vendor
 .env
