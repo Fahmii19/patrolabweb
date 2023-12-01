@@ -37,7 +37,15 @@ class GuardController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Guard';
-        $data['pletons'] = Pleton::all();
+
+        // $data['pletons'] = Pleton::all();
+        // Dapatkan daftar ID pleton yang sudah dipilih
+        $selectedPletonIds = Guard::pluck('pleton_id')->toArray();
+
+        $data['pletons'] = Pleton::whereNotIn('id', $selectedPletonIds)->get();
+
+        // dd($data['pletons']);
+
         $data['shifts'] = Shift::all();
         $data['wilayah'] = Wilayah::all();
         $data['area'] = Area::all();
@@ -65,6 +73,8 @@ class GuardController extends Controller
             'wa' => 'required|string',
             'pleton_id' => 'required|numeric|exists:pleton,id',
             'shift_id' => 'required|numeric|exists:shift,id',
+            'password' => 'required|string',
+            'role' => 'required|in:GUARD,ADMIN_AREA', // Validasi untuk role
         ]);
 
         try {
@@ -81,7 +91,8 @@ class GuardController extends Controller
                 'wa' => $validatedData['wa'],
                 'pleton_id' => $validatedData['pleton_id'],
                 'shift_id' => $validatedData['shift_id'],
-                // Password handling, if necessary
+                'password' => bcrypt($validatedData['password']),
+                'role' => $validatedData['role'], // Menyimpan role
             ]);
 
             $guard->save();
@@ -96,6 +107,7 @@ class GuardController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage())->withInput();
         }
     }
+
 
 
 
@@ -133,6 +145,8 @@ class GuardController extends Controller
         $data['shifts'] = Shift::all();
         $data['guard'] = $guard;
 
+        // dd($data['guard']);
+
         // dd($data);
         return view('super-admin.guard-page.edit', $data);
     }
@@ -158,13 +172,14 @@ class GuardController extends Controller
             'pleton_id' => 'required|numeric|exists:pleton,id',
             'shift_id' => 'required|numeric|exists:shift,id',
             'password' => 'nullable|string|min:8',
+            'role' => 'required|string', // Tambah validasi untuk role
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Update Guard instance with validated data
-            $guard->update([
+            // Perbarui instance Guard dengan data yang telah divalidasi
+            $updateData = [
                 'badge_number' => $validatedData['badge_number'],
                 'name' => $validatedData['name'],
                 'email' => $validatedData['email'],
@@ -174,7 +189,15 @@ class GuardController extends Controller
                 'wa' => $validatedData['wa'],
                 'pleton_id' => $validatedData['pleton_id'],
                 'shift_id' => $validatedData['shift_id'],
-            ]);
+                'role' => $validatedData['role'], // Perbarui role
+            ];
+
+            // Perbarui password jika disediakan
+            if (!empty($validatedData['password'])) {
+                $updateData['password'] = bcrypt($validatedData['password']);
+            }
+
+            $guard->update($updateData);
 
             DB::commit();
 
@@ -185,6 +208,7 @@ class GuardController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage())->withInput();
         }
     }
+
 
 
     /**
