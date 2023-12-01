@@ -25,9 +25,9 @@
                     << Kembali
                 </button>
             </div>
-            <form action="{{route('check-point.store')}}" method="POST">
+            <form action="{{route('check-point.update', $checkpoint->id)}}" method="POST">
                 @csrf
-                @method('post')
+                @method('PUT')
                 <div class="row row-cols-2">
                     <div class="col">
                         <div class="mb-3">
@@ -35,7 +35,7 @@
                             <select class="form-select @error('round_id') is-invalid @enderror" name="round_id" id="idRound" required>
                                 <option value="" selected disabled>--Pilih--</option>
                                 @foreach ($round as $item)
-                                    <option value="{{ $item->id }}" {{ old('round_id') == $item->id ? 'selected' : '' }}>{{ $item->rute }}
+                                    <option value="{{ $item->id }}" {{ $checkpoint->round_id == $item->id ? 'selected' : '' }}>{{ $item->rute }}
                                 </option>
                                 @endforeach
                             </select>
@@ -47,29 +47,34 @@
                         </div>
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama Checkpoint <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" id="nama" value="{{old('nama')}}" placeholder="Masukkan Nama CheckPoint">
+                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" id="nama" value="{{$checkpoint->nama}}" placeholder="Masukkan Nama CheckPoint">
                             @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="lokasi" class="form-label">Lokasi Checkpoint <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('lokasi') is-invalid @enderror" name="lokasi" id="lokasi" value="{{old('lokasi')}}" placeholder="Masukkan Lokasi CheckPoint">
+                            <input type="text" class="form-control @error('lokasi') is-invalid @enderror" name="lokasi" id="lokasi" value="{{$checkpoint->lokasi}}" placeholder="Masukkan Lokasi CheckPoint">
                             @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="dangerStatus" class="form-label">Danger Status <span class="text-danger">*</span></label>
                             <select class="form-select @error('danger_status') is-invalid @enderror" name="danger_status" id="dangerStatus">
                                 <option value="" disabled selected> --Pilih-- </option>
-                                <option value="LOW" {{ old('danger_status') == 'low' ? 'selected' : '' }}>Low</option>
-                                <option value="MIDDLE" {{ old('danger_status') == 'middle' ? 'selected' : '' }}>Middle</option>
-                                <option value="HIGH" {{ old('danger_status') == 'high' ? 'selected' : '' }}>High</option>
+                                <option value="LOW" {{ $checkpoint->danger_status == 'LOW' ? 'selected' : '' }}>Low</option>
+                                <option value="MIDDLE" {{ $checkpoint->danger_status == 'MIDDLE' ? 'selected' : '' }}>Middle</option>
+                                <option value="HIGH" {{ $checkpoint->danger_status == 'HIGH' ? 'selected' : '' }}>High</option>
                             </select>
                             @error('danger_status')
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="mb-3 align-middle">
+                            <input type="checkbox" class="form-check-input fs-5 mt-0 me-2 @error('status') is-invalid @enderror" name="status" id="checkPointStatus" value="ACTIVED" checked>
+                            <label for="checkPointStatus" class="align-middle mb-0">Aktif</label>
+                            @error('status') <span class="text-danger d-block">{{$message}}</span> @enderror
+                        </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success">Update</button>
+                <button type="submit" class="btn btn-success">Simpan</button>
             </form>
         </div>
     </div>
@@ -77,8 +82,8 @@
 <!-- Container-fluid Ends-->
 
 @push('js')
-    <script>
-        active_menu("#menu-checkpoint", "#sub-add-checkpoint")
-    </script>
+<script>
+    active_menu("#menu-checkpoint")
+</script>
 @endpush
 @endsection

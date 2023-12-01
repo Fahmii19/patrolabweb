@@ -73,6 +73,7 @@
                         <ul class="sidebar-submenu">
                             <li><a href="{{ route('round.create') }}" id="sub-round-create">Add Route</a></li>
                             <li><a href="{{ route('round.index') }}" id="sub-round-list">Route List</a></li>
+                            <li><a href="{{ route('round.detail') }}" id="sub-round-detail">Route Detail</a></li>
                         </ul>
                     </li>
                     <li class="sidebar-list active" id="menu-ai"><a class="sidebar-link sidebar-title active" href="#"><i data-feather="cpu"></i><span>AI CAPTURE</span></a>

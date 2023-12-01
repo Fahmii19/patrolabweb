@@ -71,9 +71,10 @@
         }, {
             data: 'status',
             render: function(data, type, row) {
-                if (row.status == 'aktif') {
+                if (row.status == 'ACTIVED') {
                     return '<span class="badge badge-success">' + row.status + '</span>'
-                } else {
+                }
+                if (row.status = 'INACTIVED'){
                     return '<span class="badge badge-danger">' + row.status + '</span>'
                 }
             }
