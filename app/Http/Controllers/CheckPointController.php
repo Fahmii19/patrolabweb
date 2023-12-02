@@ -24,7 +24,7 @@ class CheckPointController extends Controller
      */
     public function index()
     {
-        $data['title'] = "Daftar Area CheckPoint";
+        $data['title'] = "Daftar Area Checkpoint";
         return view('super-admin.check-point.index', $data);
     }
 
@@ -35,7 +35,7 @@ class CheckPointController extends Controller
      */
     public function create()
     {
-        $data['title'] = "Tambah Area CheckPoint";
+        $data['title'] = "Tambah Area Checkpoint";
         $data['round'] = Round::all();
         return view('super-admin.check-point.create', $data);
     }
@@ -52,8 +52,9 @@ class CheckPointController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'round_id' => 'required|numeric',
-                'nama' => 'required|string',
-                'lokasi' => 'required|string',
+                'name' => 'required|string',
+                'location' => 'required|string',
+                'location_long_lat' => 'required|string',
                 'danger_status' => 'required',
             ]);
 
@@ -63,13 +64,13 @@ class CheckPointController extends Controller
 
             $data = $validator->validated();
             $currentTime = date('His');
-            $capitalizeName = strtoupper($request->nama);
-            $data['kode'] = str_replace(' ','',$currentTime.$capitalizeName);
+            $capitalizeName = strtoupper($request->name);
+            $data['qr_code'] = str_replace(' ','',$currentTime.$capitalizeName);
             $data['status'] = 'ACTIVED';
 
             CheckPoint::create($data);
             DB::commit();
-            return redirect()->route('check-point.index')->with('success', 'Data Berhasil Ditambahkan');
+            return redirect()->route('check-point.index')->with('success', 'Checkpoint Berhasil Ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('CheckPointController store() ' . $e->getMessage());
@@ -114,8 +115,9 @@ class CheckPointController extends Controller
         try{
             $validator = Validator::make($request->all(), [
                 'round_id' => 'required|numeric',
-                'nama' => 'required|string',
-                'lokasi' => 'required|string',
+                'name' => 'required|string',
+                'location' => 'required|string',
+                'location_long_lat' => 'required|string',
                 'danger_status' => 'required',
                 'status' => 'nullable|in:ACTIVED,INACTIVED',
             ]);
@@ -132,7 +134,7 @@ class CheckPointController extends Controller
             DB::commit();
 
             if ($action) {
-                return redirect()->route('check-point.index')->with('success', 'checkpoint berhasil diupdate');
+                return redirect()->route('check-point.index')->with('success', 'Checkpoint berhasil diupdate');
             }
             DB::rollback();
             return redirect()->back()->with('error', 'checkpoint gagal diupdate');
@@ -155,7 +157,7 @@ class CheckPointController extends Controller
             DB::beginTransaction();
             CheckPoint::find($id)->delete();
             DB::commit();
-            return redirect()->route('check-point.index')->with('success', 'Data Berhasil Dihapus');
+            return redirect()->route('check-point.index')->with('success', 'Checkpoint Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('CheckPoint destroy() ' . $e->getMessage());
@@ -169,9 +171,10 @@ class CheckPointController extends Controller
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('name', '{{$nama}}')
-            ->addColumn('qr_code', '{{$kode}}')
-            ->addColumn('location', '{{$lokasi}}')
+            ->addColumn('name', '{{$name}}')
+            ->addColumn('qr_code', '{{$qr_code}}')
+            ->addColumn('location', '{{$location}}')
+            ->addColumn('location_long_lat', '{{$location_long_lat}}')
             ->addColumn('status', '{{$status}}')
             ->addColumn('danger_status', '{{$danger_status}}')
             ->addColumn('round', '{{$round_id ? $round["rute"] : "-"}}')
@@ -208,7 +211,7 @@ class CheckPointController extends Controller
             $badge = $checkpoint[$i]['status'] == "ACTIVED" ? "badge-success" : "badge_danger";
             $html .= '<tr>'.
                 '<th scope="row">'. $i + 1 .'</th>'.
-                '<td>'. $checkpoint[$i]['nama'] . '</td>'.
+                '<td>'. $checkpoint[$i]['name'] . '</td>'.
                 '<td>'. $round['wilayah']['nama'] . '</td>'.
                 '<td>'. $round['project']['name'] . '</td>'.
                 '<td>'. $round['area']['name'] . '</td>'.
@@ -252,8 +255,8 @@ class CheckPointController extends Controller
         return DataTables::of($data)
         ->addIndexColumn()
         ->escapeColumns('active')
-        ->addColumn('name', '{{$nama}}')
-        ->addColumn('location', '{{$lokasi}}')
+        ->addColumn('name', '{{$name}}')
+        ->addColumn('location', '{{$location}}')
         ->addColumn('status', '{{$status}}')
         ->addColumn('danger_status', '{{$danger_status}}')
         ->addColumn('action', function(CheckPoint $checkpoint) {
@@ -274,9 +277,6 @@ class CheckPointController extends Controller
                 return redirect()->back()->with('error', 'Nama checkpoint dan round tidak boleh kosong');
             }
 
-            // $data["round"] = $request->input('edit_id_round');
-            // $data["id"] = $id;
-            // return response()->json($data);
             $round_id = $request->input('edit_id_round');
             DB::beginTransaction();
             CheckPoint::find($id)->update(['round_id' => $round_id]);
