@@ -25,6 +25,7 @@ class GuardController extends Controller
      */
     public function index()
     {
+        // dd(auth()->user()->hasRole('super-admin'));
         $data['title'] = "Daftar Petugas";
         return view('super-admin.guard-page.index', $data);
     }

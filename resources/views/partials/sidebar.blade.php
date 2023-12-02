@@ -18,6 +18,7 @@
                             <h6>Patrol ABB</h6>
                         </div>
                     </li>
+                    @role('super-admin')
                     <li><a class="{{ isset($page) && $page == 'dashboard' ? 'active-menu' : '' }} d-block" href="{{ route('admin.dashboard') }}" data-original-title="" title="" id="menu_dashboard"> <i data-feather="bar-chart-2"></i><span>Dashboard </span></a></li>
                     </li>
                     <li class="sidebar-list" id="data_master">
@@ -92,6 +93,19 @@
                         </ul>
                     </li>
                     <li><a class="{{ isset($page) && $page == 'audit_log' ? 'active-menu' : '' }} d-block" href="{{ route('audit-log.index') }}" id="menu-audit" data-original-title="" title=""> <i data-feather="activity"></i><span>Audit Log </span></a></li>
+                    @endrole
+
+                    @role('guard')
+                    <li class="sidebar-list" id="menu-guard">
+                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="layers"></i><span>Guard Management</span></a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ route('guard.index') }}" id="sub-list-guard">Guard List</a></li>
+                            <li><a href="{{ route('pleton.index') }}" id="sub-list-pleton">Pleton List</a></li>
+                        </ul>
+                    </li>
+
+                    @endrole
+
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

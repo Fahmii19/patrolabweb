@@ -46,12 +46,23 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/dashboard', function () {
-    if (auth()->user()->hasRole('super-admin')) {
-        return redirect()->route('admin.dashboard');
+    if (auth()->check()) {
+        if (auth()->user()->hasRole('super-admin')) {
+            return redirect()->route('admin.dashboard');
+        } elseif (auth()->user()->hasRole('guard')) {
+            return redirect()->route('guard.index');
+        } elseif (auth()->user()->hasRole('admin-area')) {
+            // Asumsikan Anda memiliki dashboard khusus untuk 'admin-area'
+            return redirect()->route('admin-area.dashboard');
+        } else {
+            // Redirect ke halaman default jika user tidak memiliki peran di atas
+            return redirect()->route('default.dashboard');
+        }
     }
+    return redirect()->route('login'); // Redirect ke login jika tidak terautentikasi
 })->middleware(['auth', 'verified']);
-//Route::get('/dashboard',[SuperAdminController::class,'dashboard'])->middleware(['auth', 'verified','role:super-admin'])->name('dashboard');
-//admin route
+
+//Grup Rute untuk Super Admin
 Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'role:super-admin']], function () {
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::resources([
@@ -126,6 +137,13 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     //Ajax hak akses
     Route::post('get-hak-akses', [HakAksesController::class, 'get_hak_akses'])->name('get-hak-akses');
 });
+
+// Grup Rute untuk Guard
+Route::group(['middleware' => ['auth', 'verified', 'role:guard']], function () {
+    Route::get('/dashboard', [GuardController::class, 'index'])->name('guard.index');
+});
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
