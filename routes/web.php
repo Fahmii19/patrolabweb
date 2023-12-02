@@ -140,7 +140,17 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
 
 // Grup Rute untuk Guard
 Route::group(['middleware' => ['auth', 'verified', 'role:guard']], function () {
-    Route::get('/guard/dashboard', [GuardController::class, 'index'])->name('guard.index');
+    Route::resources([
+        'guard' => GuardController::class,
+        'pleton' => PletonController::class,
+
+    ]);
+    // Guard
+    Route::get('/guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');
+    Route::get('/guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
+
+    //Pleton
+    Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
 });
 
 
