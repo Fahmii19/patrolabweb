@@ -140,7 +140,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
 
 // Grup Rute untuk Guard
 Route::group(['middleware' => ['auth', 'verified', 'role:guard']], function () {
-    Route::get('/dashboard', [GuardController::class, 'index'])->name('guard.index');
+    Route::get('/guard/dashboard', [GuardController::class, 'index'])->name('guard.index');
 });
 
 
