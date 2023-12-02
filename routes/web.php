@@ -139,7 +139,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
 });
 
 // Grup Rute untuk Guard
-Route::group(['middleware' => ['auth', 'verified', 'role:guard']], function () {
+Route::group(['prefix' => 'guard', 'middleware' => ['auth', 'verified', 'role:guard']], function () {
     Route::resources([
         'guard' => GuardController::class,
         'pleton' => PletonController::class,
