@@ -53,28 +53,32 @@ class UserController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'guard_id' => 'required|numeric',
-                // 'role' => 'required',
+                'role' => 'required',
                 'password' => 'required',
-                'status'=>'required|in:ACTIVED,INACTIVED'
+                'status' => 'required|in:ACTIVED,INACTIVED'
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
             $validator->validated();
+
+            // dd($request->role);
+
             $guard = Guard::find($request->guard_id);
+
             $data_user = [
                 'guard_id' => $guard->id,
                 'name' => $guard->name,
                 'no_badge' => $guard->badge_number,
                 'email' => $guard->email,
                 'password' => bcrypt($request->password),
-                'status'=>$request->status
+                'status' => $request->status
             ];
             $usr = User::create($data_user);
-            $usr->assignRole('user');
+            $usr->assignRole($request->role);
             // foreach ($request->role as $item) {
-            //     $usr->assignRole($item);
+            //     // $usr->assignRole($item);
             // }
             DB::commit();
             return redirect()->route('user.index')->with('success', 'Data Berhasil Ditambahkan');
@@ -110,8 +114,15 @@ class UserController extends Controller
         //     ->where('name', '!=', 'user')
         //     ->get();
         $data['user'] = User::find($id);
-        // dd($data);
-        return view('super-admin.user.edit', $data);
+
+        // Pastikan user ditemukan sebelum mencoba mengakses metode pada objeknya
+        if (!$data['user']) {
+            // Handle kasus di mana user tidak ditemukan, misalnya tampilkan pesan error atau redirect
+            return redirect()->back()->with('error', 'User tidak ditemukan.');
+        }
+
+        $roleNames = $data['user']->getRoleNames(); // Menggunakan variabel $data['user'] yang sudah didefinisikan
+        return view('super-admin.user.edit', $data, compact('roleNames'));
     }
 
     /**
@@ -126,29 +137,32 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                // 'role' => 'required',
+                'role' => 'required', // Pastikan role diisi
                 'password' => 'nullable',
-                'status'=>'required|in:ACTIVED,INACTIVED'
+                'status' => 'required|in:ACTIVED,INACTIVED'
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
-            $validator->validated();
 
             $usr = User::find($id);
-            // foreach (Role::all()->where('name', '!=', 'super-admin')->where('name', '!=', 'user') as $item) {
-            //     $usr->removeRole($item->name);
-            // }
-            // foreach ($request->role as $item) {
-            //     $usr->assignRole($item);
-            // }
+            if (!$usr) {
+                throw new Exception('User tidak ditemukan.');
+            }
 
-            $data_user['status'] = $request->status;
-            if($request->password){
+            // dd($request->role);
+
+            // Update role user
+            $usr->syncRoles($request->role); // Menggunakan syncRoles untuk update peran
+
+            // Update data user lainnya
+            $data_user = ['status' => $request->status];
+            if ($request->password) {
                 $data_user['password'] = bcrypt($request->password);
             }
             $usr->update($data_user);
+
             DB::commit();
             return redirect()->route('user.index')->with('success', 'Data Berhasil Diedit');
         } catch (Throwable $e) {
@@ -169,7 +183,7 @@ class UserController extends Controller
         try {
             $user = User::find($id);
             DB::beginTransaction();
-           
+
             $action = $user->delete();
             DB::commit();
 
@@ -187,6 +201,19 @@ class UserController extends Controller
 
     public function datatable()
     {
+
+        // $data = User::where('id', '!=', 1)->get(); // Mengambil semua pengguna kecuali yang memiliki id = 1
+
+        // foreach ($data as $user) {
+        //     // Di sini Anda bisa menggunakan $user->getRoleNames() untuk mendapatkan peran pengguna
+        //     $roleNames = $user->getRoleNames()->toArray();
+        //     $roles = implode(', ', $roleNames);
+
+        //     // Lakukan sesuatu dengan $roles, misalnya menampilkannya atau menyimpannya
+        //     echo "User: " . $user->name . " - Roles: " . $roles . "\n";
+        // }
+
+
         $data = User::where('id', '!=', 1)->get();
         return DataTables::of($data)
             ->addIndexColumn()
@@ -200,6 +227,13 @@ class UserController extends Controller
                 return date('d M y', strtotime($user->created_at));
             })
             ->addColumn('status', '{{$status}}')
+            ->addColumn('action', function (User $user) {
+                return [
+                    'editurl' => route('user.edit', $user->id),
+                    'deleteurl' => route('user.destroy', $user->id)
+                ];
+            })
+
             ->toJson();
     }
 }

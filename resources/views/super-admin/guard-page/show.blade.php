@@ -25,9 +25,11 @@
                     <p>Email: {{ $guard->email }}</p>
                     <p>Gender: {{ $guard->gender }}</p>
                     <p>Date of Birth: {{ $guard->dob ? $guard->dob->format('d M Y') : 'N/A' }}</p>
+                    <p>Alamat: {{ $guard->address }}</p> <!-- Menambahkan alamat -->
                     <p>Phone (WhatsApp): {{ $guard->wa }}</p>
                     <p>Pleton: {{ $guard->pleton->name ?? 'N/A' }}</p> <!-- Displaying Pleton -->
                     <p>Shift: {{ $guard->shift->name ?? 'N/A' }}</p> <!-- Displaying Shift -->
+                    <p>Role: {{ $guard->role }}</p> <!-- Menambahkan Role -->
                     <!-- Include other fields as necessary -->
                 </div>
             </div>
