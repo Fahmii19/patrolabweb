@@ -48,6 +48,33 @@
                             @enderror
                         </div>
 
+                        {{-- Kolom Password --}}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="password" placeholder="Masukkan Password" value="{{ old('password') }}">
+                            @error('password')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Kolom Role Select Option ada : guard dan admin area --}}
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+                            <select class="form-select @error('role') is-invalid @enderror" name="role" id="role">
+                                <option value="" selected disabled>--Pilih--</option>
+                                <option value="GUARD" {{ old('role') == 'GUARD' ? 'selected' : '' }}>GUARD</option>
+                                <option value="ADMIN_AREA" {{ old('role') == 'ADMIN_AREA' ? 'selected' : '' }}>ADMIN AREA</option>
+                            </select>
+                            @error('role')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
+                    </div>
+
+                    <div class="col">
+
                         <!-- Kolom gender -->
                         <div class="mb-3">
                             <label for="gender" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
@@ -69,9 +96,8 @@
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>
 
-                    <div class="col">
+
                         <!-- Kolom address -->
                         <div class="mb-3">
                             <label for="address" class="form-label">Alamat <span class="text-danger">*</span></label>
