@@ -108,7 +108,7 @@
 
                         <div class="mb-3">
                             <label for="idCheck" class="form-label">Nama Checkpoint <span class="text-danger">*</span></label>
-                            <select class="form-select @error('id_checkpoint') is-invalid @enderror" name="id_checkpoint" id="idCheck" required>
+                            <select class="form-select @error('insert_checkpoint') is-invalid @enderror" name="insert_checkpoint" id="idCheck" required>
                                 <option selected disabled>--Pilih--</option>
                                 @foreach ($checkpoint as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}
@@ -119,8 +119,8 @@
 
                         <div class="mb-3">
                             <label for="shortDesc" class="form-label">Deskripsi</label>
-                            <input type="text" class="form-control @error('nama_aset') is-invalid @enderror" name="short_desc" id="shortDesc" placeholder="Deksripsi singkat" required>
-                            @error('nama_aset') <span class="text-danger d-block">{{$message}}</span> @enderror
+                            <input type="text" class="form-control @error('short_desc') is-invalid @enderror" name="short_desc" id="shortDesc" placeholder="Deksripsi singkat" required>
+                            @error('short_desc') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                     </form>
                 </div>
@@ -201,7 +201,6 @@
                 modalInsert.attr('id', `modalInsertAsset${row.id}`)
                 const formInsert = modalInsert.find('.form-insert-asset')
                 formInsert.attr('id', `formInsert${row.id}`)
-                        .attr('action', row.action)
 
                 formInsert.find('input[name="asset_id"]').attr('value', row.id)
                 formInsert.find('input[name="nama_aset"]').attr('value', row.name)
@@ -221,7 +220,6 @@
     function insert_asset(event) {
         const btnTarget = $(event.target)
         const formId = btnTarget.attr('form-id')
-        console.log(`${formId} submitted`)
         $(formId).submit();
     }
     active_menu("#menu-checkpointaset", "#sub-checkpoint-aset-detail")
