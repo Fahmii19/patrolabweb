@@ -65,8 +65,10 @@
                     </li>
                     <li class="sidebar-list" id="menu-checkpointaset"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Client Asset</span></a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ route('checkpoint-aset.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li>
-                            <li><a href="{{ route('checkpoint-aset.index') }}" id="sub-checkpoint-aset-list">Asset CheckPoint</a></li>
+                            {{-- <li><a href="{{ route('checkpoint-aset-client.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li> --}}
+                            <li><a href="{{ route('checkpoint-aset-client.index') }}" id="sub-checkpoint-aset-list">Asset CheckPoint</a></li>
+                            <li><a href="{{ route('asset-client-detail') }}" id="sub-checkpoint-aset-detail">Detail Checkpoint</a></li>
+                            
                         </ul>
                     </li>
                     <li class="sidebar-list" id="menu-round"><a class="sidebar-link sidebar-title" href="#"><i data-feather="arrow-right-circle"></i><span>Round</span></a>

@@ -23,8 +23,8 @@ class CheckPoint extends Model
     {
         return $this->belongsTo(Area::class, 'id_area');
     }
-    public function cpas()
+    public function checkpoint_asset_client()
     {
-        return $this->hasMany(CheckpointAset::class, 'id_check_point');
+        return $this->hasMany(CheckpointAssetClient::class, 'checkpoint_id');
     }
 }
