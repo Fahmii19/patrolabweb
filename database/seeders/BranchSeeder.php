@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Round;
+use App\Models\Branch;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Whoops\Run;
 
-class RoundSeeder extends Seeder
+class BranchSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,21 +15,23 @@ class RoundSeeder extends Seeder
      */
     public function run()
     {
-        Round::create([
-            'id_wilayah' => 1,
-            'id_project' => 1,
-            'id_area' => 1,
-            'rute' => 'Rute 01',
+        Branch::create([
+            'code' => 'koranch01',
+            'name' => 'Branch 01',
             'status' => 'ACTIVED',
             'created_at' => now(),
             'updated_at' => null,
         ]);
-        
-        Round::create([
-            'id_wilayah' => 2,
-            'id_project' => 3,
-            'id_area' => 3,
-            'rute' => 'Rute 02',
+        Branch::create([
+            'code' => 'koranch02',
+            'name' => 'Branch 02',
+            'status' => 'ACTIVED',
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
+        Branch::create([
+            'code' => 'koranch03',
+            'name' => 'Branch 03',
             'status' => 'INACTIVED',
             'created_at' => now(),
             'updated_at' => null,

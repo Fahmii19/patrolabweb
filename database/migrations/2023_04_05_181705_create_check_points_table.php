@@ -16,9 +16,10 @@ return new class extends Migration
 
         Schema::create('checkpoint', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('kode')->unique();
-            $table->string('lokasi');
+            $table->string('name');
+            $table->string('location');
+            $table->string('location_long_lat');
+            $table->string('qr_code')->unique();
             $table->foreignId('round_id')->nullable();
             $table->enum('status',['ACTIVED','INACTIVED']);
             $table->enum('danger_status', ['LOW', 'MIDDLE', 'HIGH']);

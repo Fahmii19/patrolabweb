@@ -47,13 +47,18 @@
                         </div>
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama Checkpoint <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" id="nama" value="{{$checkpoint->nama}}" placeholder="Masukkan Nama CheckPoint">
-                            @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="nama" value="{{$checkpoint->name}}" placeholder="Masukkan Nama CheckPoint">
+                            @error('name') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="lokasi" class="form-label">Lokasi Checkpoint <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('lokasi') is-invalid @enderror" name="lokasi" id="lokasi" value="{{$checkpoint->lokasi}}" placeholder="Masukkan Lokasi CheckPoint">
-                            @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
+                            <input type="text" class="form-control @error('location') is-invalid @enderror" name="location" id="lokasi" value="{{$checkpoint->location}}" placeholder="Masukkan Lokasi Checkpoint">
+                            @error('location') <span class="text-danger d-block">{{$message}}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="koordinat" class="form-label">Koordinat Checkpoint <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('location_long_lat') is-invalid @enderror" name="location_long_lat" id="koordinat" value="{{$checkpoint->location_long_lat}}" placeholder="Masukkan Koordinat Checkpoint">
+                            @error('location_long_lat') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="dangerStatus" class="form-label">Danger Status <span class="text-danger">*</span></label>
@@ -63,12 +68,10 @@
                                 <option value="MIDDLE" {{ $checkpoint->danger_status == 'MIDDLE' ? 'selected' : '' }}>Middle</option>
                                 <option value="HIGH" {{ $checkpoint->danger_status == 'HIGH' ? 'selected' : '' }}>High</option>
                             </select>
-                            @error('danger_status')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
+                            @error('danger_status') <span class="text-danger d-block">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3 align-middle">
-                            <input type="checkbox" class="form-check-input fs-5 mt-0 me-2 @error('status') is-invalid @enderror" name="status" id="checkPointStatus" value="ACTIVED" checked>
+                            <input type="checkbox" class="form-check-input fs-5 mt-0 me-2 @error('status') is-invalid @enderror" name="status" id="checkPointStatus" value="ACTIVED" {{ $checkpoint->status == 'ACTIVED' ? 'checked' : '' }}>
                             <label for="checkPointStatus" class="align-middle mb-0">Aktif</label>
                             @error('status') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>

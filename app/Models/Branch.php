@@ -21,8 +21,8 @@ class Branch extends Model
 
     // Define relationships here if needed
     // For example, if a branch has many projects
-    // public function projects()
-    // {
-    //     return $this->hasMany(Project::class);
-    // }
+    public function projects()
+    {
+        return $this->hasMany(ProjectModel::class, 'branch_id', 'id');
+    }
 }

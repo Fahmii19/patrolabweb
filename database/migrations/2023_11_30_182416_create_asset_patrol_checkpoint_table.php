@@ -13,8 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('aset_patrolis', function (Blueprint $table) {
+        Schema::create('asset_patrol_checkpoint', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('asset_master_id');
+            $table->foreignId('checkpoint_id');
+            $table->string('checkpoint_note');
+            $table->enum('status',['ACTIVED', 'INACTIVED']);
             $table->timestamps();
         });
     }
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('aset_patrolis');
+        Schema::dropIfExists('asset_patrol_checkpoint');
     }
 };

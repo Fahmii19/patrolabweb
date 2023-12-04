@@ -20,25 +20,25 @@ class WilayahSeeder extends Seeder
             'kode' => 'kowil01',
             'nama' => 'Wilayah 01',
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
         Wilayah::create([
             'kode' => 'kowil02',
             'nama' => 'Wilayah 02',
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
         Wilayah::create([
             'kode' => 'kowil03',
             'nama' => 'Wilayah 03',
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
         Wilayah::create([
             'kode' => 'kowil04',
             'nama' => 'Wilayah 04',
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
     }
 }

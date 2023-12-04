@@ -15,44 +15,38 @@ class ProjectSeeder extends Seeder
      */
     public function run()
     {
-        // ProjectModel::create([
-        //     'nama_project' => 'PERTAGAS',
-        //     'wilayah' => 1,
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        // ]);
-        // ProjectModel::create([
-        //     'nama_project' => 'PERTAMINA',
-        //     'wilayah' => 1,
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        // ]);
-        // ProjectModel::create([
-        //     'nama_project' => 'PARKIR 1',
-        //     'wilayah' => 2,
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        // ]);
-
         ProjectModel::create([
-            'nama_project' => 'Proyek 01',
-            'wilayah' => 1,
+            'code' => 'kojek01',
+            'name' => 'Proyek 01',
+            'wilayah_id' => 1,
+            'branch_id' => 1,
+            'address' => 'Lokasi Proyek 01',
+            'location_long_lat' => '104.756554;-2.990934',
+            'status' => 'ACTIVED',
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
-
         ProjectModel::create([
-            'nama_project' => 'Proyek 02',
-            'wilayah' => 1,
+            'code' => 'kojek02',
+            'name' => 'Proyek 02',
+            'wilayah_id' => 1,
+            'branch_id' => 1,
+            'address' => 'Lokasi Proyek 02',
+            'location_long_lat' => '104.756554;-2.990934',
+            'status' => 'ACTIVED',
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
-
         ProjectModel::create([
-            'nama_project' => 'Proyek 03',
-            'wilayah' => 2,
+            'code' => 'kojek01',
+            'name' => 'Proyek 01',
+            'wilayah_id' => 1,
+            'branch_id' => 1,
+            'address' => 'Lokasi Proyek 01',
+            'location_long_lat' => '104.756554;-2.990934',
+            'status' => 'ACTIVED',
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
     }
 }

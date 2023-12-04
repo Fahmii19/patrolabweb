@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('asets', function (Blueprint $table) {
+        Schema::create('asset_client_checkpoint', function (Blueprint $table) {
             $table->id();
-            $table->string('kode')->unique();
-            $table->string('nama');
-            $table->enum('status',['aktif','tidak aktif']);
+            $table->foreignId('asset_master_id');
+            $table->foreignId('checkpoint_id');
+            $table->string('checkpoint_note');
+            $table->enum('status',['ACTIVED', 'INACTIVED']);
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('asets');
+        Schema::dropIfExists('asset_client_checkpoint');
     }
 };

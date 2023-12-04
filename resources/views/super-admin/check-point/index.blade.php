@@ -26,10 +26,11 @@
             <table id="mytable" class="display" style="width:100%">
                 <thead>
                     <tr>
-                        <th style="max-width: 40px;">No</th>
-                        <th>CheckPoint</th>
-                        <th>Kode</th>
+                        <th style="max-width: 30px;">No.</th>
+                        <th>Checkpoint</th>
+                        <th>QR Kode</th>
                         <th>Lokasi</th>
+                        <th>Koordinat</th>
                         <th>Status</th>
                         <th>Danger Status</th>
                         <th>Nama Round</th>
@@ -82,7 +83,7 @@
             name: 'No'
         }, {
             data: 'name',
-            name: 'CheckPoint'
+            name: 'Checkpoint'
         }, {
             data: 'qr_code',
             render: function(data, type, row) {
@@ -95,6 +96,9 @@
         }, {
             data: 'location',
             name: 'Location'
+        }, {
+            data: 'location_long_lat',
+            name: 'Koordinat'
         }, {
             data: 'status',
             render: function(data, type, row) {
