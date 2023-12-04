@@ -49,9 +49,7 @@ class AssetClientCheckpointController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'asset_id' => 'required|numeric',
-                'nama_aset' => 'required|string',
-                'id_checkpoint' => 'required|numeric',
-                'short_desc' => 'string',
+                'insert_checkpoint' => 'required|numeric',
             ]);
 
             if ($validator->fails()) {
@@ -61,14 +59,19 @@ class AssetClientCheckpointController extends Controller
             $data = $validator->validated();
             $data = [
                 "asset_master_id" => $request->asset_id,
-                "checkpoint_id" => $request->id_checkpoint,
+                "checkpoint_id" => $request->insert_checkpoint,
                 "checkpoint_note" => $request->short_desc,
                 "status" => 'ACTIVED'    
             ];
 
-            CheckpointAssetClient::create($data);
+            $action = CheckpointAssetClient::create($data);
             DB::commit();
-            return redirect()->route('asset-client-detail')->with('success', 'Asset Berhasil Ditambahkan');
+            if ($action) {
+                return redirect()->route('asset-client-detail')->with('success', 'Asset Berhasil Ditambahkan');
+            }
+            
+            DB::rollback();
+            return redirect()->back()->with('error', 'Asset gagal ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('CheckpointAssetClient store() ' . $e->getMessage());
