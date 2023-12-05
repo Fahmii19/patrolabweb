@@ -27,4 +27,8 @@ class CheckPoint extends Model
     {
         return $this->hasMany(CheckpointAssetClient::class, 'checkpoint_id');
     }
+    public function checkpoint_asset_patrol()
+    {
+        return $this->hasMany(CheckpointAssetPatrol::class, 'checkpoint_id');
+    }
 }

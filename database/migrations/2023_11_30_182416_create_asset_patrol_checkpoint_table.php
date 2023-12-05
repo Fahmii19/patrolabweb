@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('asset_master_id');
             $table->foreignId('checkpoint_id');
-            $table->string('checkpoint_note');
+            $table->string('checkpoint_note')->nullable();
             $table->enum('status',['ACTIVED', 'INACTIVED']);
             $table->timestamps();
         });

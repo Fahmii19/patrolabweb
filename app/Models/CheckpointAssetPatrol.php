@@ -10,4 +10,14 @@ class CheckpointAssetPatrol extends Model
     use HasFactory;
     protected $guarded = ['id'];
     protected $table = 'asset_patrol_checkpoint';
+
+    public function checkpoint()
+    {
+        return $this->belongsTo(CheckPoint::class, 'checkpoint_id', 'id');
+    }
+
+    public function asset()
+    {
+        return $this->belongsTo(Aset::class, 'asset_master_id', 'id');
+    }
 }

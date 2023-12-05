@@ -24,7 +24,6 @@ class AssetClientCheckpointController extends Controller
     {
         $data['title'] = 'Daftar Checkpoint Aset Client';
         return view('super-admin.checkpoint-aset.index-client', $data);
-        // print_r($data);
     }
 
     /**
@@ -34,7 +33,7 @@ class AssetClientCheckpointController extends Controller
      */
     public function create()
     {
-        return response()->json(["asd" => "asd"]);
+        //
     }
 
     /**

@@ -64,12 +64,18 @@
                             <li><a href="{{ route('check-point.index') }}" id="sub-list-checkpoint">Checkpoint List</a></li>
                         </ul>
                     </li>
-                    <li class="sidebar-list" id="menu-checkpointaset"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Client Asset</span></a>
+                    <li class="sidebar-list" id="menu-checkpointaset-client"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Client Asset</span></a>
                         <ul class="sidebar-submenu">
                             {{-- <li><a href="{{ route('checkpoint-aset-client.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li> --}}
-                            <li><a href="{{ route('checkpoint-aset-client.index') }}" id="sub-checkpoint-aset-list">Asset CheckPoint</a></li>
-                            <li><a href="{{ route('asset-client-detail') }}" id="sub-checkpoint-aset-detail">Detail Checkpoint</a></li>
-                            
+                            <li><a href="{{ route('checkpoint-aset-client.index') }}" id="sub-checkpoint-client-aset-list">Asset CheckPoint</a></li>
+                            <li><a href="{{ route('asset-client-detail') }}" id="sub-checkpoint-client-aset-detail">Detail Checkpoint</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list" id="menu-checkpointaset-patrol"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Patrol Asset</span></a>
+                        <ul class="sidebar-submenu">
+                            {{-- <li><a href="{{ route('checkpoint-aset-client.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li> --}}
+                            <li><a href="{{ route('checkpoint-aset-patrol.index') }}" id="sub-checkpoint-patrol-aset-list">Asset CheckPoint</a></li>
+                            <li><a href="{{ route('asset-patrol-detail') }}" id="sub-checkpoint-patrol-aset-detail">Detail Checkpoint</a></li>
                         </ul>
                     </li>
                     <li class="sidebar-list" id="menu-round"><a class="sidebar-link sidebar-title" href="#"><i data-feather="arrow-right-circle"></i><span>Round</span></a>

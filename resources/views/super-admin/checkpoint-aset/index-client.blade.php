@@ -20,9 +20,9 @@
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
-            <div class="d-flex mb-3 justify-content-end">
+            {{-- <div class="d-flex mb-3 justify-content-end">
                 <a href="#" class="btn btn-success">Tambah Checkpoint Asset</a>
-            </div>
+            </div> --}}
             <table id="mytable" class="display" style="width:100%">
                 <thead>
                     <tr>
@@ -85,7 +85,7 @@
             }
         }]
     });
-    active_menu("#menu-checkpointaset", "#sub-list-checkpoint")
+    active_menu("#menu-checkpointaset-client", "#sub-checkpoint-client-aset-list")
 </script>
 
 @endpush
