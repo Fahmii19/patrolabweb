@@ -18,6 +18,7 @@
                             <h6>Patrol ABB</h6>
                         </div>
                     </li>
+                    @role('super-admin')
                     <li><a class="{{ isset($page) && $page == 'dashboard' ? 'active-menu' : '' }} d-block" href="{{ route('admin.dashboard') }}" data-original-title="" title="" id="menu_dashboard"> <i data-feather="bar-chart-2"></i><span>Dashboard </span></a></li>
                     </li>
                     <li class="sidebar-list" id="data_master">
@@ -65,8 +66,10 @@
                     </li>
                     <li class="sidebar-list" id="menu-checkpointaset"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Client Asset</span></a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ route('checkpoint-aset.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li>
-                            <li><a href="{{ route('checkpoint-aset.index') }}" id="sub-checkpoint-aset-list">Asset CheckPoint</a></li>
+                            {{-- <li><a href="{{ route('checkpoint-aset-client.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li> --}}
+                            <li><a href="{{ route('checkpoint-aset-client.index') }}" id="sub-checkpoint-aset-list">Asset CheckPoint</a></li>
+                            <li><a href="{{ route('asset-client-detail') }}" id="sub-checkpoint-aset-detail">Detail Checkpoint</a></li>
+                            
                         </ul>
                     </li>
                     <li class="sidebar-list" id="menu-round"><a class="sidebar-link sidebar-title" href="#"><i data-feather="arrow-right-circle"></i><span>Round</span></a>
@@ -92,6 +95,19 @@
                         </ul>
                     </li>
                     <li><a class="{{ isset($page) && $page == 'audit_log' ? 'active-menu' : '' }} d-block" href="{{ route('audit-log.index') }}" id="menu-audit" data-original-title="" title=""> <i data-feather="activity"></i><span>Audit Log </span></a></li>
+                    @endrole
+
+                    @role('guard')
+                    <li class="sidebar-list" id="menu-guard">
+                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="layers"></i><span>Guard Management</span></a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ route('guard.index') }}" id="sub-list-guard">Guard List</a></li>
+                            <li><a href="{{ route('pleton.index') }}" id="sub-list-pleton">Pleton List</a></li>
+                        </ul>
+                    </li>
+
+                    @endrole
+
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

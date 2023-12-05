@@ -28,6 +28,8 @@ use App\Http\Controllers\CheckpointAsetController;
 use App\Http\Controllers\IncomingVehicleController;
 use App\Http\Controllers\OutcomingVehicleController;
 use App\Http\Controllers\CheckpointReportController;
+use App\Http\Controllers\AssetClientCheckpointController;
+use App\Http\Controllers\AssetPatrolCheckpointController;
 use App\Models\IncomingVehicle;
 
 /*
@@ -46,12 +48,23 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/dashboard', function () {
-    if (auth()->user()->hasRole('super-admin')) {
-        return redirect()->route('admin.dashboard');
+    if (auth()->check()) {
+        if (auth()->user()->hasRole('super-admin')) {
+            return redirect()->route('admin.dashboard');
+        } elseif (auth()->user()->hasRole('guard')) {
+            return redirect()->route('guard.index');
+        } elseif (auth()->user()->hasRole('admin-area')) {
+            // Asumsikan Anda memiliki dashboard khusus untuk 'admin-area'
+            return redirect()->route('admin-area.dashboard');
+        } else {
+            // Redirect ke halaman default jika user tidak memiliki peran di atas
+            return redirect()->route('default.dashboard');
+        }
     }
+    return redirect()->route('login'); // Redirect ke login jika tidak terautentikasi
 })->middleware(['auth', 'verified']);
-//Route::get('/dashboard',[SuperAdminController::class,'dashboard'])->middleware(['auth', 'verified','role:super-admin'])->name('dashboard');
-//admin route
+
+//Grup Rute untuk Super Admin
 Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'role:super-admin']], function () {
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::resources([
@@ -73,7 +86,8 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'incoming-vehicle' => IncomingVehicleController::class,
         'outcoming-vehicle' => OutcomingVehicleController::class,
         'round' => RoundController::class,
-        'checkpoint-aset' => CheckpointAsetController::class,
+        'checkpoint-aset-client' => AssetClientCheckpointController::class,
+        'checkpoint-aset-patrol' => AssetPatrolCheckpointController::class,
         'self-patrol' => SelfPatrolController::class,
         'atensi' => AtensiController::class,
         'checkpoint-report' => CheckpointReportController::class,
@@ -87,7 +101,9 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('/project-by-wilayah/{id}', [ProjectModelController::class, 'by_wilayah'])->name('project-by-wilayah');
     Route::get('/project-by-wilayah-select/{id}', [ProjectModelController::class, 'by_wilayah_select'])->name('project-by-wilayah-select');
     Route::get('/area-by-project/{id}', [AreaController::class, 'by_project'])->name('area-by-project');
-    Route::get('/checkpoint-by-round/{id}', [CheckPointController::class, 'by_round'])->name('checkpoint-by-round');
+    Route::get('/asset-client-detail', [AssetClientCheckpointController::class, 'detail'])->name('asset-client-detail');
+    Route::get('/asset-client-by-checkpoint/{id}', [AssetClientCheckpointController::class, 'asset_by_checkpoint']);
+
 
     //Route Data Table
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
@@ -105,6 +121,9 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('hak-akses-datatable', [HakAksesController::class, 'datatable'])->name('hak-akses.datatable');
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
     Route::get('check-point-aset.datatable', [CheckpointAsetController::class, 'datatable'])->name('check-point-aset.datatable');
+    Route::get('checkpoint-aset-client-datatable', [AssetClientCheckpointController::class, 'asset_client_datatable'])->name('checkpoint-aset-client.datatable');
+    Route::get('asset-client-datatable', [AssetClientCheckpointController::class, 'asset_datatable'])->name('asset-client-datatable');
+    Route::get('checkpoint-aset-patrol.datatable', [CheckpointAsetController::class, 'patrol_datatable'])->name('checkpoint-aset-patrol.datatable');
     Route::get('atensi-datatable', [AtensiController::class, 'datatable'])->name('atensi.datatable');
     Route::get('self-patrol-datatable', [SelfPatrolController::class, 'datatable'])->name('self-patrol.datatable');
     Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
@@ -125,6 +144,21 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
 
     //Ajax hak akses
     Route::post('get-hak-akses', [HakAksesController::class, 'get_hak_akses'])->name('get-hak-akses');
+});
+
+// Grup Rute untuk Guard
+Route::group(['prefix' => 'guard', 'middleware' => ['auth', 'verified', 'role:guard']], function () {
+    Route::resources([
+        'guard' => GuardController::class,
+        'pleton' => PletonController::class,
+
+    ]);
+    // Guard
+    Route::get('/guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');
+    Route::get('/guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
+
+    //Pleton
+    Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
 });
 
 Route::middleware('auth')->group(function () {

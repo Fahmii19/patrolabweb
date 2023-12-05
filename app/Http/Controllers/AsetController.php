@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Aset;
+use Dotenv\Repository\RepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class AsetController extends Controller
 {
@@ -15,9 +20,6 @@ class AsetController extends Controller
      */
     public function index()
     {
-
-        $data = Aset::all();
-
         $data['title'] = "Master data Aset";
         return view('super-admin.aset.index', $data);
     }
@@ -30,7 +32,6 @@ class AsetController extends Controller
     public function create()
     {
         $data['title'] = "Tambah Data Aset";
-
         return view('super-admin.aset.create', $data);
     }
 
@@ -42,41 +43,55 @@ class AsetController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'kode' => 'required',
-            'nama' => 'required',
-            'status' => 'required',
-            'short_desc' => 'nullable',
-            'asset_master_type' => 'required',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'kode' => 'required|string',
+                'nama' => 'required|string',
+                'asset_master_type' => 'required|in:PATROL,CLIENT',
+                'short_desc' => 'nullable',
+            ]);
 
-        // Inisialisasi nama file
-        $filename = null;
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            }
+    
+            // Inisialisasi nama file
+            $filename = null;
+    
+            // Menangani upload gambar
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $currentDateTime = date('Ymd_His');
+                $filename = $currentDateTime . '_' . $file->getClientOriginalName();
+    
+                // Pindahkan file ke direktori publik
+                $file->move(public_path('gambar/aset'), $filename);
+            }
+    
+            // Membuat data aset dengan filename gambar
+            $aset = Aset::create([
+                'code' => $request->kode,
+                'name' => $request->nama,
+                'status' => 'ACTIVED',
+                'short_desc' => $request->short_desc,
+                'asset_master_type' => $request->asset_master_type,
+                'image' => $filename,
+            ]);
 
-        // Menangani upload gambar
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $currentDateTime = date('Ymd_His');
-            $filename = $currentDateTime . '_' . $file->getClientOriginalName();
+            DB::commit();
+            if($aset) {
+                return redirect()->route('aset.index')->with('success', 'Data Aset berhasil ditambahkan');
+            }
 
-            // Pindahkan file ke direktori publik
-            $file->move(public_path('gambar/aset'), $filename);
+            DB::rollback();
+            return redirect()->back()->with('error', 'Data aset gagak ditambahkan');
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::debug('AsetController store ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        // Membuat data aset dengan filename gambar
-        $aset = Aset::create([
-            'code' => $request->kode,
-            'name' => $request->nama,
-            'status' => $request->status,
-            'short_desc' => $request->short_desc,
-            'asset_master_type' => $request->asset_master_type,
-            'image' => $filename,
-        ]);
-
-        return redirect()->route('aset.index')->with('success', 'Data Aset berhasil ditambahkan');
+        
     }
-
-
 
 
     /**
@@ -100,7 +115,6 @@ class AsetController extends Controller
     {
         $data['title'] = "Edit Data Aset";
         $data['aset'] = $aset;
-        // dd($data);
         return view('super-admin.aset.edit', $data);
     }
 
@@ -112,41 +126,54 @@ class AsetController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Aset $aset)
-    {
+    {   
+        try {
+            $validator = Validator::make($request->all(), [
+                'code' => 'required|string',
+                'name' => 'required|string',
+                'asset_master_type' => 'required|in:PATROL,CLIENT',
+                'short_desc' => 'nullable',
+                'status' => 'nullable|in:ACTIVED,INACTIVED',
+            ]);
 
-        // dd($request->all());
-
-        // $request->validate([
-        //     'code' => 'required',
-        //     'nama' => 'required',
-        //     'status' => 'required',
-        //     'short_desc' => 'nullable', // Validasi untuk deskripsi singkat
-        //     'asset_master_type' => 'nullable', // Validasi untuk tipe aset
-        // ]);
-
-        $aset->code = $request->code;
-        $aset->name = $request->name;
-        $aset->status = $request->status;
-        $aset->short_desc = $request->short_desc; // Menyimpan deskripsi singkat
-        $aset->asset_master_type = $request->asset_master_type; // Menyimpan tipe aset
-
-        // Menangani upload gambar
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('gambar/aset'), $filename); // Sesuaikan path sesuai kebutuhan
-
-            // Hapus gambar lama jika ada
-            if ($aset->image && file_exists(public_path('gambar/aset/' . $aset->image))) {
-                unlink(public_path('gambar/aset/' . $aset->image));
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
 
-            $aset->image = $filename; // Menyimpan nama file gambar baru
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('gambar/aset'), $filename); // Sesuaikan path sesuai kebutuhan
+
+                // Hapus gambar lama jika ada
+                if ($aset->image && file_exists(public_path('gambar/aset/' . $aset->image))) {
+                    unlink(public_path('gambar/aset/' . $aset->image));
+                }
+
+                // Menyimpan nama file gambar baru
+                $aset->image = $filename; 
+            }
+
+            $aset->code = $request->code;
+            $aset->name = $request->name;
+            $aset->status = $request->status ?? 'INACTIVED';
+            $aset->short_desc = $request->short_desc; 
+            $aset->asset_master_type = $request->asset_master_type;
+
+            $action = $aset->save();
+            DB::commit();
+
+            if($action){
+                return redirect()->route('aset.index')->with('success', 'Data Aset berhasil diupdate');
+            }
+
+            DB::rollback();
+            return redirect()->back()->with('error', 'Data Aset gagal diupdate');
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::debug('AsetController update ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        $aset->save();
-
-        return redirect()->route('aset.index')->with('success', 'Data Aset berhasil diupdate');
     }
 
 
@@ -166,7 +193,6 @@ class AsetController extends Controller
     public function datatable()
     {
         $data = Aset::all();
-        // dd($data);
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')

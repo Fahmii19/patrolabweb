@@ -20,7 +20,7 @@ class AreaSeeder extends Seeder
             'name' => 'Area 01',
             'project_id' => 1,
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
 
         Area::create([
@@ -28,7 +28,7 @@ class AreaSeeder extends Seeder
             'name' => 'Area 02',
             'project_id' => 1,
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
 
         Area::create([
@@ -36,7 +36,7 @@ class AreaSeeder extends Seeder
             'name' => 'Area 03',
             'project_id' => 2,
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => null,
         ]);
     }
 }
