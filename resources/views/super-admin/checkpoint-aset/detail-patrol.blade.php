@@ -9,7 +9,7 @@
             <div class="col-6">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Asset Client</li>
+                    <li class="breadcrumb-item">Asset Patrol</li>
                     <li class="breadcrumb-item">{{ $title }}</li>
                 </ol>
             </div>
@@ -68,7 +68,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="fs-5 mb-4">Daftar Asset Client</h2>
+                    <h2 class="fs-5 mb-4">Daftar Asset Patrol</h2>
 
                     <table id="mytable" class="display" style="width:100%">
                         <thead>
@@ -96,7 +96,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{{route('checkpoint-aset-client.store')}}" class="form-insert-asset">
+                    <form method="post" action="{{route('checkpoint-aset-patrol.store')}}" class="form-insert-asset">
                         @csrf
                         @method('post')
                         <input type="hidden" name="asset_id">
@@ -143,7 +143,7 @@
         const area_table = $('#tableAsset tbody');
         const select_alert = $('#checkpoint-alert');
         $.ajax({
-            url: "{{ url('/super-admin/asset-client-by-checkpoint') }}/" + id_checkpoint,
+            url: "{{ url('/super-admin/asset-patrol-by-checkpoint') }}/" + id_checkpoint,
             method: 'get',
             data: {
                 id_checkpoint: "{{ old('id_checkpoint') }}"
@@ -169,7 +169,7 @@
     $('#mytable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('asset-client-datatable') }}",
+        ajax: "{{ route('asset-patrol-datatable') }}",
         columns: [{
             data: 'DT_RowIndex',
             name: 'No'
@@ -222,7 +222,7 @@
         const formId = btnTarget.attr('form-id')
         $(formId).submit();
     }
-    active_menu("#menu-checkpointaset-client", "#sub-checkpoint-patrol-aset-detail")
+    active_menu("#menu-checkpointaset-patrol", "#sub-checkpoint-patrol-aset-detail")
 </script>
 
 @endpush

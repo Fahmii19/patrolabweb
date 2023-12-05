@@ -9,7 +9,7 @@
             <div class="col-6">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Asset Checkpoint Client</li>
+                    <li class="breadcrumb-item">Asset Checkpoint Patrol</li>
                     <li class="breadcrumb-item">{{ $title }}</li>
                 </ol>
             </div>
@@ -20,9 +20,9 @@
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
-            <div class="d-flex mb-3 justify-content-end">
-                <a href="{{route('')}}" class="btn btn-success">Tambah Checkpoint Asset</a>
-            </div>
+            {{-- <div class="d-flex mb-3 justify-content-end">
+                <a href="#" class="btn btn-success">Tambah Checkpoint Asset</a>
+            </div> --}}
             <table id="mytable" class="display" style="width:100%">
                 <thead>
                     <tr>
@@ -53,7 +53,39 @@
 
 @push('js')
 <script>
-    active_menu("#menu-checkpointaset", "#sub-list-checkpoint")
+    $('#mytable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('checkpoint-aset-patrol.datatable') }}",
+        columns: [{
+            data: 'DT_RowIndex',
+            name: 'No'
+        }, {
+            data: 'checkpoint_name',
+            name: 'Checkpoint'
+        }, {
+            data: 'jumlah_asset',
+            name: 'Jumlah Aset'
+        }, {
+            data: 'location',
+            name: 'Lokasi'
+        }, {
+            data: 'status',
+            render: function(data, type, row) {
+                if(row.status == 'ACTIVED') {
+                    return '<span class="badge badge-success">' + row.status + '</span>'
+                } 
+                if(row.status == 'INACTIVED'){
+                    return '<span class="badge badge-danger">' + row.status + '</span>'
+                }
+            }
+        }, {
+            render: function() {
+                return `<a href="{{route('asset-patrol-detail')}}" class="btn btn-primary me-2">Detail</a>`
+            }
+        }]
+    });
+    active_menu("#menu-checkpointaset-patrol", "#sub-checkpoint-patrol-aset-list")
 </script>
 
 @endpush

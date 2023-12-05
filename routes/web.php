@@ -103,6 +103,8 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('/area-by-project/{id}', [AreaController::class, 'by_project'])->name('area-by-project');
     Route::get('/asset-client-detail', [AssetClientCheckpointController::class, 'detail'])->name('asset-client-detail');
     Route::get('/asset-client-by-checkpoint/{id}', [AssetClientCheckpointController::class, 'asset_by_checkpoint']);
+    Route::get('/asset-patrol-detail', [AssetPatrolCheckpointController::class, 'detail'])->name('asset-patrol-detail');
+    Route::get('/asset-patrol-by-checkpoint/{id}', [AssetPatrolCheckpointController::class, 'asset_by_checkpoint']);
 
 
     //Route Data Table
@@ -122,8 +124,9 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
     Route::get('check-point-aset.datatable', [CheckpointAsetController::class, 'datatable'])->name('check-point-aset.datatable');
     Route::get('checkpoint-aset-client-datatable', [AssetClientCheckpointController::class, 'asset_client_datatable'])->name('checkpoint-aset-client.datatable');
+    Route::get('checkpoint-aset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_patrol_datatable'])->name('checkpoint-aset-patrol.datatable');
     Route::get('asset-client-datatable', [AssetClientCheckpointController::class, 'asset_datatable'])->name('asset-client-datatable');
-    Route::get('checkpoint-aset-patrol.datatable', [CheckpointAsetController::class, 'patrol_datatable'])->name('checkpoint-aset-patrol.datatable');
+    Route::get('asset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_datatable'])->name('asset-patrol-datatable');
     Route::get('atensi-datatable', [AtensiController::class, 'datatable'])->name('atensi.datatable');
     Route::get('self-patrol-datatable', [SelfPatrolController::class, 'datatable'])->name('self-patrol.datatable');
     Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
