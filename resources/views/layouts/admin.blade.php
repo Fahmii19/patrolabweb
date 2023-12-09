@@ -57,8 +57,6 @@
                     <div class="toggle-sidebar">
                         <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
                     </div>
-                    <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle"
-                            data-feather="align-center"></i></div>
                 </div>
                 <div class="left-header col horizontal-wrapper ps-0">
                     <ul class="horizontal-menu">
