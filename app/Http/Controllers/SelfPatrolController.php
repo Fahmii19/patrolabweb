@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\AssetCheckpointLog;
 use App\Models\AssetUnsafeOption;
 use App\Models\CheckPoint;
@@ -57,6 +58,9 @@ class SelfPatrolController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_guard' => 'required|numeric',
                 'id_checkpoint' => 'required|numeric',
+                'patrol_date' => 'required',
+                'patrol_start_time' => 'required',
+                'patrol_finish_time' => 'required',
                 'asset_id.*' => 'required|numeric',
                 'asset_status.*' => 'required|in:SAFE,UNSAFE',
                 'unsafe_description.*' => 'nullable|string',
@@ -69,9 +73,15 @@ class SelfPatrolController extends Controller
             }
 
             $data = $validator->validated();
+            $start_time = Carbon::parse($data['patrol_start_time'])->seconds(0);
+            $finish_time = Carbon::parse($data['patrol_finish_time'])->seconds(0);
+
             $patrol = [
-                'checkpoint_id' => $data['id_checkpoint'],
                 'guard_id' => $data['id_guard'],
+                'patrol_date' => $data['patrol_date'],
+                'start_time' => $start_time->format('H:i:s'),
+                'finish_time' => $finish_time->format('H:i:s'),
+                'checkpoint_id' => $data['id_checkpoint'],
                 'created_at' => now(),
             ];
 

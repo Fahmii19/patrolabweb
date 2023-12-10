@@ -17,6 +17,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('checkpoint_id');
             $table->foreignId('guard_id');
+            $table->date('patrol_date');
+            $table->time('start_time');
+            $table->time('finish_time');
             $table->timestamps();
         });
     }

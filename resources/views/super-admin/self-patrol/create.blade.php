@@ -31,7 +31,7 @@
         <div class="col-sm-12 col-lg-12 col-xl-5">
             <div class="card">
                 <div class="card-body row switch-showcase height-equal">
-                    <div class="mb-3">
+                    <div class="col-12 mb-3">
                         <label for="idGuard" class="form-label">Nama Guard<span class="text-danger">*</span></label>
                         <select class="form-select @error('id_guard') is-invalid @enderror" name="id_guard" id="idGuard" required>
                             <option value="" selected disabled>--Pilih--</option>
@@ -40,7 +40,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="col-12 mb-3">
                         <label for="select-checkpoint" class="form-label">Nama Checkpoint <span class="text-danger">*</span></label>
                         <select class="form-select @error('id_checkpoint') is-invalid @enderror" name="id_checkpoint" id="select-checkpoint" onchange="get_asset(this.value)" required>
                             <option value="" selected disabled>--Pilih--</option>
@@ -49,6 +49,21 @@
                             @endforeach
                         </select>
                         <span class="text-danger d-block" id="checkpoint-alert"></span>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="patrolDate" class="form-label">Tanggal Patrol <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control @error('patrol_date') is-invalid @enderror" name="patrol_date" id="patrolDate" value="{{old('patrol_date')}}">
+                        @error('patrol_date') <span class="text-danger d-block">{{$message}}</span> @enderror
+                    </div>
+                    <div class="col-6">
+                        <label for="patrolStartTime" class="form-label">Jam Mulai <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control @error('patrol_start_time') is-invalid @enderror" name="patrol_start_time" id="patrolStartTime" value="{{old('patrol_start_time')}}">
+                        @error('patrol_start_time') <span class="text-danger d-block">{{$message}}</span> @enderror
+                    </div>
+                    <div class="col-6">
+                        <label for="patrolFinishTime" class="form-label">Jam Selesai <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control @error('patrol_finish_time') is-invalid @enderror" name="patrol_finish_time" id="patrolFinishTime" value="{{old('patrol_finish_time')}}">
+                        @error('patrol_finish_time') <span class="text-danger d-block">{{$message}}</span> @enderror
                     </div>
                 </div>
             </div>
