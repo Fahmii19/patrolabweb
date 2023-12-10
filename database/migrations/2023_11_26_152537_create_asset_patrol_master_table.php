@@ -19,7 +19,7 @@ class CreateAssetPatrolMasterTable extends Migration
             $table->string('code', 255);
             $table->string('name', 255);
             $table->text('short_desc')->nullable();
-            $table->enum('status', ['ACTIVED', 'INACTIVED']);
+            $table->enum('status', ['ACTIVED', 'UNACTIVED']);
             $table->enum('asset_master_type', ['PATROL', 'CLIENT']);
             $table->string('image', 255)->nullable();
         });

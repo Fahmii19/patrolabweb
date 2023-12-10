@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('checkpoint_reports', function (Blueprint $table) {
+        Schema::create('patrol_checkpoint_log', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('checkpoint_id');
+            $table->foreignId('guard_id');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('checkpoint_reports');
+        Schema::dropIfExists('patrol_checkpoint_log');
     }
 };

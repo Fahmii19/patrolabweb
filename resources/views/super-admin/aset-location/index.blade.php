@@ -123,10 +123,6 @@
     });
     active_menu("#menu_aset", "#location_asset")
 </script>
-<div class="d-flex">
-    <a class="btn btn-warning me-2">Edit</a>
-    <button class="btn btn-danger me-2">Hapus</button>
-</div>
 @endpush
 
 @endsection

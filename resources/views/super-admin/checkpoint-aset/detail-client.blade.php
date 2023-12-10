@@ -70,18 +70,20 @@
                 <div class="card-body">
                     <h2 class="fs-5 mb-4">Daftar Asset Client</h2>
 
-                    <table id="mytable" class="display" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th style="max-width: 40px;">No</th>
-                                <th>Kode</th>
-                                <th>Nama</th>
-                                <th>Tipe</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="mytable" class="table" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th style="max-width: 40px;">No</th>
+                                    <th>Kode</th>
+                                    <th>Nama</th>
+                                    <th>Tipe</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

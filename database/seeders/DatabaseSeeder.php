@@ -20,10 +20,16 @@ class DatabaseSeeder extends Seeder
             WilayahSeeder::class,
             AreaSeeder::class,
             AsetSeeder::class,
+            AssetUnsafeOptionSeeder::class,
+            AssetClientCheckpointSeeder::class,
+            AssetPatrolCheckpointSeeder::class,
             BranchSeeder::class,
             ProjectSeeder::class,
             RoundSeeder::class,
             CheckpointSeeder::class,
+            ShiftSeeder::class,
+            PletonSeeder::class,
+            GuardSeeder::class,
         ]);
     }
 }

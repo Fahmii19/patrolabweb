@@ -17,25 +17,25 @@ class ShiftSeeder extends Seeder
     {
         DB::table('shift')->insert([
             [
-                'nama' => 'Shift Pagi',
-                'mulai' => '08:01:00',
-                'selesai' => '14:00:00',
-                'created_at' => '2023-04-13 16:14:36',
-                'updated_at' => '2023-04-13 16:16:23'
+                'name' => 'Shift Pagi',
+                'start_time' => '08:01:00',
+                'end_time' => '16:00:00',
+                'created_at' => now(),
+                'updated_at' => null
             ],
             [
-                'nama' => 'Shift Siang',
-                'mulai' => '16:01:00',
-                'selesai' => '00:00:00',
-                'created_at' => '2023-04-13 16:15:25',
-                'updated_at' => '2023-04-13 16:15:25'
+                'name' => 'Shift Siang',
+                'start_time' => '16:01:00',
+                'end_time' => '00:00:00',
+                'created_at' => now(),
+                'updated_at' => null
             ],
             [
-                'nama' => 'Shift Malam',
-                'mulai' => '00:01:00',
-                'selesai' => '08:00:00',
-                'created_at' => '2023-04-13 16:15:53',
-                'updated_at' => '2023-04-13 16:16:06'
+                'name' => 'Shift Malam',
+                'start_time' => '00:01:00',
+                'end_time' => '08:00:00',
+                'created_at' => now(),
+                'updated_at' => null
             ],
         ]);
     }

@@ -9,7 +9,7 @@
             <div class="col-6">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Round</li>
+                    <li class="breadcrumb-item">Reporting</li>
                     <li class="breadcrumb-item">{{ $title }}</li>
                 </ol>
             </div>
@@ -26,180 +26,110 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12 col-xl-6 col-lg-12 col-md-6">
+    <form action="{{ route('self-patrol.store') }}" method="POST" enctype="multipart/form-data" class="row">
+        @csrf        
+        <div class="col-sm-12 col-lg-12 col-xl-5">
             <div class="card">
                 <div class="card-body row switch-showcase height-equal">
                     <div class="mb-3">
-                        <label for="id_area" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
-                        <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="myselect0">
+                        <label for="idGuard" class="form-label">Nama Guard<span class="text-danger">*</span></label>
+                        <select class="form-select @error('id_guard') is-invalid @enderror" name="id_guard" id="idGuard" required>
                             <option value="" selected disabled>--Pilih--</option>
-                            @foreach ($wilayah as $item)
-                            <option value="{{ $item->id }}" {{ old('id_wilayah') == $item->id ? 'selected' : '' }}>{{ $item->nama }}
-                            </option>
+                            @foreach ($guard as $item)
+                                <option value={{ $item->id }} {{ old('id_guard') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
-                        @error('id_wilayah')
-                        <span class="text-danger d-block">{{ $message }}</span>
-                        @enderror
                     </div>
                     <div class="mb-3">
-                        <label for="id_area" class="form-label">Nama Project <span class="text-danger">*</span></label>
-                        <select class="form-select @error('id_project') is-invalid @enderror" name="id_project" onchange="get_area(this.value)" id="select-project">
+                        <label for="select-checkpoint" class="form-label">Nama Checkpoint <span class="text-danger">*</span></label>
+                        <select class="form-select @error('id_checkpoint') is-invalid @enderror" name="id_checkpoint" id="select-checkpoint" onchange="get_asset(this.value)" required>
                             <option value="" selected disabled>--Pilih--</option>
+                            @foreach ($checkpoint as $item)
+                                <option value={{ $item->id }} {{ old('id_checkpoint') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                            @endforeach
                         </select>
-                        <span class="text-danger d-block" id="project-alert"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_area" class="form-label">Nama Area <span class="text-danger">*</span></label>
-                        <select class="form-select @error('id_area') is-invalid @enderror" name="id_area" id="select-area">
-                            <option value="" selected disabled>--Pilih--</option>
-                        </select>
-                        <span class="text-danger d-block" id="area-alert"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Rute <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" id="nama" value="{{old('nama')}}" placeholder="Masukkan Nama CheckPoint">
-                        @error('nama') <span class="text-danger d-block">{{$message}}</span> @enderror
-                    </div>
-                    <div class="mb-3">
-                        <button class="btn btn-primary">Simpan</button>
+                        <span class="text-danger d-block" id="checkpoint-alert"></span>
                     </div>
                 </div>
-
             </div>
         </div>
-        <div class="col-sm-12 col-xl-6 col-lg-12 col-md-6">
+        <div class="col-sm-12 col-lg-12 col-xl-7">
             <div class="card">
                 <div class="card-body row switch-showcase height-equal">
                     <div class="mb-3">
-                        <label for="id_area" class="form-label">Pilih Check Point <span class="text-danger">*</span></label>
-                        <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="">
-                            <option value="" selected disabled>--Pilih--</option>
+                        <label for="id_area" class="form-label">Daftar Asset pada Checkpoint</label>
+                    </div>
+                    <div class="asset-wrapper mb-3"></div>
 
-                        </select>
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">No</th>
-                                        <th scope="col">Check Point</th>
-                                        <th scope="col">Area</th>
-                                        <th scope="col">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Will 1</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Will 2</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Will 3</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">4</th>
-                                        <td>Will 4</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">5</th>
-                                        <td>Will 5</td>
-                                        <td>Zamrud</td>
-                                        <td>
-                                            <div class="button btn btn-primary">Del<i class="fa fa-trash ms-2"></i></div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button class="btn btn-primary" type="submit">Insert</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <!-- Container-fluid Ends-->
 
 @push('js')
 <script>
-    function get_project(id_wilayah) {
-        let project_base = $('#select-project')
+    function get_asset(id_checkpoint) {
+        let checkpoint_base = $('#select-checkpoint')
         //let project_item = $('#project_item').clone().removeAttr('id')
-        let project_alert = $('#project-alert')
+        let checkpoint_alert = $('#checkpoint-alert')
+        let asset_wrapper = $('.asset-wrapper')
         $.ajax({
-            url: "{{ url('/super-admin/project-by-wilayah-select') }}/" + id_wilayah,
+            url: "{{ url('/super-admin/checkpoint-get-all-asset') }}/" + id_checkpoint,
             method: 'get',
             data: {
-                id_project: "{{ old('id_project') ? implode(',',old('id_project')) : '' }}"
+                id_checkpoint: "{{ old('id_checkpoint') }}"
             },
             //menghapus checkbox sebelumnya jika di select form lain
             beforeSend: function() {
-                project_alert.removeClass('text-danger').addClass('text-black').text('Mengambil data project')
+                checkpoint_alert.removeClass('text-danger').addClass('text-black').text('Mengambil data checkpoint')
             },
 
             success: function(response) {
                 let data = response.data
-                //console.log(data)
-                project_base.html(data)
-                project_alert.text('')
+                // console.log(response);
+                asset_wrapper.html(`
+                    <div class="accordion" id="accordionAsset">
+                        ${data}
+                    </div>
+                `);
+                checkpoint_alert.text('')
             },
             error: function(response) {
-                project_base.html('<option value="" selected disabled>--Pilih--</option>')
-                project_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data project di wilayah ini')
-                //console.log(response)
+                console.log(response);
+                asset_wrapper.html('<div class="bg-warning p-3 rounded-3 text-dark">Tidak ada asset</div>')
+                checkpoint_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data asset pada checkpoint ini')
             }
         })
     }
 
-    function get_area(id_project) {
-        let area_base = $('#select-area')
-        //let project_item = $('#project_item').clone().removeAttr('id')
-        let area_alert = $('#area-alert')
-        $.ajax({
-            url: "{{ url('/super-admin/area-by-project') }}/" + id_project,
-            method: 'get',
-            data: {
-                id_area: "{{ old('id_area') ? implode(',',old('id_area')) : '' }}"
-            },
-            //menghapus checkbox sebelumnya jika di select form lain
-            beforeSend: function() {
-                area_alert.removeClass('text-danger').addClass('text-black').text('Mengambil data area')
-            },
-
-            success: function(response) {
-                let data = response.data
-                //console.log(data)
-                area_base.html(data)
-                area_alert.text('')
-            },
-            error: function(response) {
-                area_base.html('<option value="" selected disabled>--Pilih--</option>')
-                area_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data area di project ini')
-                //console.log(response)
-            }
-        })
+    function selectStatus(event) {
+        const selectTarget = $(event.target);
+        const selectData = $(selectTarget).data('unsafe-form');
+        const selectUnsafe = $(selectData).find('select[name="option_id[]"]');
+        const hiddenOption = $(selectData).find('input[name="asset_unsafe_option_id[]"]');
+        const inputImage = $(selectData).find('input[name="unsafe_image[]"]');
+        const selectValue = $(selectTarget).val();
+        if (selectValue == "UNSAFE") {
+            $(selectData).removeClass("d-none").addClass("d-block");
+        } else {
+            $(selectData).removeClass("d-block").addClass("d-none");
+            $(selectUnsafe).val("");
+            $(hiddenOption).val("");
+            $(inputImage).val("");
+        }
     }
-    active_menu("#menu-round", "#sub-round-create")
+
+    function selectOption(event) {
+        const selectTarget = $(event.target);
+        const hiddenOption = $(selectTarget).parent().find('input[name="asset_unsafe_option_id[]"]');
+        hiddenOption.val($(selectTarget).find(":selected").val())
+    }
+    active_menu("#menu-report", "#sub-report-self-patrol")
 </script>
 
 @endpush

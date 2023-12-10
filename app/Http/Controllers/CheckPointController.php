@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Exception;
 use Throwable;
 use App\Models\Area;
+use App\Models\AssetUnsafeOption;
 use App\Models\Wilayah;
 use App\Models\CheckPoint;
 use App\Models\CheckpointAset;
+use App\Models\CheckpointAssetClient;
+use App\Models\CheckpointAssetPatrol;
 use App\Models\Round;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -286,6 +289,156 @@ class CheckPointController extends Controller
             DB::rollback();
             Log::debug('CheckpointController update ' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function get_all_asset(Request $request, $id) {
+        try {
+            $old = [];
+            if ($request->id_checkpoint) {
+                $old = $request->id_checkpoint;
+            }
+
+            $clientAsset = CheckpointAssetClient::with('asset')->where('checkpoint_id', $id)->get();
+            $patrolAsset = CheckpointAssetPatrol::with('asset')->where('checkpoint_id', $id)->get();
+            $unsafeOption = AssetUnsafeOption::all();
+
+            if ($clientAsset->count() <= 0 && $patrolAsset->count() <= 0) {
+                return response()->json([
+                    "status" => "false",
+                    "message" => "gagal mengambil data asset",
+                    "data" => []
+                ], 404);
+            }
+
+            $selectUnsafeOption = '';
+            if ($unsafeOption->count() > 0) {
+                foreach($unsafeOption as $item) {
+                    $selectUnsafeOption .= '<option value="'.$item->id.'" '.(old("option_id[]") == $item->id ? "selected" : '').'>'.$item->option_condition.'</option>';
+                }
+            }
+
+            $html = '';
+            foreach($clientAsset as $item){
+                $asset_id = $item->asset_master_id;
+
+                if($item->asset->image && file_exists(public_path('gambar/aset/'.$item->asset->image))){
+                    $asset_image = asset('gambar/aset/'.$item->asset->image);
+                } else {
+                    $asset_image = asset('gambar/no-image.png');
+                }
+                
+                $html .= '<div class="accordion-item">' .
+                    '<h2 class="accordion-header" id="heading'.$asset_id.'">'.
+                        '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.$asset_id.'" aria-expanded="false" aria-controls="collapse'.$asset_id.'">'.
+                            $item->asset->name . ' (' .$item->asset->code. ')' . ' - ' . $item->asset->asset_master_type .
+                        '</button>'.
+                    '</h2>'.
+                    '<div id="collapse'.$asset_id.'" class="accordion-collapse collapse" aria-labelledby="heading'.$asset_id.'">'.
+                        '<div class="accordion-body">'.
+                            '<div class="row g-3 align-item-start">'.
+                                '<div class="col-12 col-sm-6 col-xl-4">'.
+                                    '<img src="'.$asset_image.'" class="img-fluid img-rounded" alt="img asset">'.
+                                '</div>'.
+                                '<div class="col-12 col-sm-6 col-xl-8">'.
+                                    '<div class="mb-3">'.
+                                        '<input type="hidden" name="asset_id[]" value="'.$asset_id.'">'.
+                                        '<label for="assetStatus'.$asset_id.'" class="form-label">Status Asset<span class="text-danger">*</span></label>'.
+                                        '<select class="form-select '. (isset($errors) && $errors->has("asset_status[]") ? 'is-invalid' : '') . '" name="asset_status[]" data-unsafe-form="#unsafeForm'.$asset_id.'" id="assetStatus'.$asset_id.'" onchange="selectStatus(event)">'.
+                                            '<option value="" selected disabled>--Pilih--</option>'.
+                                            '<option value="SAFE"> SAFE </option>'.
+                                            '<option value="UNSAFE"> UNSAFE </option>'.
+                                        '</select>'.
+                                    '</div>'.
+                                    '<div class="d-none" id="unsafeForm'.$asset_id.'">'.
+                                        '<div class="mb-3">'.
+                                            '<input type="hidden" name="asset_unsafe_option_id[]">'.
+                                            '<label for="unsafeId'.$asset_id.'" class="form-label">Unsafe Option<span class="text-danger">*</span></label>'.
+                                            '<select class="form-select '. (isset($errors) && $errors->has("option_id[]") ? 'is-invalid' : '') . '" name="option_id[]" id="unsafeId'.$asset_id.'" onchange="selectOption(event)">'.
+                                                '<option value="" selected disabled>--Pilih--</option>'.
+                                                $selectUnsafeOption .
+                                            '</select>'.
+                                        '</div>'.
+                                        '<div class="mb-3">'.
+                                            '<label for="unsafeDesc'.$asset_id.'" class="form-label">Deskripsi <span class="text-danger">*</span></label>'.
+                                            '<input type="text" class="form-control '. (isset($errors) && $errors->has("unsafe_description[]") ? 'is-invalid' : '') . '" name="unsafe_description[]" id="unsafeDesc'.$asset_id.'" value="'.old('unsafe_description[]').'" placeholder="Deskripsi">'.
+                                            (isset($errors) && $errors->has('unsafe_description[]') ? '<span class="text-danger d-block">{{$message}}</span>' : '').
+                                        '</div>'.
+                                        '<div class="mb-3">'.
+                                            '<label for="unsafeImage'.$asset_id.'" class="form-label">Gambar Aset <span class="text-danger">*</span></label>'.
+                                            '<input type="file" class="form-control '. (isset($errors) && $errors->has("unsafe_image[]") ? 'is-invalid' : '') . '" name="unsafe_image[]" id="unsafeImage'.$asset_id.'">'.
+                                            (isset($errors) && $errors->has('unsafe_image[]') ? '<span class="text-danger d-block">{{$message}}</span>' : '').
+                                        '</div>'.
+                                    '</div>'.
+                                '</div>'.
+                            '</div>'.
+                        '</div>'.
+                    '</div>'.
+                '</div>';
+            }
+            foreach($patrolAsset as $item){
+                $asset_id = $item->asset_master_id;
+                if($item->asset->image && file_exists(public_path('gambar/aset/'.$item->asset->image))){
+                    $asset_image = asset('gambar/aset/'.$item->asset->image);
+                } else {
+                    $asset_image = asset('gambar/no-image.png');
+                }
+                $html .= '<div class="accordion-item">' .
+                    '<h2 class="accordion-header" id="heading'.$asset_id.'">'.
+                        '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.$asset_id.'" aria-expanded="false" aria-controls="collapse'.$asset_id.'">'.
+                            $item->asset->name . ' (' .$item->asset->code. ')' . ' - ' . $item->asset->asset_master_type .
+                        '</button>'.
+                    '</h2>'.
+                    '<div id="collapse'.$asset_id.'" class="accordion-collapse collapse" aria-labelledby="heading'.$asset_id.'">'.
+                        '<div class="accordion-body">'.
+                            '<div class="row g-3 align-item-start">'.
+                                '<div class="col-12 col-sm-6 col-xl-4">'.
+                                    '<img src="'.$asset_image.'" class="img-fluid img-rounded" alt="img asset">'.
+                                '</div>'.
+                                '<div class="col-12 col-sm-6 col-xl-8">'.
+                                '<div class="mb-3">'.
+                                        '<input type="hidden" name="asset_id[]" value="'.$asset_id.'">'.
+                                        '<label for="assetStatus'.$asset_id.'" class="form-label">Status Asset<span class="text-danger">*</span></label>'.
+                                        '<select class="form-select '. (isset($errors) && $errors->has("asset_status[]") ? 'is-invalid' : '') . '" name="asset_status[]" data-unsafe-form="#unsafeForm'.$asset_id.'" id="assetStatus'.$asset_id.'" onchange="selectStatus(event)">'.
+                                            '<option value="" selected disabled>--Pilih--</option>'.
+                                            '<option value="SAFE"> SAFE </option>'.
+                                            '<option value="UNSAFE"> UNSAFE </option>'.
+                                        '</select>'.
+                                    '</div>'.
+                                    '<div class="d-none" id="unsafeForm'.$asset_id.'">'.
+                                        '<div class="mb-3">'.
+                                            '<input type="hidden" name="asset_unsafe_option_id[]">'.
+                                            '<label for="unsafeId'.$asset_id.'" class="form-label">Unsafe Option<span class="text-danger">*</span></label>'.
+                                            '<select class="form-select '. (isset($errors) && $errors->has("option_id[]") ? 'is-invalid' : '') . '" name="option_id[]" id="unsafeId'.$asset_id.'" onchange="selectOption(event)">'.
+                                                '<option value="" selected disabled>--Pilih--</option>'.
+                                                $selectUnsafeOption .
+                                            '</select>'.
+                                        '</div>'.
+                                        '<div class="mb-3">'.
+                                            '<label for="unsafeDesc'.$asset_id.'" class="form-label">Deskripsi <span class="text-danger">*</span></label>'.
+                                            '<input type="text" class="form-control '. (isset($errors) && $errors->has("unsafe_description[]") ? 'is-invalid' : '') . '" name="unsafe_description[]" id="unsafeDesc'.$asset_id.'" value="'.old('unsafe_description[]').'" placeholder="Deskripsi">'.
+                                            (isset($errors) && $errors->has('unsafe_description[]') ? '<span class="text-danger d-block">{{$message}}</span>' : '').
+                                        '</div>'.
+                                        '<div class="mb-3">'.
+                                            '<label for="unsafeImage'.$asset_id.'" class="form-label">Gambar Aset <span class="text-danger">*</span></label>'.
+                                            '<input type="file" class="form-control '. (isset($errors) && $errors->has("unsafe_image[]") ? 'is-invalid' : '') . '" name="unsafe_image[]" id="unsafeImage'.$asset_id.'">'.
+                                            (isset($errors) && $errors->has('unsafe_image[]') ? '<span class="text-danger d-block">{{$message}}</span>' : '').
+                                        '</div>'.
+                                    '</div>'.
+                                '</div>'.
+                            '</div>'.
+                        '</div>'.
+                    '</div>'.
+                '</div>';
+            }
+
+            return response()->json([
+                "status" => "true",
+                "messege" => "berhasil mengambil data asset",
+                "data" => [$html],
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::debug($th->getMessage());
         }
     }
 }

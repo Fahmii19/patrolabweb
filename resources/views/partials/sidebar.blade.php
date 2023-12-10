@@ -94,10 +94,10 @@
                     </li>
                     <li class="sidebar-list" id="menu-report"><a class="sidebar-link sidebar-title" href="#"><i data-feather="flag"></i><span>Reporting</span></a>
                         <ul class="sidebar-submenu">
+                            <li><a href="{{ route('self-patrol.create') }}" id="sub-report-self-patrol">Self Patrol</a></li>
                             <li><a href="{{ route('checkpoint-report.index') }}">Checkpoint Report</a></li>
-                            <li><a href="">Shift Patrol Report</a></li>
-                            <li><a href="{{ route('self-patrol.index') }}" id="sub-report-self-patrol">Self Patrol</a></li>
                             <li><a href="">Asset Report</a></li>
+                            <li><a href="">Shift Patrol Report</a></li>
                         </ul>
                     </li>
                     <li><a class="{{ isset($page) && $page == 'audit_log' ? 'active-menu' : '' }} d-block" href="{{ route('audit-log.index') }}" id="menu-audit" data-original-title="" title=""> <i data-feather="activity"></i><span>Audit Log </span></a></li>

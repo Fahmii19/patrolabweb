@@ -30,6 +30,7 @@ use App\Http\Controllers\OutcomingVehicleController;
 use App\Http\Controllers\CheckpointReportController;
 use App\Http\Controllers\AssetClientCheckpointController;
 use App\Http\Controllers\AssetPatrolCheckpointController;
+use App\Http\Controllers\AssetReportController;
 use App\Models\IncomingVehicle;
 
 /*
@@ -88,10 +89,10 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'round' => RoundController::class,
         'checkpoint-aset-client' => AssetClientCheckpointController::class,
         'checkpoint-aset-patrol' => AssetPatrolCheckpointController::class,
-        'self-patrol' => SelfPatrolController::class,
         'atensi' => AtensiController::class,
+        'self-patrol' => SelfPatrolController::class,
         'checkpoint-report' => CheckpointReportController::class,
-
+        'asset-report' => AssetReportController::class,
     ]);
 
     //Route
@@ -132,6 +133,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
     Route::get('incoming-vehicle.datatable', [IncomingVehicleController::class, 'datatable'])->name('incoming-vehicle.datatable');
     Route::get('outcoming-vehicle.datatable', [OutcomingVehicleController::class, 'datatable'])->name('outcoming-vehicle.datatable');
+    Route::get('checkpoint-get-all-asset/{id}', [CheckPointController::class, 'get_all_asset']);
 
 
     //Guard

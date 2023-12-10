@@ -27,7 +27,7 @@ class AsetSeeder extends Seeder
         Aset::create([
             'code' => 'koset02',
             'name' => 'Aset 02',
-            'status' => 'INACTIVED',
+            'status' => 'UNACTIVED',
             'asset_master_type' => 'PATROL',
             'short_desc' => 'Deskripsi singkat Aset 02',
             'created_at' => now(),
@@ -45,7 +45,7 @@ class AsetSeeder extends Seeder
         Aset::create([
             'code' => 'koset04',
             'name' => 'Aset 04',
-            'status' => 'INACTIVED',
+            'status' => 'UNACTIVED',
             'asset_master_type' => 'CLIENT',
             'short_desc' => 'Deskripsi singkat Aset 04',
             'created_at' => now(),
