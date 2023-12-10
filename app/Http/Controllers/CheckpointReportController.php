@@ -3,14 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\CheckpointReport;
+use App\Models\PatrolCheckpointLog;
 use Illuminate\Http\Request;
-
-use Exception;
-use Throwable;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Validator;
 
 class CheckpointReportController extends Controller
 {
@@ -93,16 +88,18 @@ class CheckpointReportController extends Controller
 
     public function datatable()
     {
-        $data = CheckpointReport::all();
+        
+        $data = PatrolCheckpointLog::with(['checkpoint', 'guards.shift'])->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('checkpoint_name_log', '{{$checkpoint_name_log}}')
-            ->addColumn('checkpoint_location_log', '{{$checkpoint_location_log}}')
-            ->addColumn('checkpoint_location_long_lat_log', '{{$checkpoint_location_long_lat_log}}')
-            ->addColumn('shift_start_time_log', '{{$shift_start_time_log}}')
-            ->addColumn('shift_end_time_log', '{{$shift_end_time_log}}')
-            ->addColumn('business_date', '{{$business_date}}')
-            ->toJson();
+            ->addColumn('checkpoint_name', '{{$checkpoint["name"]}}')
+            ->addColumn('checkpoint_loc', '{{$checkpoint["location"]}}')
+            ->addColumn('guard', '{{$guards["name"]}}')
+            ->addColumn('shift', '{{$guards["shift"]["name"]}}')
+            ->addColumn('patrol_date', '{{$patrol_date}}')
+            ->addColumn('start_time', '{{$start_time}}')
+            ->addColumn('finish_time', '{{$finish_time}}')
+        ->toJson();
     }
 }

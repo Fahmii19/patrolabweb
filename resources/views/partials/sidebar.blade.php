@@ -41,8 +41,9 @@
                     </li>
                     <li class="sidebar-list" id="menu_aset"><a class="sidebar-link sidebar-title" href="#"><i data-feather="truck"></i><span>Asset Management</span></a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ route('aset-patroli.index') }}" id="patroli_asset">Patroli Asset</a></li>
+                            {{-- <li><a href="{{ route('aset-patroli.index') }}" id="patroli_asset">Patroli Asset</a></li> --}}
                             <li><a href="{{ route('aset-location.index') }}" id="location_asset">Location Asset</a></li>
+                            <li><a href="{{ route('aset-unsafe-option.index') }}" id="unsafe-option">Unsafe Option</a></li>
                         </ul>
                     </li>
                     <li class="sidebar-list" id="menu-gate"><a class="sidebar-link sidebar-title" href="#"><i data-feather="command"></i><span>Gate Access</span></a>
@@ -95,8 +96,8 @@
                     <li class="sidebar-list" id="menu-report"><a class="sidebar-link sidebar-title" href="#"><i data-feather="flag"></i><span>Reporting</span></a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ route('self-patrol.create') }}" id="sub-report-self-patrol">Self Patrol</a></li>
-                            <li><a href="{{ route('checkpoint-report.index') }}">Checkpoint Report</a></li>
-                            <li><a href="">Asset Report</a></li>
+                            <li><a href="{{ route('checkpoint-report.index') }}" id="sub-list-checkpoint-report">Checkpoint Report</a></li>
+                            <li><a href="{{ route('asset-report.index') }}" id="sub-list-asset-report">Asset Report</a></li>
                             <li><a href="">Shift Patrol Report</a></li>
                         </ul>
                     </li>
