@@ -31,6 +31,7 @@ use App\Http\Controllers\CheckpointReportController;
 use App\Http\Controllers\AssetClientCheckpointController;
 use App\Http\Controllers\AssetPatrolCheckpointController;
 use App\Http\Controllers\AssetReportController;
+use App\Http\Controllers\AssetUnsafeOptionController;
 use App\Models\IncomingVehicle;
 
 /*
@@ -81,6 +82,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'hak-akses' => HakAksesController::class,
         'project-model' => ProjectModelController::class,
         'aset-location' => AsetLocationController::class,
+        'aset-unsafe-option' => AssetUnsafeOptionController::class,
         'aset-patroli' => AsetPatroliController::class,
         'shift' => ShiftController::class,
         'audit-log' => AuditLogController::class,
@@ -119,6 +121,8 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('aset-location-datatable', [AsetLocationController::class, 'datatable'])->name('aset-location.datatable');
     Route::get('ai-master-datatable', [AiMasterDataController::class, 'datatable'])->name('ai-master.datatable');
     Route::get('aset-datatable', [AsetController::class, 'datatable'])->name('aset.datatable');
+    Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
+    Route::get('aset-unsafe-option-datatable', [AssetUnsafeOptionController::class, 'datatable'])->name('aset-unsafe-option.datatable');
     Route::get('project-datatable', [ProjectModelController::class, 'datatable'])->name('project.datatable');
     Route::get('aset-location-datatable', [AsetLocationController::class, 'datatable'])->name('aset-location.datatable');
     Route::get('hak-akses-datatable', [HakAksesController::class, 'datatable'])->name('hak-akses.datatable');

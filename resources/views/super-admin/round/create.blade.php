@@ -38,9 +38,7 @@
                                 </option>
                                 @endforeach
                             </select>
-                            @error('id_wilayah')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
+                            @error('id_wilayah') <span class="text-danger d-block">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="selectProject" class="form-label">Nama Project <span class="text-danger">*</span></label>
@@ -48,6 +46,7 @@
                                 <option value="" selected disabled>--Pilih--</option>
                             </select>
                             <span class="text-danger d-block" id="project-alert"></span>
+                            @error('id_project') <span class="text-danger d-block">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="selectArea" class="form-label">Nama Area <span class="text-danger">*</span></label>
@@ -55,6 +54,7 @@
                                 <option value="" selected disabled>--Pilih--</option>
                             </select>
                             <span class="text-danger d-block" id="area-alert"></span>
+                            @error('id_area') <span class="text-danger d-block">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama Rute <span class="text-danger">*</span></label>

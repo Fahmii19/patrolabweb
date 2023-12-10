@@ -30,4 +30,9 @@ class SelfPatrol extends Model
     {
         return $this->belongsTo(Guard::class, 'id_guard');
     }
+
+    public function asset_report()
+    {
+        return $this->hasMany(AssetCheckpointLog::class, 'patrol_checkpoint_id', 'id');
+    }
 }
