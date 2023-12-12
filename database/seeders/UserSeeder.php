@@ -23,6 +23,13 @@ class UserSeeder extends Seeder
             'status' => 'ACTIVED',
         ]);
 
+        $admin_area = User::create([
+            'name' => 'admin-area',
+            'email' => 'admin.area@gmail.com',
+            'password' => Hash::make('123456'),
+            'status' => 'ACTIVED',
+        ]);
+
         $user = User::create([
             'guard_id' => '1',
             'name' => 'agus',
@@ -33,6 +40,7 @@ class UserSeeder extends Seeder
         ]);
 
         $super_admin->assignRole('super-admin');
+        $admin_area->assignRole('admin-area');
         $user->assignRole('user');
     }
 }

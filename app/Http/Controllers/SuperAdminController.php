@@ -8,7 +8,7 @@ class SuperAdminController extends Controller
 {
     public function dashboard(){
         $data = [
-            'title' => "Dashboard Patrol ABB"
+            'title' => "Dashboard Super Admin Patrol ABB"
         ];
         return view('super-admin.dashboard',$data);
     }
