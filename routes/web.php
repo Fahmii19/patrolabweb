@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminAreaController;
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AreaController;
@@ -51,19 +52,22 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     if (auth()->check()) {
+        // Cek hak akses super-admin
         if (auth()->user()->hasRole('super-admin')) {
             return redirect()->route('admin.dashboard');
-        } elseif (auth()->user()->hasRole('guard')) {
-            return redirect()->route('guard.index');
-        } elseif (auth()->user()->hasRole('admin-area')) {
-            // Asumsikan Anda memiliki dashboard khusus untuk 'admin-area'
+        } 
+        // Cek hak akses admin-area
+        elseif (auth()->user()->hasRole('admin-area')) {
             return redirect()->route('admin-area.dashboard');
-        } else {
-            // Redirect ke halaman default jika user tidak memiliki peran di atas
+        } 
+        // Default hak akses sebagai guard / user
+        else {
+            // Redirect ke halaman default jika hak akses sebagai user / guard
             return redirect()->route('default.dashboard');
         }
     }
-    return redirect()->route('login'); // Redirect ke login jika tidak terautentikasi
+    // Redirect ke login jika tidak terautentikasi
+    return redirect()->route('login'); 
 })->middleware(['auth', 'verified']);
 
 //Grup Rute untuk Super Admin
@@ -139,10 +143,9 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('outcoming-vehicle.datatable', [OutcomingVehicleController::class, 'datatable'])->name('outcoming-vehicle.datatable');
     Route::get('checkpoint-get-all-asset/{id}', [CheckPointController::class, 'get_all_asset']);
 
-
     //Guard
     Route::get('guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');
-    Route::get('/guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
+    Route::get('guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
 
 
     //Pleton
@@ -155,12 +158,25 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::post('get-hak-akses', [HakAksesController::class, 'get_hak_akses'])->name('get-hak-akses');
 });
 
+Route::group(['prefix' => 'admin-area', 'middleware' => ['auth', 'verified', 'role:super-admin|admin-area']], function () {
+    Route::get('/dashboard', [AdminAreaController::class, 'dashboard'])->name('admin-area.dashboard');
+    Route::resources([
+        'area' => AreaController::class,
+        'branch' => BranchController::class,
+        'project-model' => ProjectModelController::class,
+    ]);
+
+    Route::get('area-datatable', [AreaController::class, 'datatable'])->name('area.datatable');
+    Route::get('branch-datatable', [BranchController::class, 'datatable'])->name('branch.datatable');
+    Route::get('project-datatable', [ProjectModelController::class, 'datatable'])->name('project.datatable');
+});
+
 // Grup Rute untuk Guard
-Route::group(['prefix' => 'guard', 'middleware' => ['auth', 'verified', 'role:guard']], function () {
+Route::group(['prefix' => 'guard', 'middleware' => ['auth', 'verified', 'role:super-admin|guard']], function () {
+    
     Route::resources([
         'guard' => GuardController::class,
         'pleton' => PletonController::class,
-
     ]);
     // Guard
     Route::get('/guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');
