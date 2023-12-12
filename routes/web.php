@@ -33,6 +33,7 @@ use App\Http\Controllers\AssetClientCheckpointController;
 use App\Http\Controllers\AssetPatrolCheckpointController;
 use App\Http\Controllers\AssetReportController;
 use App\Http\Controllers\AssetUnsafeOptionController;
+use App\Http\Controllers\DefaultController;
 use App\Models\IncomingVehicle;
 
 /*
@@ -172,7 +173,8 @@ Route::group(['prefix' => 'admin-area', 'middleware' => ['auth', 'verified', 'ro
 });
 
 // Grup Rute untuk Guard
-Route::group(['prefix' => 'guard', 'middleware' => ['auth', 'verified', 'role:super-admin|guard']], function () {
+Route::group(['prefix' => 'guard', 'middleware' => ['auth', 'verified', 'role:super-admin|guard|user']], function () {
+    Route::get('/dashboard', [DefaultController::class, 'dashboard'])->name('default.dashboard');
     
     Route::resources([
         'guard' => GuardController::class,
