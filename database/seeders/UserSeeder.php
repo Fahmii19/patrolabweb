@@ -25,6 +25,7 @@ class UserSeeder extends Seeder
 
         $admin_area = User::create([
             'name' => 'admin-area',
+            'access_area' => '1,2',
             'email' => 'admin.area@gmail.com',
             'password' => Hash::make('123456'),
             'status' => 'ACTIVED',
@@ -33,7 +34,6 @@ class UserSeeder extends Seeder
         $user = User::create([
             'guard_id' => '1',
             'name' => 'agus',
-            'no_badge' => '123456',
             'email' => 'agus@gmail.com',
             'password' => Hash::make('123456'),
             'status' => 'ACTIVED',

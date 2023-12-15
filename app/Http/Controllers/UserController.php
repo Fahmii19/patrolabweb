@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Throwable;
+use App\Models\Area;
 use App\Models\User;
 use App\Models\Guard;
 use Illuminate\Http\Request;
@@ -33,11 +34,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        $data['title'] = "Tambah User";
-        $data['guard'] = Guard::doesntHave('user')->get();
-        $data['role'] = Role::where('name', '!=', 'super-admin')
-            ->where('name', '!=', 'user')
-            ->get();
+        $data['title'] = "Tambah User (Admin Area)";
+        $data['area'] = Area::all(); // Data area untuk admin-area
         return view('super-admin.user.create', $data);
     }
 
@@ -51,37 +49,42 @@ class UserController extends Controller
     {
         try {
             DB::beginTransaction();
+
             $validator = Validator::make($request->all(), [
-                'guard_id' => 'required|numeric',
-                'role' => 'required',
+                'name' => 'required|string',
+                'email' => 'required|email',
                 'password' => 'required',
-                'status' => 'required|in:ACTIVED,INACTIVED'
+                'area.*' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+
+            if ($request->area == null) {
+                return redirect()->back()->withErrors(['area' => 'Area wajib dipilih, minimal satu']);
+            }
+
             $validator->validated();
 
-            // dd($request->role);
-
-            $guard = Guard::find($request->guard_id);
-
             $data_user = [
-                'guard_id' => $guard->id,
-                'name' => $guard->name,
-                'no_badge' => $guard->badge_number,
-                'email' => $guard->email,
+                'access_area' => implode(',', $request->area),
+                'name' => $request->name,
+                'email' => $request->email,
                 'password' => bcrypt($request->password),
-                'status' => $request->status
+                'status' => 'ACTIVED',
             ];
-            $usr = User::create($data_user);
-            $usr->assignRole($request->role);
-            // foreach ($request->role as $item) {
-            //     // $usr->assignRole($item);
-            // }
-            DB::commit();
-            return redirect()->route('user.index')->with('success', 'Data Berhasil Ditambahkan');
+
+            $user = User::create($data_user);
+
+            if ($user) {
+                $user->assignRole('admin-area');
+                DB::commit();
+                return redirect()->route('user.index')->with('success', 'Admin Area Berhasil Ditambahkan');
+            }
+
+            DB::rollback();
+            return redirect()->back()->with('error', 'Admin Area Gagal Ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('UserController store() ' . $e->getMessage());
@@ -109,11 +112,8 @@ class UserController extends Controller
     public function edit($id)
     {
         $data['title'] = "Edit User";
-        // $data['guard'] = Guard::doesntHave('user')->get();
-        // $data['role'] = Role::where('name', '!=', 'super-admin')
-        //     ->where('name', '!=', 'user')
-        //     ->get();
         $data['user'] = User::find($id);
+        $data['area'] = Area::all();
 
         // Pastikan user ditemukan sebelum mencoba mengakses metode pada objeknya
         if (!$data['user']) {
@@ -137,34 +137,54 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                'role' => 'required', // Pastikan role diisi
+                'role' => 'required|string',
+                'name' => 'required|string',
+                'email' => 'required|email',
                 'password' => 'nullable',
-                'status' => 'required|in:ACTIVED,INACTIVED'
+                'area.*' => 'nullable|string',
+                'status' => 'nullable|in:ACTIVED,INACTIVED'
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
 
-            $usr = User::find($id);
-            if (!$usr) {
+
+            $user = User::find($id);
+            if (!$user) {
                 throw new Exception('User tidak ditemukan.');
             }
 
-            // dd($request->role);
-
-            // Update role user
-            $usr->syncRoles($request->role); // Menggunakan syncRoles untuk update peran
-
             // Update data user lainnya
-            $data_user = ['status' => $request->status];
+            $data = $validator->validated();
+            $data_user = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'status' => $data['status'] ?? 'INACTIVED'
+            ];
+
+            // Check jika hak akses user sebagai admin area
+            if ($request->role == 'admin-area') {
+
+                if ($request->area == null) {
+                    return redirect()->back()->withErrors(['area' => 'Area wajib dipilih, minimal satu']);
+                }
+
+                $data_user['access_area'] = implode(',', $request->area);
+            }
+
+            // Check jika password tidak kosong
             if ($request->password) {
                 $data_user['password'] = bcrypt($request->password);
             }
-            $usr->update($data_user);
 
-            DB::commit();
-            return redirect()->route('user.index')->with('success', 'Data Berhasil Diedit');
+            if ($user->update($data_user)){
+                DB::commit();
+                return redirect()->route('user.index')->with('success', 'User Berhasil Diedit');
+            }
+
+            DB::rollback();
+            return redirect()->back()->with('error', 'User Gagal Diedit');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('UserController update() ' . $e->getMessage());
@@ -184,42 +204,41 @@ class UserController extends Controller
             $user = User::find($id);
             DB::beginTransaction();
 
-            $action = $user->delete();
-            DB::commit();
-
-            if ($action) {
-                return redirect()->route('user.index')->with('success', 'data user berhasil dihapus');
+            if ($user->delete()) {
+                DB::commit();
+                return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
             }
+
             DB::rollback();
-            return redirect()->back()->with('error', 'data user gagal dihapus');
+            return redirect()->back()->with('error', 'User gagal dihapus');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('UserController destroy ' . $e->getMessage());
+            Log::debug('UserController destroy() ' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
     public function datatable()
     {
-
-        // $data = User::where('id', '!=', 1)->get(); // Mengambil semua pengguna kecuali yang memiliki id = 1
-
-        // foreach ($data as $user) {
-        //     // Di sini Anda bisa menggunakan $user->getRoleNames() untuk mendapatkan peran pengguna
-        //     $roleNames = $user->getRoleNames()->toArray();
-        //     $roles = implode(', ', $roleNames);
-
-        //     // Lakukan sesuatu dengan $roles, misalnya menampilkannya atau menyimpannya
-        //     echo "User: " . $user->name . " - Roles: " . $roles . "\n";
-        // }
-
-
-        $data = User::where('id', '!=', 1)->get();
+        $data = User::with('data_guard')->where('id', '!=', 1)->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('name', '{{$name}}')
-            ->addColumn('no_badge', '{{$no_badge}}')
+            ->addColumn('no_badge', '{{$guard_id ? $data_guard["badge_number"] : "-"}}')
+            ->addColumn('access_area', function(User $user) {
+                if ($user->access_area) {
+                    $list_area = "";
+                    $areas = explode(',', $user->access_area);
+                    foreach($areas as $item){
+                        $area = Area::where('id', $item)->pluck('name');
+                        $list_area .= $area[0] . ', ';
+                    }
+
+                    return rtrim($list_area, ', ');
+                }
+                return "-";
+            })
             ->addColumn('role', function (User $user) {
                 return implode(', ', $user->getRoleNames()->toArray());
             })
@@ -233,7 +252,6 @@ class UserController extends Controller
                     'deleteurl' => route('user.destroy', $user->id)
                 ];
             })
-
             ->toJson();
     }
 }
