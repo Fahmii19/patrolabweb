@@ -24,7 +24,6 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\AsetPatroliController;
 use App\Http\Controllers\AiMasterDataController;
 use App\Http\Controllers\AsetLocationController;
-use App\Http\Controllers\ProjectModelController;
 use App\Http\Controllers\CheckpointAsetController;
 use App\Http\Controllers\IncomingVehicleController;
 use App\Http\Controllers\OutcomingVehicleController;
@@ -34,6 +33,8 @@ use App\Http\Controllers\AssetPatrolCheckpointController;
 use App\Http\Controllers\AssetReportController;
 use App\Http\Controllers\AssetUnsafeOptionController;
 use App\Http\Controllers\DefaultController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProvinceController;
 use App\Models\IncomingVehicle;
 
 /*
@@ -76,20 +77,21 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::resources([
         'user' => UserController::class,
+        'province' => ProvinceController::class,
         'wilayah' => WilayahController::class,
         'area' => AreaController::class,
         'branch' => BranchController::class,
+        'project' => ProjectController::class,
+        'aset' => AsetController::class,
+        'shift' => ShiftController::class,
         'check-point' => CheckPointController::class,
         'guard' => GuardController::class,
         'pleton' => PletonController::class,
         'ai-master' => AiMasterDataController::class,
-        'aset' => AsetController::class,
         'hak-akses' => HakAksesController::class,
-        'project-model' => ProjectModelController::class,
         'aset-location' => AsetLocationController::class,
         'aset-unsafe-option' => AssetUnsafeOptionController::class,
         'aset-patroli' => AsetPatroliController::class,
-        'shift' => ShiftController::class,
         'audit-log' => AuditLogController::class,
         'incoming-vehicle' => IncomingVehicleController::class,
         'outcoming-vehicle' => OutcomingVehicleController::class,
@@ -102,21 +104,21 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'asset-report' => AssetReportController::class,
     ]);
 
-    //Route
+    //Route 
     Route::get('/round/detail/', [RoundController::class, 'detail'])->name('round.detail');
     Route::delete('/checkpoint/remove-round/{id}', [CheckPointController::class, 'remove_round'])->name('checkpoint-remove-round');
     Route::put('/checkpoint/update-round/{id}', [CheckPointController::class, 'update_round'])->name('checkpoint-update-round');
-    Route::get('/project-by-wilayah/{id}', [ProjectModelController::class, 'by_wilayah'])->name('project-by-wilayah');
-    Route::get('/project-by-wilayah-select/{id}', [ProjectModelController::class, 'by_wilayah_select'])->name('project-by-wilayah-select');
+    Route::get('/project-by-wilayah/{id}', [ProjectController::class, 'by_wilayah'])->name('project-by-wilayah');
+    Route::get('/project-by-wilayah-select/{id}', [ProjectController::class, 'by_wilayah_select'])->name('project-by-wilayah-select');
     Route::get('/area-by-project/{id}', [AreaController::class, 'by_project'])->name('area-by-project');
     Route::get('/asset-client-detail', [AssetClientCheckpointController::class, 'detail'])->name('asset-client-detail');
     Route::get('/asset-client-by-checkpoint/{id}', [AssetClientCheckpointController::class, 'asset_by_checkpoint']);
     Route::get('/asset-patrol-detail', [AssetPatrolCheckpointController::class, 'detail'])->name('asset-patrol-detail');
     Route::get('/asset-patrol-by-checkpoint/{id}', [AssetPatrolCheckpointController::class, 'asset_by_checkpoint']);
 
-
     //Route Data Table
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
+    Route::get('province-datatable', [ProvinceController::class, 'datatable'])->name('province.datatable');
     Route::get('wilayah-datatable', [WilayahController::class, 'datatable'])->name('wilayah.datatable');
     Route::get('area-datatable', [AreaController::class, 'datatable'])->name('area.datatable');
     Route::get('branch-datatable', [BranchController::class, 'datatable'])->name('branch.datatable');
@@ -128,7 +130,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('aset-datatable', [AsetController::class, 'datatable'])->name('aset.datatable');
     Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
     Route::get('aset-unsafe-option-datatable', [AssetUnsafeOptionController::class, 'datatable'])->name('aset-unsafe-option.datatable');
-    Route::get('project-datatable', [ProjectModelController::class, 'datatable'])->name('project.datatable');
+    Route::get('project-datatable', [ProjectController::class, 'datatable'])->name('project.datatable');
     Route::get('aset-location-datatable', [AsetLocationController::class, 'datatable'])->name('aset-location.datatable');
     Route::get('hak-akses-datatable', [HakAksesController::class, 'datatable'])->name('hak-akses.datatable');
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
@@ -164,12 +166,12 @@ Route::group(['prefix' => 'admin-area', 'middleware' => ['auth', 'verified', 'ro
     Route::resources([
         'area' => AreaController::class,
         'branch' => BranchController::class,
-        'project-model' => ProjectModelController::class,
+        'project' => ProjectController::class,
     ]);
 
     Route::get('area-datatable', [AreaController::class, 'datatable'])->name('area.datatable');
     Route::get('branch-datatable', [BranchController::class, 'datatable'])->name('branch.datatable');
-    Route::get('project-datatable', [ProjectModelController::class, 'datatable'])->name('project.datatable');
+    Route::get('project-datatable', [ProjectController::class, 'datatable'])->name('project.datatable');
 });
 
 // Grup Rute untuk Guard

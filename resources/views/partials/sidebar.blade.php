@@ -27,11 +27,12 @@
                             <a class="sidebar-link sidebar-title" href="#"><i class="menu-icon" data-feather="home"></i><span>Master Data</span></a>
                             <ul class="sidebar-submenu">
                                 <li><a href="{{ route('user.index') }}" id="user">User</a></li>
-                                <li><a href="{{ route('aset.index') }}" id="asset">Asset</a></li>
+                                <li><a href="{{ route('province.index') }}" id="province">Province</a></li>
+                                <li><a href="{{ route('wilayah.index') }}" id="region">Region</a></li>
                                 <li><a href="{{ route('area.index') }}" id="area">Areas</a></li>
                                 <li><a href="{{ route('branch.index') }}" id="branch">Branch</a></li>
-                                <li><a href="{{ route('project-model.index') }}" id="project">Projects</a></li>
-                                <li><a href="{{ route('wilayah.index') }}" id="wilayah">Region</a></li>
+                                <li><a href="{{ route('project.index') }}" id="project">Projects</a></li>
+                                <li><a href="{{ route('aset.index') }}" id="asset">Asset</a></li>
                                 <li><a href="{{ route('shift.index') }}" id="shift">Shift</a></li>
                             </ul>
                         </li>
@@ -117,7 +118,7 @@
                             <ul class="sidebar-submenu">
                                 <li><a href="{{ route('area.index') }}" id="area">Areas</a></li>
                                 <li><a href="{{ route('branch.index') }}" id="branch">Branch</a></li>
-                                <li><a href="{{ route('project-model.index') }}" id="project">Projects</a></li>
+                                <li><a href="{{ route('project.index') }}" id="project">Projects</a></li>
                             </ul>
                         </li>
                     @endrole
