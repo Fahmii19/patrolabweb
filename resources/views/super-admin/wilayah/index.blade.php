@@ -1,25 +1,14 @@
-<!-- @php
-$page = 'data-master';
-$section = 'wilayah';
-@endphp -->
 @extends('layouts.admin')
 @section('content')
-<div class="container-fluid">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-6">
-                <h3>{{ $title }}</h3>
-            </div>
-            <div class="col-6">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Wilayah</li>
-                    <li class="breadcrumb-item">{{ $title }}</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+    @component('components.dashboard.headpage')
+        @slot('title')
+            {{ $title }}
+        @endslot
+        @slot('bread')
+            <li class="breadcrumb-item">Master Data</li>
+            <li class="breadcrumb-item">{{ $title }}</li>
+        @endslot
+    @endcomponent
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="card">
@@ -27,16 +16,19 @@ $section = 'wilayah';
             <div class="d-flex mb-3 justify-content-end">
                 <a href="{{route('wilayah.create')}}" class="btn btn-success">Tambah Wilayah</a>
             </div>
-            <table id="mytable" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th style="max-width: 40px;">No</th>
-                        <th>Kode Wilayah</th>
-                        <th>Nama Wilayah</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
+            <div class="table-responsive">
+                <table id="mytable" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="max-width: 40px;">No</th>
+                            <th>Provinsi</th>
+                            <th>Kode Wilayah</th>
+                            <th>Nama Wilayah</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -63,11 +55,15 @@ $section = 'wilayah';
                 name: 'No'
             },
             {
-                data: 'kode',
+                data: 'province',
+                name: 'Provinsi'
+            },
+            {
+                data: 'code',
                 name: 'Kode Wilayah'
             },
             {
-                data: 'nama',
+                data: 'name',
                 name: 'Nama Wilayah'
             },
             {
@@ -84,7 +80,7 @@ $section = 'wilayah';
             }
         ]
     });
-    active_menu("#data_master", "#wilayah")
+    active_menu("#data_master", "#region")
 </script>
 @endpush
 

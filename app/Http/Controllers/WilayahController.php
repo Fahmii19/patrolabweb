@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Wilayah;
+use App\Models\Province;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class WilayahController extends Controller
 {
@@ -30,6 +32,7 @@ class WilayahController extends Controller
     public function create()
     {
         $data['title'] = "Tambah Data Wilayah";
+        $data['province'] = Province::all();
         return view('super-admin.wilayah.create', $data);
     }
 
@@ -43,24 +46,27 @@ class WilayahController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = $request->validate([
-                'kode' => ['required', 'unique:wilayahs'],
-                'nama' => ['required', 'string']
+            $validator = Validator::make($request->all(), [
+                'province_id' => 'required|numeric',
+                'code' => 'required|unique:city',
+                'name' => 'required|string',
             ]);
 
-            $action = Wilayah::create($data);
-            DB::commit();
-
-            // dd($action);
-
-            if ($action) {
-                return redirect()->route('wilayah.index')->with('success', 'data wilayah berhasil disimpan');
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+
+            $data = $validator->validated();
+            if (Wilayah::create($data)) {
+                DB::commit();
+                return redirect()->route('wilayah.index')->with('success', 'Wilayah berhasil ditambahkan');
+            }
+
             DB::rollback();
-            return redirect()->back()->with('error', 'data wilayah gagal disimpan');
+            return redirect()->back()->with('error', 'Wilayah gagal ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('WilayahController store ' . $e->getMessage());
+            Log::debug('WilayahController store() -' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -85,6 +91,7 @@ class WilayahController extends Controller
     public function edit(Wilayah $wilayah)
     {
         $data['title'] = "Edit Data Wilayah";
+        $data['province'] = Province::all();
         $data['wilayah'] = $wilayah;
         return view('super-admin.wilayah.edit', $data);
     }
@@ -100,27 +107,29 @@ class WilayahController extends Controller
     {
         try {
             DB::beginTransaction();
-            $unique = 'unique:wilayahs';
 
-            if ($request->kode == $wilayah->kode) {
-                $unique = '';
-            }
-            $data = $request->validate([
-                'kode' => ['required', $unique],
-                'nama' => ['required', 'string']
+            $validator = Validator::make($request->all(), [
+                'province_id' => 'required|numeric',
+                'code' => 'required|unique:city,code,' . $wilayah->id,
+                'name' => 'required|string',
             ]);
 
-            $action = $wilayah->update($data);
-            DB::commit();
-
-            if ($action) {
-                return redirect()->route('wilayah.index')->with('success', 'data wilayah berhasil diupdate');
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+
+            $data = $validator->validated();
+
+            if ($wilayah->update($data)) {
+                DB::commit();
+                return redirect()->route('wilayah.index')->with('success', 'Wilayah berhasil diupdate');
+            }
+
             DB::rollback();
-            return redirect()->back()->with('error', 'data wilayah gagal diupdate');
+            return redirect()->back()->with('error', 'Wilayah gagal diupdate');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('WilayahController update ' . $e->getMessage());
+            Log::debug('WilayahController update() -' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -136,29 +145,29 @@ class WilayahController extends Controller
         try {
             DB::beginTransaction();
 
-            $action = $wilayah->delete();
-            DB::commit();
-
-            if ($action) {
-                return redirect()->route('wilayah.index')->with('success', 'data wilayah berhasil dihapus');
+            if ($wilayah->delete()) {
+                DB::commit();
+                return redirect()->route('wilayah.index')->with('success', 'Wilayah berhasil dihapus');
             }
+
             DB::rollback();
-            return redirect()->back()->with('error', 'data wilayah gagal dihapus');
+            return redirect()->back()->with('error', 'Wilayah gagal dihapus');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('WilayahController destroy ' . $e->getMessage());
+            Log::debug('WilayahController destroy() -' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
     public function datatable()
     {
-        $data = Wilayah::all();
+        $data = Wilayah::with('province')->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('kode', '{{$kode}}')
-            ->addColumn('nama', '{{$nama}}')
+            ->addColumn('province', '{{$province["name"]}}')
+            ->addColumn('code', '{{$code}}')
+            ->addColumn('name', '{{$name}}')
             ->addColumn('action', function (Wilayah $wilayah) {
                 $data = [
                     'editurl' => route('wilayah.edit', $wilayah->id),

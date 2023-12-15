@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('kode');
             $table->string('nama');
+            $table->unsignedBigInteger('province_id');
             $table->timestamps();
         });
     }
