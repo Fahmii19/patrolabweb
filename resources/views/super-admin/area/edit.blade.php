@@ -32,30 +32,28 @@
                                     <option value="{{ $project->id }}" {{ old('project_id', $area->project_id) == $project->id ? 'selected' : '' }}>{{ $project->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('project_id')
-                                <span class="text-danger d-block">{{ $message }}</span>
-                                @enderror
+                                @error('project_id') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
                             <!-- Kode Area -->
                             <div class="mb-3">
                                 <label for="code" class="form-label">Kode Area <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{ old('code', $area->code) }}" placeholder="Masukkan kode area">
+                                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{ old('code', $area->code) }}" placeholder="Masukkan kode area" required>
                                 @error('code') <span class="text-danger d-block">{{$message}}</span> @enderror
                             </div>
                             <!-- Nama Area -->
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nama Area <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ old('name', $area->name) }}" placeholder="Masukkan Nama Area">
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ old('name', $area->name) }}" placeholder="Masukkan Nama Area" required>
                                 @error('name') <span class="text-danger d-block">{{$message}}</span> @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Deskripsi Lengkap <span class="text-danger">*</span></label>
-                                <textarea class="form-control @error('description') is-invalid @enderror" name="description" id="description" placeholder="Masukkan deskripsi lengkap" rows="4">{{ old('description', $area->description) }}</textarea>
+                                <textarea class="form-control @error('description') is-invalid @enderror" name="description" id="description" placeholder="Masukkan deskripsi lengkap" rows="4" required>{{ old('description', $area->description) }}</textarea>
                                 @error('description') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
                             <!-- Status -->
                             <div class="mb-3">
-                                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                <label for="status" class="form-label">Status</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="ACTIVED" name="status" @if($area->status == 'ACTIVED') checked @endif>
                                     <label class="form-check-label" for="status">

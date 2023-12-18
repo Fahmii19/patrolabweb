@@ -34,12 +34,12 @@
                         </div>
                         <div class="mb-3">
                             <label for="code" class="form-label">Kode Area <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{old('code')}}" placeholder="Masukkan kode area">
+                            <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{old('code')}}" placeholder="Masukkan kode area" required>
                             @error('code') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama Area <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{old('name')}}" placeholder="Masukkan Nama Area">
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{old('name')}}" placeholder="Masukkan Nama Area" required>
                             @error('name') <span class="text-danger d-block">{{$message}}</span> @enderror
                         </div>
                         <div class="mb-3">
@@ -50,7 +50,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Deskripsi Lengkap <span class="text-danger">*</span></label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" name="description" id="description" placeholder="Masukkan deskripsi lengkap" rows="4">{{ old('description') }}</textarea>
+                            <textarea class="form-control @error('description') is-invalid @enderror" name="description" id="description" placeholder="Masukkan deskripsi lengkap" rows="4" required>{{ old('description') }}</textarea>
                             @error('description') <span class="text-danger d-block">{{ $message }}</span> @enderror
                         </div>
                     </div>

@@ -82,7 +82,7 @@ class AreaController extends Controller
             }
 
             DB::rollback();
-            return redirect()->route('area.index')->with('success', 'Area gagal ditambahkan');
+            return redirect()->route('area.index')->with('error', 'Area gagal ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
             Log::error('AreaController store error: ' . $e->getMessage());
@@ -179,7 +179,7 @@ class AreaController extends Controller
             }
 
             DB::rollback();
-            return redirect()->route('area.index')->with('success', 'Area gagal diperbarui');
+            return redirect()->route('area.index')->with('error', 'Area gagal diperbarui');
         } catch (Exception $e) {
             DB::rollback();
             Log::error('AreaController update error: ' . $e->getMessage());
@@ -217,7 +217,7 @@ class AreaController extends Controller
             }
 
             DB::rollback();
-            return redirect()->route('area.index')->with('success', 'Area gagal dihapus');
+            return redirect()->route('area.index')->with('error', 'Area gagal dihapus');
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('AreaController destroy() error: ' . $e->getMessage());
