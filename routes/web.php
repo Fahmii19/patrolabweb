@@ -33,6 +33,7 @@ use App\Http\Controllers\AssetPatrolCheckpointController;
 use App\Http\Controllers\AssetReportController;
 use App\Http\Controllers\AssetUnsafeOptionController;
 use App\Http\Controllers\DefaultController;
+use App\Http\Controllers\GateController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProvinceController;
 use App\Models\IncomingVehicle;
@@ -82,6 +83,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'area' => AreaController::class,
         'branch' => BranchController::class,
         'project' => ProjectController::class,
+        'gate' => GateController::class,
         'aset' => AsetController::class,
         'shift' => ShiftController::class,
         'check-point' => CheckPointController::class,
@@ -122,15 +124,16 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('wilayah-datatable', [WilayahController::class, 'datatable'])->name('wilayah.datatable');
     Route::get('area-datatable', [AreaController::class, 'datatable'])->name('area.datatable');
     Route::get('branch-datatable', [BranchController::class, 'datatable'])->name('branch.datatable');
+    Route::get('project-datatable', [ProjectController::class, 'datatable'])->name('project.datatable');
+    Route::get('gate-datatable', [GateController::class, 'datatable'])->name('gate.datatable');
+    Route::get('aset-datatable', [AsetController::class, 'datatable'])->name('aset.datatable');
     Route::get('check-point-datatable', [CheckPointController::class, 'datatable'])->name('check-point.datatable');
     Route::get('checkpoint-without-round-datatable', [CheckPointController::class, 'datatable_without_round'])->name('check-point.without-round-datatable');
     Route::get('round-datatable', [RoundController::class, 'datatable'])->name('round.datatable');
     Route::get('aset-location-datatable', [AsetLocationController::class, 'datatable'])->name('aset-location.datatable');
     Route::get('ai-master-datatable', [AiMasterDataController::class, 'datatable'])->name('ai-master.datatable');
-    Route::get('aset-datatable', [AsetController::class, 'datatable'])->name('aset.datatable');
     Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
     Route::get('aset-unsafe-option-datatable', [AssetUnsafeOptionController::class, 'datatable'])->name('aset-unsafe-option.datatable');
-    Route::get('project-datatable', [ProjectController::class, 'datatable'])->name('project.datatable');
     Route::get('aset-location-datatable', [AsetLocationController::class, 'datatable'])->name('aset-location.datatable');
     Route::get('hak-akses-datatable', [HakAksesController::class, 'datatable'])->name('hak-akses.datatable');
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
@@ -145,6 +148,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('incoming-vehicle.datatable', [IncomingVehicleController::class, 'datatable'])->name('incoming-vehicle.datatable');
     Route::get('outcoming-vehicle.datatable', [OutcomingVehicleController::class, 'datatable'])->name('outcoming-vehicle.datatable');
     Route::get('checkpoint-get-all-asset/{id}', [CheckPointController::class, 'get_all_asset']);
+    Route::get('checkpoint-by-round/{id}', [CheckPointController::class, 'by_round']);
 
     //Guard
     Route::get('guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');

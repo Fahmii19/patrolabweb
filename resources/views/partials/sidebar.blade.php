@@ -32,6 +32,7 @@
                                 <li><a href="{{ route('area.index') }}" id="area">Areas</a></li>
                                 <li><a href="{{ route('branch.index') }}" id="branch">Branch</a></li>
                                 <li><a href="{{ route('project.index') }}" id="project">Projects</a></li>
+                                <li><a href="{{ route('gate.index') }}" id="gate">Gate</a></li>
                                 <li><a href="{{ route('aset.index') }}" id="asset">Asset</a></li>
                                 <li><a href="{{ route('shift.index') }}" id="shift">Shift</a></li>
                             </ul>
