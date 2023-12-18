@@ -34,8 +34,10 @@ use App\Http\Controllers\AssetReportController;
 use App\Http\Controllers\AssetUnsafeOptionController;
 use App\Http\Controllers\DefaultController;
 use App\Http\Controllers\GateController;
+use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\ScheduleController;
 use App\Models\IncomingVehicle;
 
 /*
@@ -86,6 +88,8 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'gate' => GateController::class,
         'aset' => AsetController::class,
         'shift' => ShiftController::class,
+        'schedule' => ScheduleController::class,
+        'notice-boards' => NoticeBoardController::class,
         'check-point' => CheckPointController::class,
         'guard' => GuardController::class,
         'pleton' => PletonController::class,

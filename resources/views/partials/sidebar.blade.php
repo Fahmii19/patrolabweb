@@ -39,8 +39,8 @@
                         </li>
                         <li class="sidebar-list mb-2" id="menu-patrol"><a class="sidebar-link sidebar-title" href="#"><i data-feather="shield"></i><span>Patrol</span></a>
                             <ul class="sidebar-submenu">
-                                <li><a href="" id="sub-schedule">Schedule</a></li>
-                                <li><a href="{{ route('atensi.index') }}" id="sub-notice">Notice Boards</a></li>
+                                <li><a href="{{ route('schedule.index') }}" id="sub-schedule">Schedule</a></li>
+                                <li><a href="{{ route('notice-boards.index') }}" id="sub-notice">Notice Boards</a></li>
                             </ul>
                         </li>
                         <li class="sidebar-list mb-2" id="menu_aset"><a class="sidebar-link sidebar-title" href="#"><i data-feather="truck"></i><span>Asset Management</span></a>
