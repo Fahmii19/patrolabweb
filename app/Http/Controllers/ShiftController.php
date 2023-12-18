@@ -29,7 +29,7 @@ class ShiftController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
+                'name' => 'required|string',
                 'start_time' => 'required',
                 'end_time' => 'required',
             ]);
@@ -37,11 +37,16 @@ class ShiftController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+
             $data = $validator->validated();
 
-            Shift::create($data);
-            DB::commit();
-            return redirect()->route('shift.index')->with('success', 'Data Berhasil Ditambahkan');
+            if(Shift::create($data)) {
+                DB::commit();
+                return redirect()->route('shift.index')->with('success', 'Shift berhasil ditambahkan');
+            }
+            
+            DB::rollback();
+            return redirect()->back()->with('error', 'Shift gagal ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('ShiftController store() ' . $e->getMessage());
@@ -60,7 +65,6 @@ class ShiftController extends Controller
     {
         $data['title'] = 'Edit Shift';
         $data['shift'] = Shift::find($id);
-        // dd($data['shift']);
         return view('super-admin.shift.edit', $data);
     }
 
@@ -69,7 +73,7 @@ class ShiftController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
+                'name' => 'required|string',
                 'start_time' => 'required',
                 'end_time' => 'required',
             ]);
@@ -77,11 +81,16 @@ class ShiftController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+
             $data = $validator->validated();
 
-            Shift::find($id)->update($data);
-            DB::commit();
-            return redirect()->route('shift.index')->with('success', 'Data Berhasil Diedit');
+            if(Shift::find($id)->update($data)) {
+                DB::commit();
+                return redirect()->route('shift.index')->with('success', 'Shift berhasil diedit');
+            }
+            
+            DB::rollback();
+            return redirect()->back()->with('error', 'Shift gagal diedit');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('ShiftController update() ' . $e->getMessage());
@@ -93,9 +102,14 @@ class ShiftController extends Controller
     {
         try {
             DB::beginTransaction();
-            Shift::find($id)->delete();
-            DB::commit();
-            return redirect()->route('shift.index')->with('success', 'Data Berhasil Dihapus');
+
+            if(Shift::find($id)->delete()){
+                DB::commit();
+                return redirect()->route('shift.index')->with('success', 'Shift berhasil dihapus');
+            }
+
+            DB::rollback();
+            return redirect()->back()->with('error', 'Shift gagal dihapus');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('ShiftController destroy() ' . $e->getMessage());

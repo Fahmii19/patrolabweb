@@ -1,25 +1,14 @@
-<!-- @php
-$page = 'data-master';
-$section = 'wilayah';
-@endphp -->
 @extends('layouts.admin')
 @section('content')
-<div class="container-fluid">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-6">
-                <h3>{{ $title }}</h3>
-            </div>
-            <div class="col-6">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Shift</li>
-                    <li class="breadcrumb-item">{{ $title }}</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+    @component('components.dashboard.headpage')
+        @slot('title')
+            {{ $title }}
+        @endslot
+        @slot('bread')
+            <li class="breadcrumb-item">Master Data</li>
+            <li class="breadcrumb-item">{{ $title }}</li>
+        @endslot
+    @endcomponent
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="card">
@@ -47,11 +36,11 @@ $section = 'wilayah';
                             <td class="text-nowrap">{{ $item->end_time }}</td>
                             <td class="text-nowrap">
                                 <div class="d-flex">
-                                    <a href="{{ route('shift.edit',$item->id) }}" class="btn btn-warning me-2">Edit</a>
+                                    <a href="{{ route('shift.edit',$item->id) }}" class="btn btn-warning me-2 text-dark">Edit</a>
                                     <form action="{{ route('shift.destroy',$item->id) }}" method="post" id="delete_form{{ $item->id }}">
                                         @csrf
                                         @method('delete')
-                                        <button type="button" class="btn btn-danger" onclick="delete_item('delete_form{{ $item->id }}')">Hapus</button>
+                                        <button type="button" class="btn btn-danger" onclick="hapus_data(event)" form-id="#delete_form{{ $item->id }}">Hapus</button>
                                     </form>
                                 </div>
                             </td>
@@ -66,12 +55,6 @@ $section = 'wilayah';
 
 @push('js')
 <script>
-    function delete_item(form) {
-        let cf = confirm('Yakin Menghapus Data ?')
-        if (cf) {
-            document.getElementById(form).submit();
-        }
-    }
     active_menu("#data_master", "#shift")
 </script>
 @endpush
