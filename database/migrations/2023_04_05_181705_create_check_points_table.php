@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('location');
             $table->string('location_long_lat');
-            $table->string('qr_code')->unique();
-            $table->foreignId('round_id')->nullable();
+            $table->string('qr_code');
+            $table->unsignedBigInteger('round_id')->nullable();
             $table->enum('status',['ACTIVED','INACTIVED']);
             $table->enum('danger_status', ['LOW', 'MIDDLE', 'HIGH']);
             $table->timestamps();

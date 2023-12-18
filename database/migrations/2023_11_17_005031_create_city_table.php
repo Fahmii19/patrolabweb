@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('city', function (Blueprint $table) {
             $table->id();
-            $table->string('kode');
+            $table->string('code');
             $table->string('nama');
             $table->unsignedBigInteger('province_id');
             $table->timestamps();

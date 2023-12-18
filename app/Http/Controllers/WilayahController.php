@@ -48,7 +48,7 @@ class WilayahController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'province_id' => 'required|numeric',
-                'code' => 'required|unique:city',
+                'code' => 'required|string|unique:city',
                 'name' => 'required|string',
             ]);
 

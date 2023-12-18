@@ -24,7 +24,7 @@ class Wilayah extends Model
 
     public function projects()
     {
-        return $this->hasMany(ProjectModel::class, 'wilayah_id');
+        return $this->hasMany(ProjectModel::class, 'city_id');
     }
 
     public function data_guards(){

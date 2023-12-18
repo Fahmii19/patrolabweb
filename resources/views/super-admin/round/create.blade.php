@@ -1,27 +1,20 @@
 @extends('layouts.admin')
 @section('content')
-<div class="container-fluid">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-6">
-                <h3>{{ $title }}</h3>
-            </div>
-            <div class="col-6">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Round</li>
-                    <li class="breadcrumb-item">{{ $title }}</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+    @component('components.dashboard.headpage')
+        @slot('title')
+            {{ $title }}
+        @endslot
+        @slot('bread')
+            <li class="breadcrumb-item">Round</li>
+            <li class="breadcrumb-item">{{ $title }}</li>
+        @endslot
+    @endcomponent
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-end">
-                <button onclick="window.history.back()" class="btn btn-warning">
+                <button type="buton" onclick="window.location.href='{{ route('round.index') }}'" class="btn btn-warning text-dark">
                     << Kembali
                 </button>
             </div>
@@ -34,7 +27,7 @@
                             <select class="form-select @error('id_wilayah') is-invalid @enderror" name="id_wilayah" onchange="get_project(this.value)" id="selectWilayah">
                                 <option value="" selected disabled>--Pilih--</option>
                                 @foreach ($wilayah as $item)
-                                <option value="{{ $item->id }}" {{ old('id_wilayah') == $item->id ? 'selected' : '' }}>{{ $item->nama }}
+                                    <option value="{{ $item->id }}" {{ old('id_wilayah') == $item->id ? 'selected' : '' }}>{{ $item->name }}
                                 </option>
                                 @endforeach
                             </select>
