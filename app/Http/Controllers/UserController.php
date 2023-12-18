@@ -52,7 +52,7 @@ class UserController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
-                'email' => 'required|email',
+                'email' => 'required|email|unique:users',
                 'password' => 'required',
                 'area.*' => 'nullable|string',
             ]);
@@ -139,7 +139,7 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [
                 'role' => 'required|string',
                 'name' => 'required|string',
-                'email' => 'required|email',
+                'email' => 'required|email|unique:users,email,'. $id,
                 'password' => 'nullable',
                 'area.*' => 'nullable|string',
                 'status' => 'nullable|in:ACTIVED,INACTIVED'
