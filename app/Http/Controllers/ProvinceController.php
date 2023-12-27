@@ -45,7 +45,7 @@ class ProvinceController extends Controller
             DB::beginTransaction();
 
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string',
+                'name' => 'required|string|unique:province',
             ]);
 
             if ($validator->fails()) {
@@ -54,17 +54,14 @@ class ProvinceController extends Controller
 
             $data = $validator->validated();
 
-            if (Province::create($data)) {
-                DB::commit();
-                return redirect()->route('province.index')->with('success', 'Provinsi berhasil ditambahkan');
-            }
+            Province::create($data);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Provinsi gagal ditambahkan');
+            return redirect()->route('province.index')->with('success', 'Provinsi berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('ProvinceController store() -' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::debug('ProvinceController store() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'Provinsi gagal ditambahkan: ' . $e->getMessage());
         }
     }
 
@@ -110,7 +107,7 @@ class ProvinceController extends Controller
             DB::beginTransaction();
             
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string',
+                'name' => 'required|string|unique:province,name,'. $id,
             ]);
 
             if ($validator->fails()) {
@@ -120,17 +117,14 @@ class ProvinceController extends Controller
             $data = $validator->validated();
             $province = Province::find($id);            
 
-            if ($province->update($data)) {
-                DB::commit();
-                return redirect()->route('province.index')->with('success', 'Provinsi berhasil diupdate');
-            }
+            $province->update($data);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Provinsi gagal diupdate');
+            return redirect()->route('province.index')->with('success', 'Provinsi berhasil diedit');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('ProvinceController update() -' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::debug('ProvinceController update() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'Provinsi gagal diedit: ' . $e->getMessage());
         }
     }
 
@@ -144,19 +138,19 @@ class ProvinceController extends Controller
     {
         try {
             $province = Province::find($id);
+            if (!$province) {
+                return redirect()->back()->with('error', 'Provinsi tidak ditemukan.');
+            }
             DB::beginTransaction();
 
-            if ($province->delete()) {
-                DB::commit();
-                return redirect()->route('province.index')->with('success', 'Provinsi berhasil dihapus');
-            }
+            $province->delete();
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Provinsi gagal dihapus');
+            return redirect()->route('province.index')->with('success', 'Provinsi berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('ProvinceController destroy() -' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::debug('ProvinceController destroy() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'Provinsi gagal dihapus: ' . $e->getMessage());
         }
     }
 
@@ -174,6 +168,6 @@ class ProvinceController extends Controller
                 ];
                 return $data;
             })
-            ->toJson();
+        ->toJson();
     }
 }

@@ -35,7 +35,7 @@
         <form method="post" class="d-flex">
             @csrf
             @method('delete')
-            <a id="edit" class="btn btn-warning me-2">Edit</a>
+            <a id="edit" class="btn btn-warning me-2 text-dark">Edit</a>
             <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
         </form>
     </div>
