@@ -9,7 +9,7 @@ class Guard extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $table = 'guard';
+    protected $table = 'guards';
 
     protected $dates = ['dob'];
 
@@ -21,10 +21,7 @@ class Guard extends Model
     {
         return $this->belongsTo(Shift::class, 'shift_id');
     }
-    // public function pleton(){
-    //     return $this->belongsTo(Pleton::class,'pleton_id');
-    // }
-
+    
     public function pleton()
     {
         return $this->belongsTo(Pleton::class, 'pleton_id', 'id');
