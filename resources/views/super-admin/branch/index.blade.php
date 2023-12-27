@@ -70,11 +70,8 @@
                 data: 'status',
                 name: 'Status Branch',
                 render: function(data, type, row) {
-                    if (row.status == 'ACTIVED') {
-                        return '<span class="badge badge-success">' + row.status + '</span>'
-                    }
-
-                    return '<span class="badge badge-danger">' + row.status + '</span>'
+                    if (row.status == 'ACTIVED') return `<span class="badge badge-success">${row.status}</span>`
+                    return `<span class="badge badge-danger">${row.status}</span>`
                 }
             },
             {

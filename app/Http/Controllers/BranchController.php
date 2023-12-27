@@ -60,17 +60,14 @@ class BranchController extends Controller
             $data = $validator->validated();
             $data['status'] = 'ACTIVED';
 
-            if (Branch::create($data)) {
-                DB::commit();
-                return redirect()->route('branch.index')->with('success', 'Branch berhasil ditambahhkan');
-            }
+            Branch::create($data);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Branch gagal ditambahkan');
-        } catch (\Exception $e) {
+            return redirect()->route('branch.index')->with('success', 'Branch berhasil ditambahhkan');
+        } catch (Exception $e) {
             DB::rollback();
             Log::error('BranchController store() error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Data branch gagal disimpan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Branch gagal ditambahkan: ' . $e->getMessage());
         }
     }
 
@@ -96,6 +93,11 @@ class BranchController extends Controller
         //
         $data['title'] = "Edit Data Branch";
         $data['branch'] = $branch;
+
+        if (!$data['branch']) {
+            return redirect()->back()->with('error', 'Branch tidak ditemukan.');
+        }
+
         return view('super-admin.branch.edit', $data);
     }
 
@@ -127,14 +129,11 @@ class BranchController extends Controller
             $data['status'] = $data['status'] ?? 'INACTIVED';
 
             // Update data branch
-            if ($branch->update($data)){
-                DB::commit();
-                return redirect()->route('branch.index')->with('success', 'Branch berhasil diperbarui');
-            }
+            $branch->update($data);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->route('project.index')->with('success', 'Branch gagal diperbarui');
-        } catch (\Exception $e) {
+            return redirect()->route('branch.index')->with('success', 'Branch berhasil diperbarui');
+        } catch (Exception $e) {
             DB::rollback();
             Log::error('BranchController update() error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Branch gagal diperbarui: ' . $e->getMessage());

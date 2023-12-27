@@ -39,7 +39,7 @@
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="ACTIVED" name="status" @if($branch->status == 'ACTIVED') checked @endif>
+                                    <input class="form-check-input" type="checkbox" value="ACTIVED" id="status" name="status" @if(old('status', $branch->status) == 'ACTIVED') checked @endif>
                                     <label class="form-check-label" for="status">
                                         ACTIVED
                                     </label>
