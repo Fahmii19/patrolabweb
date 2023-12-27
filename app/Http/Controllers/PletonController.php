@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Throwable;
-// use App\Models\Guard;
 use App\Models\Area;
 use App\Models\Pleton;
-use App\Models\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -22,9 +21,6 @@ class PletonController extends Controller
      */
     public function index()
     {
-        $pletonData = Pleton::withCount('guards')->get();
-        // dd($pletonData);
-
         $data['title'] = "Daftar Pleton";
         return view('super-admin.pleton-page.index', $data);
     }
@@ -52,33 +48,33 @@ class PletonController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
+                'area_id' => 'required|integer|exists:areas,id',
+                'code' => 'required|string|max:255|unique:pleton',
                 'name' => 'required|string|max:255',
-                'code' => 'required|string|max:255',
-                'status' => 'required|in:ACTIVED,INACTIVED',
-                'area_id' => 'required|integer|exists:areas,id'
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+
             $validatedData = $validator->validated();
 
             $pleton = new Pleton();
             $pleton->name = $validatedData['name'];
             $pleton->code = $validatedData['code'];
-            $pleton->status = $validatedData['status'];
+            $pleton->status = 'ACTIVED';
             $pleton->area_id = $validatedData['area_id'];
-            $pleton->save();
 
+            $pleton->save();
             DB::commit();
+
             return redirect()->route('pleton.index')->with('success', 'Pleton berhasil ditambahkan.');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('PletonController store() ' . $e->getMessage());
+            Log::debug('PletonController store() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -89,12 +85,17 @@ class PletonController extends Controller
     public function show($id)
     {
         $pleton = Pleton::with('area')->findOrFail($id);
-        $title = "Detail Pleton";
+
+        if (!$pleton) {
+            return redirect()->back()->with('error', 'Pleton tidak ditemukan.');
+        }
 
         // Mengirim data ke view
-        return view('super-admin.pleton-page.show', compact('pleton', 'title'));
+        return view('super-admin.pleton-page.show', [
+            'title' => 'Detail Pleton',
+            'pleton' => $pleton,
+        ]);
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -107,10 +108,14 @@ class PletonController extends Controller
         $pleton = Pleton::findOrFail($id);
         $areas = Area::all(); // Get all areas
 
+        if (!$pleton) {
+            return redirect()->back()->with('error', 'Pleton tidak ditemukan.');
+        }
+
         return view('super-admin.pleton-page.edit', [
             'title' => 'Edit Pleton',
             'pleton' => $pleton,
-            'areas' => $areas // Pass areas to the view
+            'areas' => $areas
         ]);
     }
 
@@ -124,31 +129,38 @@ class PletonController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validasi request
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:255|unique:pleton,code,' . $id,
-            'status' => 'required|in:ACTIVED,INACTIVED',
-            'area_id' => 'required|exists:areas,id' // Ensure area_id exists in areas table
-        ]);
+        try {
+            DB::beginTransaction();
+            // Validasi request
+            $validator = Validator::make($request->all(), [
+                'area_id' => 'required|exists:areas,id',
+                'code' => 'required|string|max:255|unique:pleton,code,' . $id,
+                'name' => 'required|string|max:255',
+                'status' => 'nullable|in:ACTIVED,INACTIVED',
+            ]);
 
-        // Cek jika validasi gagal
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            // Cek jika validasi gagal
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            }
+
+            $data = $validator->validated();
+
+            $pleton = Pleton::findOrFail($id);
+            $pleton->name = $data['name'];
+            $pleton->code = $data['code'];
+            $pleton->status = $data['status'] ?? 'INACTIVED';
+            $pleton->area_id = $data['area_id'];
+
+            $pleton->save();
+            DB::commit();
+
+            return redirect()->route('pleton.index')->with('success', 'Pleton berhasil diperbarui.');
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::debug('PletonController update() error:' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        // Mencari dan memperbarui Pleton
-        $pleton = Pleton::findOrFail($id);
-        $pleton->name = $request->name;
-        $pleton->code = $request->code;
-        $pleton->status = $request->status;
-        $pleton->area_id = $request->area_id;
-        $pleton->save();
-
-        // Redirect ke halaman sebelumnya dengan pesan sukses
-        return redirect()->route('pleton.index')->with('success', 'Pleton berhasil diperbarui.');
     }
 
 
@@ -160,21 +172,25 @@ class PletonController extends Controller
      */
     public function destroy($id)
     {
-        // Mencari data Pleton berdasarkan ID
-        $pleton = Pleton::findOrFail($id);
+        try {
+            $pleton = Pleton::findOrFail($id);
+            DB::beginTransaction();
 
-        // Melakukan penghapusan data
-        $pleton->delete();
+            $pleton->delete();
+            DB::commit();
 
-        // Mengirimkan pesan sukses setelah penghapusan
-        return redirect()->route('pleton.index')->with('success', 'Pleton berhasil dihapus');
+            return redirect()->route('pleton.index')->with('success', 'Pleton berhasil dihapus');
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::debug('PletonController destroy() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'Pleton gagal dihapus: ' . $e->getMessage());
+        }
     }
 
 
     public function datatable()
     {
         $data = Pleton::with('area')->get();
-
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('name', function ($pleton) {
@@ -187,9 +203,7 @@ class PletonController extends Controller
                 return $pleton->status;
             })
             ->addColumn('area', function ($pleton) {
-                // dd($pleton->area);
-                // Assuming 'name' is the field you want to display from the Area model
-                return $pleton->area->name ?? 'N/A'; // Use a fallback if the area is not set
+                return $pleton->area->name ?? '-'; 
             })
             ->addColumn('action', function ($pleton) {
                 return [
@@ -199,6 +213,6 @@ class PletonController extends Controller
                 ];
             })
             ->rawColumns(['action'])
-            ->toJson();
+        ->toJson();
     }
 }

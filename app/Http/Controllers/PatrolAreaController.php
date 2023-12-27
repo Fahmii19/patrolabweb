@@ -58,10 +58,10 @@ class PatrolAreaController extends Controller
                 'code' => 'required|string|unique:patrol_area',
                 'name' => 'required|string',
                 'location_long_lat' => 'nullable|string',
-                'img_location' => 'nullable|image|mimes:jpeg,png,jpg',
+                'img_location' => 'image|mimes:jpeg,png,jpg',
                 'area_id' => 'required|numeric',
                 'description' => 'nullable|string',
-                'img_desc_location.*' => 'nullable|image|mimes:jpeg,png,jpg',
+                'img_desc_location.*' => 'image|mimes:jpeg,png,jpg',
             ]);
 
             if ($validator->fails()) {
