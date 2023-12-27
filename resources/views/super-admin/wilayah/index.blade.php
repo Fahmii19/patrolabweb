@@ -22,8 +22,7 @@
                         <tr>
                             <th style="max-width: 40px;">No</th>
                             <th>Provinsi</th>
-                            <th>Kode Wilayah</th>
-                            <th>Nama Wilayah</th>
+                            <th>Nama</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -35,7 +34,7 @@
 
 <div id="actionbase" class="d-none">
     <div class="d-flex">
-        <a class="btn btn-warning me-2">Edit</a>
+        <a class="btn btn-warning me-2 text-dark">Edit</a>
         <form method="post" class="d-inline">
             @csrf
             @method('delete')
@@ -59,10 +58,6 @@
                 name: 'Provinsi'
             },
             {
-                data: 'code',
-                name: 'Kode Wilayah'
-            },
-            {
                 data: 'name',
                 name: 'Nama Wilayah'
             },
@@ -80,6 +75,7 @@
             }
         ]
     });
+    
     active_menu("#data_master", "#region")
 </script>
 @endpush

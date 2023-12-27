@@ -34,11 +34,6 @@
                                 @error('province_id') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="code" class="form-label">Kode Wilayah <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{ old('code') }}" placeholder="Masukkan kode wilayah" required>
-                                @error('code') <span class="text-danger d-block">{{ $message }}</span> @enderror
-                            </div>
-                            <div class="mb-3">
                                 <label for="name" class="form-label">Nama Wilayah <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ old('name') }}" placeholder="Masukkan Nama wilayah" required>
                                 @error('name') <span class="text-danger d-block">{{ $message }}</span> @enderror
