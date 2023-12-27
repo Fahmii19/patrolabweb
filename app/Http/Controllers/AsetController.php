@@ -210,7 +210,7 @@ class AsetController extends Controller
             ->addColumn('code', '{{$code}}')
             ->addColumn('name', '{{$name}}')
             ->addColumn('status', '{{$status}}')
-            ->addColumn('short_desc', '{{$short_desc}}')
+            ->addColumn('short_desc', '{{$short_desc ? $short_desc : "-"}}')
             ->addColumn('asset_master_type', '{{$asset_master_type}}')
             ->addColumn('action', function (Aset $aset) {
                 $data = [
