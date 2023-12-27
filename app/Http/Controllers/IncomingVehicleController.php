@@ -14,14 +14,14 @@ class IncomingVehicleController extends Controller
 {
     public function index()
     {
-        $data['title'] = 'Daftar Incoming Vehicle';
-        $data['incoming_vehicle'] = IncomingVehicle::all();
+        $data['title'] = 'Daftar Kendaraan Masuk';
+        // $data['incoming_vehicle'] = IncomingVehicle::all();
         return view('super-admin.incoming_vehicle.index', $data);
     }
 
     public function create()
     {
-        $data['title'] = 'Tambah Incoming Vehicle';
+        $data['title'] = 'Tambah Kendaraan Masuk';
         return view('super-admin.incoming_vehicle.create', $data);
     }
 
