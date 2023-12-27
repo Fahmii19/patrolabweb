@@ -1,21 +1,14 @@
 @extends('layouts.admin')
 @section('content')
-<div class="container-fluid">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-6">
-                <h3>{{ $title }}</h3>
-            </div>
-            <div class="col-6">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Branch Project</li>
-                    <li class="breadcrumb-item">{{ $title }}</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+    @component('components.dashboard.headpage')
+        @slot('title')
+            {{ $title }}
+        @endslot
+        @slot('bread')
+            <li class="breadcrumb-item">Master Data</li>
+            <li class="breadcrumb-item">{{ $title }}</li>
+        @endslot
+    @endcomponent
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="card">
@@ -23,17 +16,19 @@
             <div class="d-flex mb-3 justify-content-end">
                 <a href="{{ route('branch.create') }}" class="btn btn-success">Tambah Branch</a>
             </div>
-            <table id="mytable" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th class="text-nowrap" style="max-width: 40px;">No</th>
-                        <th class="text-nowrap">Kode Branch</th>
-                        <th class="text-nowrap">Nama Branch</th>
-                        <th class="text-nowrap">Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-            </table>
+            <div class="table-responsive">
+                <table id="mytable" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="text-nowrap" style="max-width: 40px;">No</th>
+                            <th class="text-nowrap">Kode Branch</th>
+                            <th class="text-nowrap">Nama Branch</th>
+                            <th class="text-nowrap">Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -41,7 +36,7 @@
 <!-- Bagian action template -->
 <div id="actionbase" class="d-none">
     <div class="d-flex">
-        <a class="btn btn-warning me-2">Edit</a>
+        <a class="btn btn-warning me-2 text-dark">Edit</a>
         <form method="post" class="d-inline">
             @csrf
             @method('delete')
@@ -56,29 +51,35 @@
 <script>
     // Konfigurasi DataTables
     $('#mytable').addClass('w-100').DataTable({
-        processing: true
-        , serverSide: true
-        , ajax: "{{ route('branch.datatable') }}"
-        , columns: [{
-                data: 'DT_RowIndex'
-                , name: 'No'
-            , }
-            , {
-                data: 'code'
-                , name: 'Kode Branch'
-            }
-            , {
-                data: 'name'
-                , name: 'Nama Branch'
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('branch.datatable') }}",
+        columns: [{
+                data: 'DT_RowIndex',
+                name: 'No',
             },
-
             {
-                data: 'status'
-                , name: 'Status Branch'
-            }
-            , {
-                name: "Action"
-                , render: function(data, type, row) {
+                data: 'code',
+                name: 'Kode Branch',
+            },
+            {
+                data: 'name',
+                name: 'Nama Branch',
+            },
+            {
+                data: 'status',
+                name: 'Status Branch',
+                render: function(data, type, row) {
+                    if (row.status == 'ACTIVED') return `<span class="badge badge-success">${row.status}</span>`
+                    return `<span class="badge badge-danger">${row.status}</span>`
+                }
+            },
+            {
+                name: "Action",
+                data: 'action',
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row) {
                     let html = $('#actionbase').clone()
                     html = html.find('.d-flex')
                     html.find('a').attr('href', row.action.editurl)
@@ -86,10 +87,8 @@
                         .attr('id', 'delete_form' + row.id)
                     form.find('button').attr('form-id', '#delete_form' + row.id)
                     return html.html()
-                }
-                , orderable: false
-                , searchable: false
-            , }
+                },
+            }
         ]
     });
 

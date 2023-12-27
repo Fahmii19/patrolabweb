@@ -4,16 +4,12 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Branch;
-use App\Models\Aset;
-use App\Models\ProjectModel;
-use App\Models\Wilayah;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
 class BranchController extends Controller
 {
@@ -52,25 +48,26 @@ class BranchController extends Controller
             DB::beginTransaction();
 
             // Validasi input
-            // $validatedData = $request->validate([
-            //     'code' => ['required', 'unique:branches,code'],
-            //     'name' => ['required', 'string'],
-            //     'status' => ['required', 'string'],
-            // ]);
-
-            // Membuat data branch
-            Branch::create([
-                'code' => $request->code,
-                'name' => $request->name,
-                'status' => $request->status,
+            $validator = Validator::make($request->all(), [
+                'code' => 'required|string|unique:branch',
+                'name' => 'required|string',
             ]);
 
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            }
+
+            $data = $validator->validated();
+            $data['status'] = 'ACTIVED';
+
+            Branch::create($data);
             DB::commit();
-            return redirect()->route('branch.index')->with('success', 'Data branch berhasil disimpan');
-        } catch (\Exception $e) {
+
+            return redirect()->route('branch.index')->with('success', 'Branch berhasil ditambahhkan');
+        } catch (Exception $e) {
             DB::rollback();
-            Log::error('BranchController store error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Data branch gagal disimpan: ' . $e->getMessage());
+            Log::error('BranchController store() error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Branch gagal ditambahkan: ' . $e->getMessage());
         }
     }
 
@@ -96,6 +93,11 @@ class BranchController extends Controller
         //
         $data['title'] = "Edit Data Branch";
         $data['branch'] = $branch;
+
+        if (!$data['branch']) {
+            return redirect()->back()->with('error', 'Branch tidak ditemukan.');
+        }
+
         return view('super-admin.branch.edit', $data);
     }
 
@@ -113,35 +115,30 @@ class BranchController extends Controller
             DB::beginTransaction();
 
             // Validasi input
-            // $validatedData = $request->validate([
-            //     'code' => ['required', 'unique:branches,code,' . $branch->id],
-            //     'name' => ['required', 'string'],
-            //     // Tambahkan validasi untuk status jika diperlukan
-            //     'status' => ['required', 'string'],
-            //     // Hapus atau sesuaikan validasi gambar dan project ID
-            // ]);
-
-            // Hapus atau sesuaikan logika untuk menangani gambar dan project ID
-
-            // Update data branch
-            $branch->update([
-                'code' => $request->code,
-                'name' => $request->name,
-                'status' => $request->status // Menyimpan status
-                // Hapus atau sesuaikan atribut lain
+            $validator = Validator::make($request->all(), [
+                'code' => 'required|string|unique:branch,code,' . $branch->id,
+                'name' => 'required|string',
+                'status' => 'nullable|string|in:ACTIVED,INACTIVED',
             ]);
 
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            }
+
+            $data = $validator->validated();
+            $data['status'] = $data['status'] ?? 'INACTIVED';
+
+            // Update data branch
+            $branch->update($data);
             DB::commit();
-            return redirect()->route('branch.index')->with('success', 'Data branch berhasil diperbarui');
-        } catch (\Exception $e) {
+
+            return redirect()->route('branch.index')->with('success', 'Branch berhasil diperbarui');
+        } catch (Exception $e) {
             DB::rollback();
-            Log::error('BranchController update error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Data branch gagal diperbarui: ' . $e->getMessage());
+            Log::error('BranchController update() error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Branch gagal diperbarui: ' . $e->getMessage());
         }
     }
-
-
-
 
     /**
      * Remove the specified resource from storage.
@@ -151,47 +148,41 @@ class BranchController extends Controller
      */
     public function destroy(Branch $branch)
     {
-        // hapus data
-        $branch->delete();
-        return redirect()->route('branch.index')->with('success', 'Data Branch berhasil dihapus');
+        try {
+            DB::beginTransaction();
+
+            if ($branch->delete()) {
+                DB::commit();
+                return redirect()->route('branch.index')->with('success', 'Branch berhasil dihapus');
+            }
+
+            DB::rollback();
+            return redirect()->back()->with('error', 'Branch gagal dihapus');
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error('BranchController destroy() error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Branch gagal dihapus: ' . $e->getMessage());
+        }
     }
 
     public function datatable()
     {
         $data = Branch::get();
-
-        // dd($data);
-
-        // foreach ($data as $item) {
-        //     dd($item->img_location);
-        // }
-
         return DataTables::of($data)
-            ->addIndexColumn()
-            ->escapeColumns('active')
-            ->addColumn('code', function ($row) {
-                return $row->code;
-            })
-
-            ->addColumn('name', function ($row) {
-                return $row->name;
-            })
-
-            ->addColumn('status', function ($row) {
-                return $row->status == 'ACTIVED' ? 'Aktif' : 'Tidak Aktif';
-            })
-
-            ->addColumn('action', function (Branch $branch) {
-                $data = [
-                    'editurl' => route('branch.edit', $branch->id),
-                    'deleteurl' => route('branch.destroy', $branch->id)
-                ];
-                return $data;
-            })
-
-            ->toJson();
+        ->addIndexColumn()
+        ->escapeColumns('active')
+        ->addColumn('code', '{{$code}}')
+        ->addColumn('name', '{{$name}}')
+        ->addColumn('status', '{{$status}}')
+        ->addColumn('action', function (Branch $branch) {
+            $data = [
+                'editurl' => route('branch.edit', $branch->id),
+                'deleteurl' => route('branch.destroy', $branch->id)
+            ];
+            return $data;
+        })
+        ->toJson();
     }
-
 
     public function by_project(Request $request, $id)
     {
@@ -199,11 +190,11 @@ class BranchController extends Controller
         if ($request->id_area) {
             $old = $request->id_area;
         }
-        $data = ProjectModel::find($id)->areas;
+        $data = Project::find($id)->areas;
         if ($data->count() <= 0) {
             return response()->json([
                 "status" => "false",
-                "messege" => "gagal mengambil data Branch",
+                "message" => "gagal mengambil data Branch",
                 "data" => []
             ], 404);
         }
@@ -214,7 +205,7 @@ class BranchController extends Controller
         }
         return response()->json([
             "status" => "true",
-            "messege" => "berhasil mengambil data Branch",
+            "message" => "berhasil mengambil data Branch",
             "data" => [$html]
         ], 200);
     }

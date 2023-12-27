@@ -12,13 +12,19 @@ class Wilayah extends Model
     // protected $table = 'wilayahs';
     protected $table = 'city';
 
-    public function areas(){
+    public function province()
+    {
+        return $this->belongsTo(Province::class, 'province_id', 'id');
+    }
+
+    public function areas()
+    {
         return $this->hasMany(Area::class,'id_wilayah');
     }
 
     public function projects()
     {
-        return $this->hasMany(ProjectModel::class, 'wilayah_id');
+        return $this->hasMany(ProjectModel::class, 'city_id');
     }
 
     public function data_guards(){

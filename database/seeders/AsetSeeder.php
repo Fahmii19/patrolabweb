@@ -21,15 +21,17 @@ class AsetSeeder extends Seeder
             'status' => 'ACTIVED',
             'asset_master_type' => 'PATROL',
             'short_desc' => 'Deskripsi singkat Aset 01',
+            'images' => null,
             'created_at' => now(),
             'updated_at' => null,
         ]);
         Aset::create([
             'code' => 'koset02',
             'name' => 'Aset 02',
-            'status' => 'UNACTIVED',
+            'status' => 'INACTIVED',
             'asset_master_type' => 'PATROL',
             'short_desc' => 'Deskripsi singkat Aset 02',
+            'images' => null,
             'created_at' => now(),
             'updated_at' => null,
         ]);
@@ -39,15 +41,17 @@ class AsetSeeder extends Seeder
             'status' => 'ACTIVED',
             'asset_master_type' => 'CLIENT',
             'short_desc' => 'Deskripsi singkat Aset 03',
+            'images' => null,
             'created_at' => now(),
             'updated_at' => null,
         ]);
         Aset::create([
             'code' => 'koset04',
             'name' => 'Aset 04',
-            'status' => 'UNACTIVED',
+            'status' => 'INACTIVED',
             'asset_master_type' => 'CLIENT',
             'short_desc' => 'Deskripsi singkat Aset 04',
+            'images' => null,
             'created_at' => now(),
             'updated_at' => null,
         ]);

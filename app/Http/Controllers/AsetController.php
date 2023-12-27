@@ -20,7 +20,7 @@ class AsetController extends Controller
      */
     public function index()
     {
-        $data['title'] = "Master data Aset";
+        $data['title'] = "Daftar Asset";
         return view('super-admin.aset.index', $data);
     }
 
@@ -45,10 +45,11 @@ class AsetController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'kode' => 'required|string',
-                'nama' => 'required|string',
-                'asset_master_type' => 'required|in:PATROL,CLIENT',
+                'code' => 'required|string|unique:asset_patrol_master',
+                'name' => 'required|string',
                 'short_desc' => 'nullable',
+                'asset_master_type' => 'required|in:PATROL,CLIENT',
+                'image' => 'image|mimes:jpeg,png,jpg',
             ]);
 
             if ($validator->fails()) {
@@ -67,30 +68,23 @@ class AsetController extends Controller
                 // Pindahkan file ke direktori publik
                 $file->move(public_path('gambar/aset'), $filename);
             }
-    
-            // Membuat data aset dengan filename gambar
-            $aset = Aset::create([
-                'code' => $request->kode,
-                'name' => $request->nama,
-                'status' => 'ACTIVED',
-                'short_desc' => $request->short_desc,
-                'asset_master_type' => $request->asset_master_type,
-                'image' => $filename,
-            ]);
 
-            DB::commit();
-            if($aset) {
-                return redirect()->route('aset.index')->with('success', 'Data Aset berhasil ditambahkan');
+            $data = $validator->validated();
+            $data['status'] = 'ACTIVED';
+            $data['image'] = $filename;
+
+            if(Aset::create($data)){
+                DB::commit();
+                return redirect()->route('aset.index')->with('success', 'Aset berhasil ditambahkan');
             }
 
             DB::rollback();
-            return redirect()->back()->with('error', 'Data aset gagak ditambahkan');
+            return redirect()->route('aset.index')->with('error', 'Aset gagal ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
             Log::debug('AsetController store ' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
-        
     }
 
 
@@ -129,16 +123,19 @@ class AsetController extends Controller
     {   
         try {
             $validator = Validator::make($request->all(), [
-                'code' => 'required|string',
+                'code' => 'required|string|unique:asset_patrol_master,code,'.$aset->id,
                 'name' => 'required|string',
                 'asset_master_type' => 'required|in:PATROL,CLIENT',
                 'short_desc' => 'nullable',
                 'status' => 'nullable|in:ACTIVED,INACTIVED',
+                'image' => 'image|mimes:jpeg,png,jpg',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
+
+            $data = $validator->validated();
 
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
@@ -151,27 +148,21 @@ class AsetController extends Controller
                 }
 
                 // Menyimpan nama file gambar baru
-                $aset->image = $filename; 
+                $data['image'] = $filename; 
             }
 
-            $aset->code = $request->code;
-            $aset->name = $request->name;
-            $aset->status = $request->status ?? 'INACTIVED';
-            $aset->short_desc = $request->short_desc; 
-            $aset->asset_master_type = $request->asset_master_type;
+            $data['status'] = $request->status ?? 'INACTIVED';
 
-            $action = $aset->save();
-            DB::commit();
-
-            if($action){
-                return redirect()->route('aset.index')->with('success', 'Data Aset berhasil diupdate');
+            if($aset->update($data)){
+                DB::commit();
+                return redirect()->route('aset.index')->with('success', 'Aset berhasil diupdate');
             }
 
             DB::rollback();
-            return redirect()->back()->with('error', 'Data Aset gagal diupdate');
+            return redirect()->back()->with('error', 'Aset gagal diupdate');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('AsetController update ' . $e->getMessage());
+            Log::debug('AsetController update() error: ' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -185,9 +176,29 @@ class AsetController extends Controller
      */
     public function destroy(Aset $aset)
     {
-        // hapus data
-        $aset->delete();
-        return redirect()->route('aset.index')->with('success', 'Data Aset berhasil dihapus');
+        try {
+            DB::beginTransaction();
+
+            // Hapus gambar dari server jika ada
+            if ($aset->image) {
+                if (file_exists(public_path('gambar/area/' . $aset->image))) {
+                    unlink(public_path('gambar/area/' . $aset->image));
+                }
+            }
+
+            // Hapus data area
+            if($aset->delete()){
+                DB::commit();
+                return redirect()->route('aset.index')->with('success', 'Aset berhasil dihapus');
+            }
+
+            DB::rollback();
+            return redirect()->route('aset.index')->with('error', 'Aset gagal dihapus');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('AsetController destroy() error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Aset gagal dihapus: ' . $e->getMessage());
+        }
     }
 
     public function datatable()
@@ -199,7 +210,7 @@ class AsetController extends Controller
             ->addColumn('code', '{{$code}}')
             ->addColumn('name', '{{$name}}')
             ->addColumn('status', '{{$status}}')
-            ->addColumn('short_desc', '{{$short_desc}}')
+            ->addColumn('short_desc', '{{$short_desc ? $short_desc : "-"}}')
             ->addColumn('asset_master_type', '{{$asset_master_type}}')
             ->addColumn('action', function (Aset $aset) {
                 $data = [
@@ -209,6 +220,7 @@ class AsetController extends Controller
                 return $data;
             })
             ->addColumn('image', function ($row) {
+                $imgHtml = '';
                 // Cek jika file gambar ada
                 if ($row->image && file_exists(public_path('gambar/aset/' . $row->image))) {
                     $url = asset('gambar/aset/' . $row->image);
@@ -216,7 +228,24 @@ class AsetController extends Controller
                     // Jika tidak ada, gunakan gambar default
                     $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
                 }
-                return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
+
+                $imgHtml .= '<span class="btn" data-bs-toggle="modal" data-bs-target="#imageModal' . $row->id . '"><img src="' . $url . '" border="0" width="100" class="img-rounded mr-1" align="center" /></span>';
+                
+                $imgHtml .= '
+                    <div class="modal fade" id="imageModal' . $row->id . '" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <img src="' . $url . '" class="img-fluid">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ';
+                return $imgHtml;
             })
             ->rawColumns(['image'])
             ->toJson();

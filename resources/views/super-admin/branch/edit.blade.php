@@ -1,59 +1,51 @@
 @extends('layouts.admin')
 @section('content')
-<div class="container-fluid">
-    <!-- Page Title dan Breadcrumb -->
-    <div class="page-title">
-        <div class="row">
-            <div class="col-6">
-                <h3>Edit Branch</h3>
-            </div>
-            <div class="col-6">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Branch</li>
-                    <li class="breadcrumb-item">Edit</li>
-                </ol>
-            </div>
-        </div>
-    </div>
+    @component('components.dashboard.headpage')
+        @slot('title')
+            {{ $title }}
+        @endslot
+        @slot('bread')
+            <li class="breadcrumb-item">Master Data</li>
+            <li class="breadcrumb-item">{{ $title }}</li>
+        @endslot
+    @endcomponent
     <!-- Container-fluid starts-->
     <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-end">
-                    <button onclick="window.history.back()" class="btn btn-warning">
-                        << Kembali</button>
+                    <button onclick="window.location.href='{{ route('branch.index') }}'" class="btn btn-warning text-dark">
+                        << Kembali
+                    </button>
                 </div>
                 <form action="{{ route('branch.update', $branch->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf @method('PUT')
+                    @csrf 
+                    @method('PUT')
                     <div class="row row-cols-1 row-cols-lg-2">
                         <div class="col">
-                            <!-- Bidang Kode Branch -->
+                            <!-- Kode Branch -->
                             <div class="mb-3">
                                 <label for="code" class="form-label">Kode Branch <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{ old('code', $branch->code) }}" placeholder="Masukkan kode branch">
+                                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{ old('code', $branch->code) }}" placeholder="Masukkan kode branch" required>
                                 @error('code') <span class="text-danger d-block">{{$message}}</span> @enderror
                             </div>
-                            <!-- Bidang Nama Branch -->
+                            <!-- Nama Branch -->
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nama Branch <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ old('name', $branch->name) }}" placeholder="Masukkan Nama Branch">
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ old('name', $branch->name) }}" placeholder="Masukkan Nama Branch" required>
                                 @error('name') <span class="text-danger d-block">{{$message}}</span> @enderror
                             </div>
-                            <!-- Bidang Status -->
+                            <!-- Status -->
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                                <select class="form-select @error('status') is-invalid @enderror" name="status" id="status">
-                                    <option value="" disabled>Pilih Status</option>
-                                    <option value="ACTIVED" {{ old('status', $branch->status) == 'ACTIVED' ? 'selected' : '' }}>ACTIVED</option>
-                                    <option value="INACTIVED" {{ old('status', $branch->status) == 'INACTIVED' ? 'selected' : '' }}>INACTIVED</option>
-                                </select>
-                                @error('status')
-                                <span class="text-danger d-block">{{ $message }}</span>
-                                @enderror
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="ACTIVED" id="status" name="status" @if(old('status', $branch->status) == 'ACTIVED') checked @endif>
+                                    <label class="form-check-label" for="status">
+                                        ACTIVED
+                                    </label>
+                                </div>
+                                @error('status') <span class="text-danger d-block">{{ $message }}</span>  @enderror
                             </div>
-                            <!-- Hapus Bidang yang tidak relevan untuk Branch -->
-                            <!-- ... -->
                         </div>
                     </div>
                     <button type="submit" class="btn btn-success">Simpan</button>
@@ -62,12 +54,10 @@
         </div>
     </div>
     <!-- Container-fluid Ends-->
-</div>
 
-@push('js')
-<script>
-    active_menu("#data_master", "#branch")
-
-</script>
-@endpush
+    @push('js')
+        <script>
+            active_menu("#data_master", "#branch")
+        </script>
+    @endpush
 @endsection

@@ -1,8 +1,9 @@
 /node_modules
 /public/hot
 /public/storage
-/public/gambar/area
-/public/gambar/asset
+/public/gambar/area/*
+/public/gambar/aset/*
+/public/gambar/patrol-area/*
 /storage/*.key
 /vendor
 .env
@@ -16,4 +17,3 @@ yarn-error.log
 /.idea
 /.vscode
 composer.lock
-

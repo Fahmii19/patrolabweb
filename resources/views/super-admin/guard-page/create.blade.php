@@ -1,21 +1,22 @@
 @extends('layouts.admin')
 @section('content')
-@component('components.dashboard.headpage')
-@slot('title')
-{{ $title }}
-@endslot
-@slot('bread')
-<li class="breadcrumb-item">Guard Management</li>
-<li class="breadcrumb-item">{{ $title }}</li>
-@endslot
-@endcomponent
+    @component('components.dashboard.headpage')
+        @slot('title')
+        {{ $title }}
+        @endslot
+        @slot('bread')
+        <li class="breadcrumb-item">Guard Management</li>
+        <li class="breadcrumb-item">{{ $title }}</li>
+        @endslot
+    @endcomponent
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-end">
-                <button onclick="window.history.back()" class="btn btn-warning">
-                    << Kembali</button>
+                <button onclick="window.location.href='{{ route('guard.index') }}'" class="btn btn-warning text-dark">
+                    << Kembali
+                </button>
             </div>
             <form action="{{ route('guard.store') }}" method="post">
                 @csrf
@@ -24,57 +25,15 @@
                         <!-- Kolom badge_number -->
                         <div class="mb-3">
                             <label for="badge_number" class="form-label">Nomor Badge <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('badge_number') is-invalid @enderror" name="badge_number" id="badge_number" placeholder="Masukkan Nomor Badge" value="{{ old('badge_number') }}">
-                            @error('badge_number')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
+                            <input type="text" class="form-control @error('badge_number') is-invalid @enderror" name="badge_number" id="badge_number" placeholder="Masukkan Nomor Badge" value="{{ old('badge_number') }}" required>
+                            @error('badge_number') <span class="text-danger d-block">{{ $message }}</span> @enderror
                         </div>
-
                         <!-- Kolom name -->
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Masukkan Nama" value="{{ old('name') }}">
-                            @error('name')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
+                            @error('name') <span class="text-danger d-block">{{ $message }}</span> @enderror
                         </div>
-
-                        <!-- Kolom email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Masukkan Email" value="{{ old('email') }}">
-                            @error('email')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        {{-- Kolom Password --}}
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="password" placeholder="Masukkan Password" value="{{ old('password') }}">
-                            @error('password')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        {{-- Kolom Role Select Option ada : guard dan admin area --}}
-                        <div class="mb-3">
-                            <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
-                            <select class="form-select @error('role') is-invalid @enderror" name="role" id="role">
-                                <option value="" selected disabled>--Pilih--</option>
-                                <option value="GUARD" {{ old('role') == 'GUARD' ? 'selected' : '' }}>GUARD</option>
-                                <option value="ADMIN_AREA" {{ old('role') == 'ADMIN_AREA' ? 'selected' : '' }}>ADMIN AREA</option>
-                            </select>
-                            @error('role')
-                            <span class="text-danger d-block">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-
-                    </div>
-
-                    <div class="col">
-
                         <!-- Kolom gender -->
                         <div class="mb-3">
                             <label for="gender" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
@@ -87,7 +46,6 @@
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <!-- Kolom dob -->
                         <div class="mb-3">
                             <label for="dob" class="form-label">DOB <span class="text-danger">*</span></label>
@@ -96,8 +54,6 @@
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
-
-
                         <!-- Kolom address -->
                         <div class="mb-3">
                             <label for="address" class="form-label">Alamat <span class="text-danger">*</span></label>
@@ -106,7 +62,21 @@
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
+                    </div>
 
+                    <div class="col">
+                        <!-- Kolom email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Masukkan Email" value="{{ old('email') }}" required>
+                            @error('email') <span class="text-danger d-block">{{ $message }}</span> @enderror
+                        </div>
+                        {{-- Kolom Password --}}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="password" placeholder="Masukkan Password" value="{{ old('password') }}">
+                            @error('password') <span class="text-danger d-block">{{ $message }}</span> @enderror
+                        </div>
                         <!-- Kolom wa -->
                         <div class="mb-3">
                             <label for="wa" class="form-label">Nomor WhatsApp <span class="text-danger">*</span></label>
@@ -115,7 +85,6 @@
                             <span class="text-danger d-block">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <!-- Kolom pleton_id -->
                         <div class="mb-3">
                             <label for="pleton_id" class="form-label">Pleton ID <span class="text-danger">*</span></label>

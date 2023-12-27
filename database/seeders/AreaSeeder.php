@@ -18,23 +18,27 @@ class AreaSeeder extends Seeder
         Area::create([
             'code' => 'korea01',
             'name' => 'Area 01',
+            'img_location' => null,
             'project_id' => 1,
+            'status' => 'ACTIVED',
             'created_at' => now(),
             'updated_at' => null,
         ]);
-
         Area::create([
             'code' => 'korea02',
             'name' => 'Area 02',
+            'img_location' => null,
             'project_id' => 1,
+            'status' => 'ACTIVED',
             'created_at' => now(),
             'updated_at' => null,
         ]);
-
         Area::create([
             'code' => 'korea03',
             'name' => 'Area 03',
+            'img_location' => null,
             'project_id' => 2,
+            'status' => 'INACTIVED',
             'created_at' => now(),
             'updated_at' => null,
         ]);

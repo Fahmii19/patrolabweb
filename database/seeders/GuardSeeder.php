@@ -50,30 +50,46 @@ class GuardSeeder extends Seeder
         //     'id_project' => 1
         // ]);
         Guard::create([
-            "address" => "Alamat Guard 01",
-            "badge_number" => "001",
-            "email" => "email1@guard.com",
-            "gender" => "MALE",
-            "img_avatar" => null,
-            "name" => "Guard 01",
-            "pleton_id" => 1,
-            "dob" => "1999-01-01", //birth_date
-            "shift_id" => 1,
-            "password" => bcrypt("passwordGuard01"),
-            "role" => "guard",
+            'badge_number' => '001',
+            'name' => 'Guard 01',
+            'img_avatar' => null,
+            'dob' => '1999-01-01', //birth_date
+            'gender' => 'MALE',
+            'email' => 'guard01@gmail.com',
+            'wa' => '01234567891',
+            'address' => 'Alamat Guard 01',
+            'shift_id' => 1,
+            'pleton_id' => 1,
+            'created_at' => now(),
+            'updated_at' => null,
         ]);
         Guard::create([
-            "address" => "Alamat Guard 02",
-            "badge_number" => "002",
-            "email" => "email2@guard.com",
-            "gender" => "FEMALE",
-            "img_avatar" => null,
-            "name" => "Guard 02",
-            "pleton_id" => 2,
-            "dob" => "1999-02-02", //birth_date
-            "shift_id" => 2,
-            "password" => bcrypt("passwordGuard02"),
-            "role" => "guard",
+            'badge_number' => '002',
+            'name' => 'Guard 02',
+            'img_avatar' => null,
+            'dob' => '1999-02-02', //birth_date
+            'gender' => 'MALE',
+            'email' => 'guard02@gmail.com',
+            'wa' => '01234567892',
+            'address' => 'Alamat Guard 02',
+            'shift_id' => 2,
+            'pleton_id' => 2,
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
+        Guard::create([
+            'badge_number' => '003',
+            'name' => 'Guard 03',
+            'img_avatar' => null,
+            'dob' => '1999-03-03', //birth_date
+            'gender' => 'FEMALE',
+            'email' => 'guard03@gmail.com',
+            'wa' => '01234567893',
+            'address' => 'Alamat Guard 03',
+            'shift_id' => 3,
+            'pleton_id' => 3,
+            'created_at' => now(),
+            'updated_at' => null,
         ]);
     }
 

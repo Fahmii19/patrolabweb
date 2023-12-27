@@ -44,7 +44,7 @@ class CheckpointSeeder extends Seeder
             'qr_code' => 'AABBCC778899',
             'danger_status' => 'HIGH',
             'status' => 'INACTIVED',
-            'round_id' => null,
+            'round_id' => 2,
             'created_at' => now(),
             'updated_at' => null,
         ]);
