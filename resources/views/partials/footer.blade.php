@@ -105,31 +105,26 @@
                 })
             }
     </script>
+    
     <!-- Plugin used-->
     @if(session('success'))
-
-    <script>
-        Swal.fire(
-            'Sukses!',
-            "{{ session('success') }}",
-            'success'
-        )
-    </script>
-
+        <script>
+            Swal.fire(
+                'Sukses!',
+                "{{ session('success') }}",
+                'success'
+            )
+        </script>
     @endif
 
     @if(session('error'))
-
-    <script>
-        Swal.fire(
-            'Error!',
-            "{{ session('error') }}",
-            'error'
-        )
-    </script>
-
-
+        <script>
+            Swal.fire(
+                'Error!',
+                "{{ session('error') }}",
+                'error'
+            )
+        </script>
     @endif
-
 
     @stack('js')
