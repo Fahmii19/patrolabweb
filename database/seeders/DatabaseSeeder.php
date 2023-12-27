@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             GateSeeder::class,
             ShiftSeeder::class,
             PletonSeeder::class,
+            PletonPatrolSeeder::class,
             UserSeeder::class,
             GuardSeeder::class,
             AsetSeeder::class,
