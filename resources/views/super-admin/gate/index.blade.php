@@ -23,8 +23,8 @@
                                 <th class="text-nowrap" style="max-width: 40px;">No</th>
                                 <th class="text-nowrap">Kode Gate</th>
                                 <th class="text-nowrap">Nama Gate</th>
-                                <th class="text-nowrap">Project</th>
-                                <th class="text-nowrap">Wilayah</th>
+                                <th class="text-nowrap">Patrol Area</th>
+                                <th class="text-nowrap">Area</th>
                                 <th class="text-nowrap">Status</th>
                                 <th>Action</th>
                             </tr>
@@ -67,21 +67,18 @@
                     name: 'Nama Gate',
                 },
                 {
-                    data: 'project',
-                    name: 'Nama Project',
+                    data: 'patrol_area',
+                    name: 'Nama Patrol Area',
                 },
                 {
-                    data: 'wilayah',
-                    name: 'Nama Wilayah',
+                    data: 'area',
+                    name: 'Nama Area',
                 },
                 {
                     data: 'status',
                     render: function(data, type, row) {
-                        if (row.status == 'ACTIVED') {
-                            return '<span class="badge badge-success">' + row.status + '</span>'
-                        }
-
-                        return '<span class="badge badge-danger">' + row.status + '</span>'
+                        if (row.status == 'ACTIVED') return `<span class="badge badge-success">${row.status}</span>`
+                        return `<span class="badge badge-danger">${row.status}</span>`
                     }
                 },
                 {

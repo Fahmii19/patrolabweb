@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use Exception;
 use Throwable;
 use App\Models\Gate;
+use App\Models\PatrolArea;
 use App\Models\Wilayah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +24,6 @@ class GateController extends Controller
     public function index()
     {
         $data['title'] = 'Daftar Gate';
-        $data['project_model'] = Gate::all();
         return view('super-admin.gate.index', $data);
     }
 
@@ -34,7 +35,7 @@ class GateController extends Controller
     public function create()
     {
         $data['title'] = "Tambah Data Gate";
-        $data['wilayah'] = Wilayah::all();
+        $data['area'] = Area::all();
         return view('super-admin.gate.create', $data);
     }
 
@@ -49,7 +50,7 @@ class GateController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                'project_id' => 'required|numeric',
+                'patrol_area_id' => 'required|numeric',
                 'code' => 'required|string|unique:gate',
                 'name' => 'required|string',
             ]);
@@ -60,19 +61,15 @@ class GateController extends Controller
 
             $data = $validator->validated();
             $data['status'] = "ACTIVED";
-            $data['created_at'] = now();
 
-            if (Gate::create($data)) {
-                DB::commit();
-                return redirect()->route('gate.index')->with('success', 'Gate berhasil ditambahkan');
-            }
+            Gate::create($data);
+            DB::commit();
 
+            return redirect()->route('gate.index')->with('success', 'Gate berhasil ditambahkan');
+        } catch (Throwable $e) {
             DB::rollback();
-            return redirect()->route('gate.index')->with('success', 'Gate gagal ditambahkan');
-        } catch (\Throwable $e) {
-            DB::rollback();
-            Log::error('GateController store() -' . $e->getMessage());
-            return redirect()->back()->with('error' . $e->getMessage());
+            Log::error('GateController store() error:' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
@@ -96,13 +93,11 @@ class GateController extends Controller
     public function edit($id)
     {
         $data['title'] = "Edit Gate";
-        $data['gate'] = Gate::with(['project' => function($query) {
-            $query->select('id', 'name', 'city_id');
-            $query->with(['wilayah' => function($query) {
-                $query->select('id', 'name');
-            }]);
+        $data['gate'] = Gate::with(['patrol_area' => function($query) {
+            $query->select('id', 'name', 'area_id');
         }])->find($id);
-        $data['wilayah'] = Wilayah::all();
+
+        $data['area'] = Area::all();
 
         // Pastikan gate ditemukan sebelum mencoba mengakses metode pada objeknya
         if (!$data['gate']) {
@@ -110,8 +105,8 @@ class GateController extends Controller
             return redirect()->back()->with('error', 'Gate tidak ditemukan.');
         }
 
-        $data['project'] = Wilayah::find($data['gate']->project->wilayah->id)->projects;
-        // return response()->json($data);
+        $data['patrol_area'] = PatrolArea::where('area_id', $data['gate']->patrol_area->area_id)->get();
+
         return view('super-admin.gate.edit', $data);
     }
 
@@ -127,7 +122,7 @@ class GateController extends Controller
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
-                'project_id' => 'required|numeric',
+                'patrol_area_id' => 'required|numeric',
                 'code' => 'required|string|unique:gate,code,' . $id,
                 'name' => 'required|string',
                 'status' => 'nullable|string|in:ACTIVED,INACTIVED',
@@ -139,7 +134,7 @@ class GateController extends Controller
 
             $gate = Gate::find($id);
             if (!$gate) {
-                throw new Exception('User tidak ditemukan.');
+                throw new Exception('Gate tidak ditemukan.');
             }
 
             $data = $validator->validated();
@@ -151,7 +146,7 @@ class GateController extends Controller
             return redirect()->route('gate.index')->with('success', 'Gate berhasil diperbarui');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::error('GateController update() -' . $e->getMessage());
+            Log::error('GateController update() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -165,31 +160,28 @@ class GateController extends Controller
     public function destroy($id)
     {
         try {
-            $gate = Gate::find($id);
             DB::beginTransaction();
+            $gate = Gate::find($id);
 
-            if ($gate->delete()) {
-                DB::commit();
-                return redirect()->route('gate.index')->with('success', 'Gate berhasil dihapus');
-            }
+            $gate->delete();
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Gate gagal dihapus');
+            return redirect()->route('gate.index')->with('success', 'Gate berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('GateController destroy() ' . $e->getMessage());
+            Log::debug('GateController destroy() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
     public function datatable()
     {
-        $data = Gate::with(['project.wilayah'])->get();
+        $data = Gate::with(['patrol_area.area'])->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('code', '{{$code}}')
             ->addColumn('name', '{{$name}}')
-            ->addColumn('project', '{{$project["name"]}}')
-            ->addColumn('wilayah', '{{$project["wilayah"]["name"]}}')
+            ->addColumn('patrol_area', '{{$patrol_area["name"]}}')
+            ->addColumn('area', '{{$patrol_area["area"]["name"]}}')
             ->addColumn('status', '{{$status}}')
             ->addColumn('action', function (Gate $gate) {
                 $data = [

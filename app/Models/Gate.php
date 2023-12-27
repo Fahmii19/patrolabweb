@@ -11,8 +11,8 @@ class Gate extends Model
     protected $guarded = ['id'];
     protected $table = 'gate';
 
-    public function project()
+    public function patrol_area()
     {
-        return $this->belongsTo(Project::class, 'project_id', 'id');
+        return $this->belongsTo(PatrolArea::class, 'patrol_area_id', 'id');
     }
 }
