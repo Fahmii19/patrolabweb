@@ -77,18 +77,14 @@ class UserController extends Controller
 
             $user = User::create($data_user);
 
-            if ($user) {
-                $user->assignRole('admin-area');
-                DB::commit();
-                return redirect()->route('user.index')->with('success', 'Admin Area Berhasil Ditambahkan');
-            }
+            $user->assignRole('admin-area');
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Admin Area Gagal Ditambahkan');
+            return redirect()->route('user.index')->with('success', 'Admin Area berhasil ditambahkan');            
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('UserController store() ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::debug('UserController store() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'Admin Area gagal ditambahkan: ' . $e->getMessage());
         }
     }
 
@@ -115,13 +111,12 @@ class UserController extends Controller
         $data['user'] = User::find($id);
         $data['area'] = Area::all();
 
-        // Pastikan user ditemukan sebelum mencoba mengakses metode pada objeknya
         if (!$data['user']) {
-            // Handle kasus di mana user tidak ditemukan, misalnya tampilkan pesan error atau redirect
             return redirect()->back()->with('error', 'User tidak ditemukan.');
         }
 
-        $roleNames = $data['user']->getRoleNames(); // Menggunakan variabel $data['user'] yang sudah didefinisikan
+        // Menggunakan variabel $data['user'] yang sudah didefinisikan
+        $roleNames = $data['user']->getRoleNames(); 
         return view('super-admin.user.edit', $data, compact('roleNames'));
     }
 
@@ -178,17 +173,14 @@ class UserController extends Controller
                 $data_user['password'] = bcrypt($request->password);
             }
 
-            if ($user->update($data_user)){
-                DB::commit();
-                return redirect()->route('user.index')->with('success', 'User Berhasil Diedit');
-            }
+            $user->update($data_user);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'User Gagal Diedit');
+            return redirect()->route('user.index')->with('success', 'User berhasil diedit');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('UserController update() ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::debug('UserController update() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'User gagal diedit: ' . $e->getMessage());
         }
     }
 
@@ -204,23 +196,22 @@ class UserController extends Controller
             $user = User::find($id);
             DB::beginTransaction();
 
-            if ($user->delete()) {
-                DB::commit();
-                return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
-            }
+            $user->delete();
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'User gagal dihapus');
+            return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('UserController destroy() ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::debug('UserController destroy() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'User gagal dihapus: ' . $e->getMessage());
         }
     }
 
     public function datatable()
     {
-        $data = User::with('data_guard')->where('id', '!=', 1)->get();
+        $data = User::with(['data_guard' => function($query){
+            $query->select('id', 'badge_number');
+        }])->where('id', '!=', 1)->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
@@ -243,7 +234,7 @@ class UserController extends Controller
                 return implode(', ', $user->getRoleNames()->toArray());
             })
             ->addColumn('created_at', function (User $user) {
-                return date('d M y', strtotime($user->created_at));
+                return date('d/m/y - H:i:s', strtotime($user->created_at));
             })
             ->addColumn('status', '{{$status}}')
             ->addColumn('action', function (User $user) {
@@ -252,6 +243,6 @@ class UserController extends Controller
                     'deleteurl' => route('user.destroy', $user->id)
                 ];
             })
-            ->toJson();
+        ->toJson();
     }
 }

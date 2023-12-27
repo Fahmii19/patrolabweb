@@ -14,7 +14,7 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-end">
-                <button type="buton" onclick="window.location.href='{{ route('user.index') }}'" class="btn btn-warning">
+                <button type="buton" onclick="window.location.href='{{ route('user.index') }}'" class="btn btn-warning text-dark">
                     << Kembali
                 </button>
             </div>
