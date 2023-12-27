@@ -73,6 +73,8 @@ class UserController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'status' => 'ACTIVED',
+                'created_at' => now(),
+                'updated_at' => null,
             ];
 
             $user = User::create($data_user);
@@ -155,7 +157,9 @@ class UserController extends Controller
             $data_user = [
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'status' => $data['status'] ?? 'INACTIVED'
+                'status' => $data['status'] ?? 'INACTIVED',
+                'created_at' => $user->created_at,
+                'updated_at' => now(),
             ];
 
             // Check jika hak akses user sebagai admin area

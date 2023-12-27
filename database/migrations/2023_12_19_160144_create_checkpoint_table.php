@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('qr_code', 255)->unique();
             $table->enum('danger_status', ['LOW', 'MIDDLE', 'HIGH']);
             $table->enum('status', ['ACTIVED', 'INACTIVED']);
-            $table->unsignedBigInteger('round_id');
+            $table->unsignedBigInteger('round_id')->nullable();
             $table->foreign('round_id')->references('id')->on('rounds');
             $table->timestamps();
         });

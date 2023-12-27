@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Round;
+use App\Models\PletonPatrolArea;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Whoops\Run;
 
-class RoundSeeder extends Seeder
+class PletonPatrolSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,19 +15,23 @@ class RoundSeeder extends Seeder
      */
     public function run()
     {
-        Round::create([
-            'name' => 'Round 01',
-            'status' => 'ACTIVED',
+        PletonPatrolArea::create([
+            'pleton_id' => 1,
             'patrol_area_id' => 1,
             'created_at' => now(),
             'updated_at' => null,
         ]);
-        
-        Round::create([
-            'name' => 'Round 02',
-            'status' => 'ACTIVED',
+
+        PletonPatrolArea::create([
+            'pleton_id' => 2,
+            'patrol_area_id' => 1,
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
+
+        PletonPatrolArea::create([
+            'pleton_id' => 3,
             'patrol_area_id' => 2,
-            'status' => 'ACTIVED',
             'created_at' => now(),
             'updated_at' => null,
         ]);

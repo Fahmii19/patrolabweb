@@ -11,19 +11,9 @@ class Round extends Model
     protected $guarded = ['id'];
     protected $table = 'rounds';
 
-    public function wilayah()
+    public function patrol_area()
     {
-        return $this->belongsTo(Wilayah::class, 'id_wilayah', 'id');
-    }
-
-    public function project()
-    {
-        return $this->belongsTo(ProjectModel::class, 'id_project', 'id');
-    }
-
-    public function area()
-    {
-        return $this->belongsTo(Area::class, 'id_area', 'id');
+        return $this->belongsTo(PatrolArea::class, 'patrol_area_id', 'id');
     }
 
     public function checkpoint()

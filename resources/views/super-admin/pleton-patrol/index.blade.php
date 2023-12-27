@@ -15,17 +15,15 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex mb-3 justify-content-end">
-                    <a href="{{ route('pleton.create') }}" class="btn btn-success">Tambah Pleton</a>
+                    <a href="{{ route('pleton-patrol-area.create') }}" class="btn btn-success">Tambah Pleton Patrol</a>
                 </div>
                 <div class="table-responsive">
                     <table id="mytable" class="display" style="width:100%">
                         <thead>
                             <tr>
                                 <th style="max-width: 40px;">No</th>
-                                <th class="text-nowrap">Kode</th>
-                                <th class="text-nowrap">Nama</th>
-                                <th class="text-nowrap">Status</th>
-                                <th class="text-nowrap">Nama Area</th>
+                                <th class="text-nowrap">Patrol Area</th>
+                                <th class="text-nowrap">Nama Pleton</th>
                                 <th class="text-nowrap">Aksi</th>
                             </tr>
                         </thead>
@@ -39,7 +37,6 @@
             <form method="post">
                 @csrf
                 @method('delete')
-                <a id="show" class="btn btn-primary me-2">Detail</a>
                 <a id="edit" class="btn btn-warning me-2 my-2 text-dark">Edit</a>
                 <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
             </form>
@@ -55,7 +52,7 @@
                 scrollX: true,
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('pleton.datatable') }}",
+                ajax: "{{ route('pleton-patrol.datatable') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -63,23 +60,12 @@
                         searchable: false,
                     },
                     {
-                        data: 'code',
-                        name: 'Kode Pleton',
+                        data: 'patrol_area',
+                        name: 'Nama Patrol Area',
                     },
                     {
-                        data: 'name',
+                        data: 'pleton',
                         name: 'Nama Pleton',
-                    },
-                    {
-                        data: 'status',
-                        render: function(data, type, row) {
-                            if (row.status == 'ACTIVED') return `<span class="badge badge-success">${row.status}</span>`
-                            return `<span class="badge badge-danger">${row.status}</span>`
-                        }
-                    },
-                    {
-                        data: 'area',
-                        name: 'Nama Area',
                     },
                     {
                         name: "Action",
@@ -88,7 +74,6 @@
                         render: function(data, type, row) {
                             let html = $('#actionbase').clone();
                             html = html.find('.d-flex');
-                            html.find('#show').attr('href', row.action.showurl);
                             html.find('#edit').attr('href', row.action.editurl);
                             let form = html.find('form').attr('action', row.action.deleteurl)
                                 .attr('id', 'delete_form' + row.id);
@@ -100,6 +85,6 @@
             });
         });
 
-        active_menu("#menu-guard", "#sub-list-pleton")
+        active_menu("#menu-guard", "#sub-pleton-patrol")
     </script>
 @endpush

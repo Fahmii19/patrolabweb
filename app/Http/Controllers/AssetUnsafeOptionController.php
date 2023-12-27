@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Exception;
 use Throwable;
 use App\Models\AssetUnsafeOption;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -44,6 +43,8 @@ class AssetUnsafeOptionController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $validator = Validator::make($request->all(), [
                 'nama' => 'required|string',
             ]);
@@ -53,21 +54,19 @@ class AssetUnsafeOptionController extends Controller
             }
         
             // Membuat data aset dengan filename gambar
-            $option = AssetUnsafeOption::create([
+            AssetUnsafeOption::create([
                 'option_condition' => $request->nama,
                 'status' => 'ACTIVED',
+                'created_at' => now(),
+                'updated_at' => null,
             ]);
 
             DB::commit();
-            if($option) {
-                return redirect()->route('aset-unsafe-option.index')->with('success', 'Data unsafe option berhasil ditambahkan');
-            }
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Data unsafe option gagal ditambahkan');
+            return redirect()->route('aset-unsafe-option.index')->with('success', 'Aset unsafe option berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('AsetUnsafeOptionController store ' . $e->getMessage());
+            Log::debug('AsetUnsafeOptionController store() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -107,31 +106,31 @@ class AssetUnsafeOptionController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            DB::beginTransaction();
+
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
-                'status' => 'nullable|in:ACTIVED,UNACTIVED',
+                'status' => 'nullable|in:ACTIVED,INACTIVED',
             ]);
     
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
-    
-            $data['option_condition'] = $request->name;
-            $data['status'] = $request->status ?? 'UNACTIVED';
 
             $option = AssetUnsafeOption::find($id);
-            $action = $option->update($data);
+    
+            $data['option_condition'] = $request->name;
+            $data['status'] = $request->status ?? 'INACTIVED';
+            $data['created_at'] = $option->created_at;
+            $data['updated-at'] = now();
+
+            $option->update($data);
             DB::commit();
 
-            if($action) {
-                return redirect()->route('aset-unsafe-option.index')->with('success', 'Data unsafe option berhasil diupdate');
-            }
-
-            DB::rollback();
-            return redirect()->back()->with('error', 'Data unsafe option gagal diupdate');
+            return redirect()->route('aset-unsafe-option.index')->with('success', 'Aset unsafe option berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
-            Log::debug('AsetUnsafeOptionController update ' . $e->getMessage());
+            Log::debug('AsetUnsafeOptionController update() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -148,10 +147,11 @@ class AssetUnsafeOptionController extends Controller
             DB::beginTransaction();
             AssetUnsafeOption::find($id)->delete();
             DB::commit();
-            return redirect()->route('aset-unsafe-option.index')->with('success', 'Asset Unsafe Option Berhasil Dihapus');
+
+            return redirect()->route('aset-unsafe-option.index')->with('success', 'Aset unsafe option berhasil dihapus');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('AssetUnsafeOptionController destroy() ' . $e->getMessage());
+            Log::debug('AssetUnsafeOptionController destroy() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -171,6 +171,6 @@ class AssetUnsafeOptionController extends Controller
                 ];
                 return $data;
             })
-            ->toJson();
+        ->toJson();
     }
 }

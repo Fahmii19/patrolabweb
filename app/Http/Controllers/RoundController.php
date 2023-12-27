@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use Throwable;
 use App\Models\Area;
-use App\Models\ProjectModel;
 use App\Models\Round;
-use App\Models\Wilayah;
+use App\Models\PatrolArea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,14 +17,13 @@ class RoundController extends Controller
     public function index()
     {
         $data['title'] = 'Daftar Round';
-        // $data['round'] = Round::all();
         return view('super-admin.round.index', $data);
     }
 
     public function create()
     {
         $data['title'] = 'Tambah Round';
-        $data['wilayah'] = Wilayah::all();
+        $data['area'] = Area::all();
         return view('super-admin.round.create', $data);
     }
 
@@ -35,25 +33,26 @@ class RoundController extends Controller
             DB::beginTransaction();
 
             $validator = Validator::make($request->all(), [
-                'id_wilayah' => 'required|numeric',
-                'id_project' => 'required|numeric',
-                'id_area' => 'required|numeric',
-                'rute' => 'required|string',
+                'patrol_area_id' => 'required|numeric',
+                'name' => 'required|string',
             ]);
 
             if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+                return redirect()->back()->withErrors($validator->errors())->withInput();
             }
 
             $data = $validator->validated();
-            $data['status'] = 'ACTIVED';
+            $data['status'] = "ACTIVED";
+            $data['created_at'] = now();
+            $data['updated_at'] = null;
 
             Round::create($data);
             DB::commit();
-            return redirect()->route('round.index')->with('success', 'Data Berhasil Ditambahkan');
+
+            return redirect()->route('round.index')->with('success', 'Round berhasil ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('RoundController store error ' . $e->getMessage());
+            Log::error('RoundController store() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -67,11 +66,18 @@ class RoundController extends Controller
 
     public function edit($id)
     {
-        $data['title'] = 'Edit Round';
-        $data['round'] = Round::find($id);
-        $data['wilayah'] = Wilayah::all();
-        $data['project'] = Wilayah::find($data['round']->id_wilayah)->projects;
-        $data['area'] = ProjectModel::find($data['round']->id_project)->areas;
+        $data['title'] = "Edit Round";
+        $data['round'] = Round::with(['patrol_area' => function($query) {
+            $query->select('id', 'name', 'area_id');
+        }])->find($id);
+
+        if (!$data['round']) {
+            return redirect()->back()->with('error', 'Round tidak ditemukan.');
+        }
+
+        $data['area'] = Area::all();
+        $data['patrol_area'] = PatrolArea::where('area_id', $data['round']->patrol_area->area_id)->get();
+
         return view('super-admin.round.edit', $data);
     }
 
@@ -80,27 +86,30 @@ class RoundController extends Controller
         try {
             DB::beginTransaction();
 
+            $round = Round::find($id);
+
             $validator = Validator::make($request->all(), [
-                'id_wilayah' => 'required|numeric',
-                'id_project' => 'required|numeric',
-                'id_area' => 'required|numeric',
-                'rute' => 'required|string',
-                'status' => 'nullable|in:ACTIVED,INACTIVED',
+                'patrol_area_id' => 'required|numeric',
+                'name' => 'required|string',
+                'status' => 'nullable|in:ACTIVED,INACTIVED'
             ]);
 
             if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+                return redirect()->back()->withErrors($validator->errors())->withInput();
             }
-            
+
             $data = $validator->validated();
             $data['status'] = $data['status'] ?? 'INACTIVED';
+            $data['created_at'] = $round->created_at;
+            $data['updated_at'] = now();
 
-            Round::find($id)->update($data);
+            $round->update($data);
             DB::commit();
-            return redirect()->route('round.index')->with('success', 'Data Berhasil Diedit');
+
+            return redirect()->route('round.index')->with('success', 'Round berhasil diperbarui');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('RoundController update() ' . $e->getMessage());
+            Log::error('RoundController update() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -111,37 +120,36 @@ class RoundController extends Controller
             DB::beginTransaction();
             Round::find($id)->delete();
             DB::commit();
-            return redirect()->route('round.index')->with('success', 'Data Berhasil Dihapus');
+
+            return redirect()->route('round.index')->with('success', 'Route Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('RoundController destroy() ' . $e->getMessage());
+            Log::debug('RoundController destroy() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
     public function datatable()
     {
-        $data = Round::with('wilayah', 'project', 'area')->get();
+        $data = Round::with('patrol_area.area')->get();
         return DataTables::of($data)
-        ->addIndexColumn()
-        ->escapeColumns('active')
-        ->addColumn('nama', '{{$rute}}')
-        ->addColumn('jumlah', function($data){
-            $checkpoint = Round::find($data->id)->checkpoint;
-            return $checkpoint->count();
-        })
-        ->addColumn('status', '{{$status}}')
-        ->addColumn('id_area', '{{$area["name"]}}')
-        ->addColumn('id_project', '{{$project["name"]}}')
-        ->addColumn('id_wilayah', '{{$wilayah["nama"]}}')
-        ->addColumn('action', function (Round $round) {
-            $data = [
-                'editurl' => route('round.edit', $round->id),
-                'deleteurl' => route('round.destroy', $round->id)
-            ];
-            return $data;
-        })
-
+            ->addIndexColumn()
+            ->escapeColumns('active')
+            ->addColumn('name', '{{$name}}')
+            ->addColumn('jumlah', function($data){
+                $checkpoint = Round::find($data->id)->checkpoint;
+                return $checkpoint->count();
+            })
+            ->addColumn('status', '{{$status}}')
+            ->addColumn('patrol_area', '{{$patrol_area["name"]}}')
+            ->addColumn('area', '{{$patrol_area["area"]["name"]}}')
+            ->addColumn('action', function (Round $round) {
+                $data = [
+                    'editurl' => route('round.edit', $round->id),
+                    'deleteurl' => route('round.destroy', $round->id)
+                ];
+                return $data;
+            })
         ->toJson();
     }
 }

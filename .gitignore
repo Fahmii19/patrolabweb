@@ -4,6 +4,7 @@
 /public/gambar/area/*
 /public/gambar/aset/*
 /public/gambar/patrol-area/*
+/public/gambar/guard/*
 /storage/*.key
 /vendor
 .env

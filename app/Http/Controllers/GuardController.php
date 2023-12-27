@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PivotGuardProject;
+use Exception;
 use Throwable;
 use App\Models\Shift;
 use App\Models\Guard;
@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Pleton;
 use App\Models\Wilayah;
 use App\Models\Area;
+use App\Models\PivotGuardProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -38,20 +39,14 @@ class GuardController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Guard';
-
-        // $data['pletons'] = Pleton::all();
-        // Dapatkan daftar ID pleton yang sudah dipilih
-        $selectedPletonIds = Guard::pluck('pleton_id')->toArray();
-
-        $data['pletons'] = Pleton::whereNotIn('id', $selectedPletonIds)->get();
-
-        // dd($data['pletons']);
-
+        $data['area'] = Area::all();
         $data['shifts'] = Shift::all();
         $data['wilayah'] = Wilayah::all();
-        $data['area'] = Area::all();
-        // dd($data['area']);
-        // dd($data);
+
+        // Dapatkan daftar ID pleton yang sudah dipilih
+        $selectedPletonIds = Guard::pluck('pleton_id')->toArray();
+        $data['pletons'] = Pleton::whereNotIn('id', $selectedPletonIds)->get();
+
         return view('super-admin.guard-page.create', $data);
     }
 
@@ -63,54 +58,94 @@ class GuardController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input form
-        $validatedData = $request->validate([
-            'badge_number' => 'required|string|max:255|unique:guard,badge_number',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:guard,email',
-            'gender' => 'required|in:MALE,FEMALE',
-            'dob' => 'required|date',
-            'address' => 'required|string|max:255',
-            'wa' => 'required|string',
-            'pleton_id' => 'required|numeric|exists:pleton,id',
-            'shift_id' => 'required|numeric|exists:shift,id',
-            'password' => 'required|string',
-            'role' => 'required|in:GUARD,ADMIN_AREA', // Validasi untuk role
-        ]);
-
         try {
             DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'badge_number' => 'required|string|max:255|unique:guards',
+                'name' => 'required|string|max:255',
+                'img_avatar' => 'image|mimes:jpeg,png,jpg',
+                'dob' => 'required|date',
+                'gender' => 'required|in:MALE,FEMALE',
+                'email' => 'required|email|unique:guards',
+                'wa' => 'required|string|unique:guards',
+                'address' => 'required|string|max:255',
+                'shift_id' => 'required|numeric|exists:shift,id',
+                'pleton_id' => 'required|numeric|exists:pleton,id',
+                'password' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            }
+
+            // Menangani upload avatar
+            $imgAvatar = null;
+            if ($request->hasFile('img_avatar')) {
+                $file = $request->file('img_avatar');
+                $currentDateTime = date('Ymd_His');
+                $imgAvatar = $currentDateTime . '_' . $file->getClientOriginalName();
+                $file->move(public_path('gambar/guard'), $imgAvatar);
+            }
+
+            $validatedData = $validator->validated();
 
             // Create a new Guard instance with validated data
             $guard = new Guard([
                 'badge_number' => $validatedData['badge_number'],
                 'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'gender' => $validatedData['gender'],
+                'img_avatar' => $imgAvatar,
                 'dob' => $validatedData['dob'],
-                'address' => $validatedData['address'],
+                'gender' => $validatedData['gender'],
+                'email' => $validatedData['email'],
                 'wa' => $validatedData['wa'],
-                'pleton_id' => $validatedData['pleton_id'],
+                'address' => $validatedData['address'],
                 'shift_id' => $validatedData['shift_id'],
-                'password' => bcrypt($validatedData['password']),
-                'role' => $validatedData['role'], // Menyimpan role
+                'pleton_id' => $validatedData['pleton_id'],
+                'created_at' => now(),
+                'updated_at' => null,
             ]);
 
             $guard->save();
-
+            $guardId = $guard->id;
             DB::commit();
 
-            return redirect()->route('guard.index')->with('success', 'Data berhasil ditambahkan.');
-        } catch (\Exception $e) {
+            return $this->store_user($validatedData, $guardId);
+        } catch (Exception $e) {
             DB::rollback();
-
-            // Return to the form with an error message
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage())->withInput();
+            Log::error('GuardController store() error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Guard gagal disimpan: ' . $e->getMessage());
         }
     }
 
 
+    public function store_user($data, $guardId)
+    {
+        try {
+            DB::beginTransaction();
 
+            $data_user = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => bcrypt($data['password']),
+                'status' => 'ACTIVED',
+                'guard_id' => $guardId,
+                'no_badge' => $data['badge_number'],
+                'created_at' => now(),
+                'updated_at' => null,
+            ];
+
+            $user = User::create($data_user);
+            $user->assignRole('user');
+            DB::commit();
+
+            return redirect()->route('guard.index')->with('success', 'User guard berhasil ditambahkan');
+        } catch (Throwable $e) {
+            DB::rollback();
+            Log::debug('GuardController store() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'User guard gagal ditambahkan: ' . $e->getMessage());
+        }
+    }
 
 
     /**
@@ -122,16 +157,12 @@ class GuardController extends Controller
     public function show(Guard $guard)
     {
         $title = 'Detail Guard';
-
         // Eager load any additional relationships needed for the view
         $guard->load('pleton', 'shift');
-
 
         // Mengirim data Guard dan title ke view sebagai variabel terpisah
         return view('super-admin.guard-page.show', compact('guard', 'title'));
     }
-
-
 
     /**
      * Show the form for editing the specified resource.
@@ -142,13 +173,14 @@ class GuardController extends Controller
     public function edit(Guard $guard)
     {
         $data['title'] = 'Edit Guard';
-        $data['pletons'] = Pleton::all();
-        $data['shifts'] = Shift::all();
         $data['guard'] = $guard;
+        $data['shifts'] = Shift::all();
+        $selectedPletonIds = Guard::pluck('pleton_id')->toArray();
+        $pletonNotSelected = Pleton::whereNotIn('id', $selectedPletonIds)->get();
+        $pletonSelected = Pleton::where('id', $guard->pleton_id)->get();
 
-        // dd($data['guard']);
+        $data['pletons'] = $pletonNotSelected->merge($pletonSelected);
 
-        // dd($data);
         return view('super-admin.guard-page.edit', $data);
     }
 
@@ -161,55 +193,104 @@ class GuardController extends Controller
      */
     public function update(Request $request, Guard $guard)
     {
-        // Validasi input form
-        $validatedData = $request->validate([
-            'badge_number' => 'required|string|max:255|unique:guard,badge_number,' . $guard->id,
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:guard,email,' . $guard->id,
-            'gender' => 'required|in:MALE,FEMALE',
-            'dob' => 'required|date',
-            'address' => 'required|string|max:255',
-            'wa' => 'required|string',
-            'pleton_id' => 'required|numeric|exists:pleton,id',
-            'shift_id' => 'required|numeric|exists:shift,id',
-            'password' => 'nullable|string|min:8',
-            'role' => 'required|string', // Tambah validasi untuk role
-        ]);
-
         try {
             DB::beginTransaction();
 
-            // Perbarui instance Guard dengan data yang telah divalidasi
-            $updateData = [
-                'badge_number' => $validatedData['badge_number'],
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'gender' => $validatedData['gender'],
-                'dob' => $validatedData['dob'],
-                'address' => $validatedData['address'],
-                'wa' => $validatedData['wa'],
-                'pleton_id' => $validatedData['pleton_id'],
-                'shift_id' => $validatedData['shift_id'],
-                'role' => $validatedData['role'], // Perbarui role
-            ];
-
-            // Perbarui password jika disediakan
-            if (!empty($validatedData['password'])) {
-                $updateData['password'] = bcrypt($validatedData['password']);
+            $validator = Validator::make($request->all(), [
+                'badge_number' => 'required|string|max:255|unique:guards,badge_number,' . $guard->id,
+                'name' => 'required|string|max:255',
+                'img_avatar' => 'image|mimes:jpeg,png,jpg',
+                'dob' => 'required|date',
+                'gender' => 'required|in:MALE,FEMALE',
+                'email' => 'required|email|unique:guards,email,' . $guard->id,
+                'wa' => 'required|string|unique:guards,wa,' . $guard->id,
+                'address' => 'required|string|max:255',
+                'shift_id' => 'required|numeric|exists:shift,id',
+                'pleton_id' => 'required|numeric|exists:pleton,id',
+                'password' => 'nullable|string',
+            ]);
+    
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
 
-            $guard->update($updateData);
+            $validated = $validator->validated();
 
+            // Perbarui password jika disediakan
+            if (!empty($validated['password'])) {
+                $validated['password'] = bcrypt($validated['password']);
+            }
+
+            // Menangani upload thumbnail patrol area
+            $imgAvatar = $guard->img_avatar;
+            if ($request->hasFile('img_avatar')) {
+                $file = $request->file('img_avatar');
+                $imgAvatar = date('Ymd_His') . '_' . $file->getClientOriginalName();    
+                $file->move(public_path('gambar/guard'), $imgAvatar);
+
+                // Hapus gambar lama jika ada
+                if ($guard->img_avatar && file_exists(public_path('gambar/guard/' . $guard->img_avatar))) {
+                    unlink(public_path('gambar/guard/' . $guard->img_avatar));
+                }
+            }
+
+            $update = [
+                'badge_number' => $validated['badge_number'],
+                'name' => $validated['name'],
+                'img_avatar' => $imgAvatar,
+                'dob' => $validated['dob'],
+                'gender' => $validated['gender'],
+                'email' => $validated['email'],
+                'wa' => $validated['wa'],
+                'address' => $validated['address'],
+                'shift_id' => $validated['shift_id'],
+                'pleton_id' => $validated['pleton_id'],
+                'created_at' => $guard->created_at,
+                'updated_at' => now(),
+            ];
+
+            $guard->update($update);
             DB::commit();
 
-            return redirect()->route('guard.index')->with('success', 'Data berhasil diperbarui.');
-        } catch (\Exception $e) {
+            return $this->update_user($validated, $guard->id);
+        } catch (Exception $e) {
             DB::rollback();
-
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage())->withInput();
+            Log::debug('GuardController update() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'User guard gagal diperbarui: ' . $e->getMessage());
         }
     }
 
+    public function update_user($data, $guardId) 
+    {
+        
+        try {
+            DB::beginTransaction();
+            $user = User::where('guard_id', $guardId)->firstOrFail();
+
+            $data_user = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'status' => $user->status,
+                'guard_id' => $guardId,
+                'no_badge' => $data['badge_number'],
+                'created_at' => $user->created_at,
+                'updated_at' => now(),
+            ];
+
+            if($data['password']){
+                $data_user['password'] = $data['password'];
+            }
+
+            $user->update($data_user);
+            DB::commit();
+
+            return redirect()->route('guard.index')->with('success', 'User guard berhasil diperbarui');
+        } catch (Throwable $e) {
+            DB::rollback();
+            Log::debug('GuardController update_user() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'User guard gagal diperbarui: ' . $e->getMessage());
+        }   
+    }
 
 
     /**
@@ -229,7 +310,14 @@ class GuardController extends Controller
             }
 
             // Hapus hubungan many-to-many dengan projects jika ada
-            $guard->projects()->detach();
+            // $guard->projects()->detach();
+
+            if ($guard->img_avatar) {
+                $image = $guard->img_avatar;
+                if (file_exists(public_path('gambar/guard/' . $image))) {
+                    unlink(public_path('gambar/guard/' . $image));
+                }
+            }
 
             // Hapus data Guard
             $guard->delete();
@@ -237,10 +325,10 @@ class GuardController extends Controller
             DB::commit();
 
             return redirect()->route('guard.index')->with('success', 'Guard berhasil dihapus.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
-
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus Guard: ' . $e->getMessage());
+            Log::debug('GuardController destroy() error:' . $e->getMessage());
+            return redirect()->back()->with('error', 'User guard gagal dihapus: ' . $e->getMessage());
         }
     }
 
@@ -248,8 +336,6 @@ class GuardController extends Controller
     public function datatable()
     {
         $data = Guard::with('shift', 'pleton')->get(); // Assuming relationships with Pleton and Shift
-
-        // dd($data);
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -266,13 +352,13 @@ class GuardController extends Controller
                 return $guard->gender;
             })
             ->addColumn('dob', function (Guard $guard) {
-                return $guard->dob ? date('d M Y', strtotime($guard->dob)) : '';
+                return $guard->dob ? date('d M Y', strtotime($guard->dob)) : '-';
             })
             ->addColumn('pleton', function (Guard $guard) {
-                return $guard->pleton->name ?? 'N/A'; // Displaying the name of the Pleton
+                return $guard->pleton->name ?? '-'; // Displaying the name of the Pleton
             })
             ->addColumn('shift', function (Guard $guard) {
-                return $guard->shift->name ?? 'N/A'; // Displaying the name of the Shift
+                return $guard->shift->name ?? '-'; // Displaying the name of the Shift
             })
             ->addColumn('action', function (Guard $guard) {
                 return [
