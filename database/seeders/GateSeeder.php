@@ -16,30 +16,34 @@ class GateSeeder extends Seeder
     public function run()
     {
         Gate::create([
+            "code" => "koget01",
             "name" => "Gate 01",
             "status" => "ACTIVED",
-            "project_id" => 1,
+            "patrol_area_id" => 1,
             "created_at" => now(),
             "updated_at" => null,
         ]);
         Gate::create([
+            "code" => "koget02",
             "name" => "Gate 02",
             "status" => "ACTIVED",
-            "project_id" => 1,
+            "patrol_area_id" => 1,
             "created_at"  => now(),
             "updated_at" => null,
         ]);
         Gate::create([
+            "code" => "koget03",
             "name" => "Gate 03",
             "status" => "ACTIVED",
-            "project_id" => 2,
+            "patrol_area_id" => 2,
             "created_at"  => now(),
             "updated_at" => null,
         ]);
         Gate::create([
+            "code" => "koget04",
             "name" => "Gate 04",
             "status" => "ACTIVED",
-            "project_id" => 2,
+            "patrol_area_id" => 2,
             "created_at"  => now(),
             "updated_at" => null,
         ]);

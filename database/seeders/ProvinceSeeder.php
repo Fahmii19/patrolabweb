@@ -16,24 +16,25 @@ class ProvinceSeeder extends Seeder
     public function run()
     {
         Province::create([
-            "name" => "Province 01",
-            "created_at" => now(),
-            "updated_at" => null,
+            'name' => 'Province 01',
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
+
+        Province::create([
+            'name' => 'Province 02',
+            'created_at' => now(),
+            'updated_at' => null,
         ]);
         Province::create([
-            "name" => "Province 02",
-            "created_at" => now(),
-            "updated_at" => null,
+            'name' => 'Province 03',
+            'created_at' => now(),
+            'updated_at' => null,
         ]);
         Province::create([
-            "name" => "Province 03",
-            "created_at" => now(),
-            "updated_at" => null,
-        ]);
-        Province::create([
-            "name" => "Province 04",
-            "created_at" => now(),
-            "updated_at" => null,
+            'name' => 'Province 04',
+            'created_at' => now(),
+            'updated_at' => null,
         ]);
     }
 }

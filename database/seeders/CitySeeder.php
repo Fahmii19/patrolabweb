@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
+use App\Models\City;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
-class RoleSeeder extends Seeder
+class CitySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,18 +15,21 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        Role::create([
-            'name' => 'super-admin', 
+        City::create([
+            'name' => 'City 01',
+            'province_id' => 1,
             'created_at' => now(),
             'updated_at' => null,
         ]);
-        Role::create([
-            'name' => 'admin-area', 
+        City::create([
+            'name' => 'City 02',
+            'province_id' => 1,
             'created_at' => now(),
             'updated_at' => null,
         ]);
-        Role::create([
-            'name' => 'user', 
+        City::create([
+            'name' => 'City 03',
+            'province_id' => 1,
             'created_at' => now(),
             'updated_at' => null,
         ]);
