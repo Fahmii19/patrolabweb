@@ -197,7 +197,7 @@ class CheckPointController extends Controller
             $old = $request->id_round;
         }
 
-        $round = Round::with(['wilayah', 'project', 'area'])->find($id);
+        $round = Round::with(['patrol_area.area'])->find($id);
         $checkpoint = Round::find($id)->checkpoint;
 
         if ($checkpoint->count() <= 0) {
@@ -210,13 +210,13 @@ class CheckPointController extends Controller
 
         $html = '';
         for ($i=0; $i < $checkpoint->count(); $i++) {
-            $badge = $checkpoint[$i]['status'] == "ACTIVED" ? "badge-success" : "badge_danger";
+            $badge = $checkpoint[$i]['status'] == "ACTIVED" ? "badge-success" : "badge-danger";
             $html .= '<tr>'.
                 '<th scope="row">'. $i + 1 .'</th>'.
                 '<td>'. $checkpoint[$i]['name'] . '</td>'.
-                '<td>'. $round['wilayah']['nama'] . '</td>'.
-                '<td>'. $round['project']['name'] . '</td>'.
-                '<td>'. $round['area']['name'] . '</td>'.
+                '<td>'. $checkpoint[$i]['location'] . '</td>'.
+                '<td>'. $round['patrol_area']['name'] . '</td>'.
+                '<td>'. $round['patrol_area']['area']['name'] . '</td>'.
                 '<td><span class="badge '.$badge.'">'. $checkpoint[$i]['status'] . '</span></td>'.
                 '<td>'.
                     '<form method="post" action="'.route("checkpoint-remove-round",$checkpoint[$i]['id']).'" class="d-inline" id="delete_form'.$checkpoint[$i]['id'].'">
