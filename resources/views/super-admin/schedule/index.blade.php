@@ -14,16 +14,17 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex mb-3 justify-content-end">
-                <a href="{{route('project.create')}}" class="btn btn-success">Tambah Jadwal</a>
+                {{-- <a href="{{route('project.create')}}" class="btn btn-success">Tambah Jadwal</a> --}}
             </div>
             <div class="table-responsive">
                 <table id="mytable" class="display" style="width:100%">
                     <thead>
                         <tr>
                             <th style="width:40px">No</th>
-                            <th>Area</th>
-                            <th>Judul</th>
-                            <th>Deskripsi</th>
+                            <th>Pleton</th>
+                            <th>Shift</th>
+                            <th>Patrol Area</th>
+                            <th>Tanggal</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -101,7 +102,7 @@
     //         }
     //     ]
     // });
-    active_menu("#menu-patrol", "#sub-notice");
+    active_menu("#menu-patrol", "#sub-schedule");
 </script>
 @endpush
 @endsection
