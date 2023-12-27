@@ -90,7 +90,7 @@ class ProjectController extends Controller
     public function show($id)
     {
         $data['title'] = 'Detail Project Model';
-        $data['project'] = Project::with('data_wilayah', 'data_branch')->findOrFail($id);
+        $data['project'] = Project::with('wilayah', 'branch')->findOrFail($id);
         return view('super-admin.project.show', $data);
     }
 
@@ -187,17 +187,17 @@ class ProjectController extends Controller
 
     public function datatable()
     {
-        $data = Project::with('data_wilayah', 'data_branch')->get();
+        $data = Project::with('wilayah', 'branch')->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns([])
             ->addColumn('code', '{{$code}}')
             ->addColumn('name', '{{$name}}')
-            ->addColumn('region', '{{$data_wilayah["name"]}}')
-            ->addColumn('branch', '{{$data_branch["name"]}}')
+            ->addColumn('region', '{{$wilayah["name"]}}')
+            ->addColumn('branch', '{{$branch["name"]}}')
             ->addColumn('status', '{{$status}}')
             ->addColumn('created_at', function ($data) {
-                return Carbon::parse($data->created_at)->format('m/d/Y H:i:s');
+                return date('m/d/Y H:i:s', strtotime($data->created_at));
             })
             ->addColumn('action', function (Project $project) {
                 return [

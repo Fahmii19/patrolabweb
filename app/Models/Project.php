@@ -16,7 +16,7 @@ class Project extends Model
         return $this->belongsTo(Wilayah::class, 'city_id', 'id');
     }
     
-    public function data_branch()
+    public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
