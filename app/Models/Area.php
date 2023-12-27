@@ -50,4 +50,9 @@ class Area extends Model
     {
         return $this->hasMany(incomingvehicle::class, 'id_area');
     }
+
+    public function patrol_area()
+    {
+        return $this->hasMany(PatrolArea::class, 'patrol_area_id');
+    }
 }

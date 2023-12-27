@@ -52,8 +52,7 @@ class AreaController extends Controller
             $validator = Validator::make($request->all(), [
                 'code' => 'required|string|unique:areas',
                 'name' => 'required|string',
-                'description' => 'required|string',
-                'img_location.*' => 'image|mimes:jpeg,png,jpg',
+                'img_location' => 'image|mimes:jpeg,png,jpg',
                 'project_id' => 'required|numeric',
             ]);
 
@@ -61,20 +60,16 @@ class AreaController extends Controller
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
 
-            $filenames = [];
+            $filename = null;
             if ($request->hasFile('img_location')) {
-                foreach ($request->file('img_location') as $file) {
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('gambar/area'), $filename);
-                    $filenames[] = $filename;
-                }
+                $file = $request->file('img_location');
+                $filename = date('Ymd_His') . '_' . $file->getClientOriginalName();
+                $file->move(public_path('gambar/area'), $filename);
             }
-
-            $imgLocation = implode(',', $filenames);
 
             $data = $validator->validated();
             $data['status'] = 'ACTIVED';
-            $data['img_location'] = $imgLocation;
+            $data['img_location'] = $filename;
 
             if (Area::create($data)){
                 DB::commit();
@@ -85,7 +80,7 @@ class AreaController extends Controller
             return redirect()->route('area.index')->with('error', 'Area gagal ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
-            Log::error('AreaController store error: ' . $e->getMessage());
+            Log::error('AreaController store() error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Area gagal disimpan: ' . $e->getMessage());
         }
     }
@@ -133,56 +128,40 @@ class AreaController extends Controller
                 'project_id' => 'required|numeric',
                 'code' => 'required|string|unique:areas,code,'. $area->id,
                 'name' => 'required|string',
-                'description' => 'required|string',
                 'status' => 'nullable|string|in:ACTIVED,INACTIVED',
-                'img_location.*' => 'image|mimes:jpeg,png,jpg',
+                'img_location' => 'image|mimes:jpeg,png,jpg',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
 
-            $currentImages = explode(',', $area->img_location);
-
-            // Menangani upload gambar baru
+            $imgLocation = $area->img_location;
             if ($request->hasFile('img_location')) {
-                foreach ($request->file('img_location') as $file) {
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('gambar/area'), $filename);
-                    $currentImages[] = $filename;
-                }
-            }
+                $file = $request->file('img_location');
+                $filename = date('Ymd_His') . '_' . $file->getClientOriginalName();
+                $file->move(public_path('gambar/area'), $filename); // Sesuaikan path sesuai kebutuhan
 
-            // Gabungkan nama file yang ada dan baru menjadi string
-            $imgLocation = implode(',', $currentImages);
+                // Hapus gambar lama jika ada
+                if ($imgLocation && file_exists(public_path('gambar/area/' . $imgLocation))) {
+                    unlink(public_path('gambar/area/' . $imgLocation));
+                }
+
+                // Menyimpan nama file gambar baru
+                $imgLocation = $filename; 
+            }
 
             $data = $validator->validated();
             $data['img_location'] = $imgLocation;
             $data['status'] = $data['status'] ?? 'INACTIVED';
 
-            if ($area->update($data)) {
-                DB::commit();
-                // Menangani gambar yang dihapus setelah update berhasil
-                if ($request->has('delete_images')) {
-                    foreach ($request->delete_images as $deleteImage) {
-                        if (($key = array_search($deleteImage, $currentImages)) !== false) {
-                            // Hapus file dari server
-                            if (file_exists(public_path('gambar/area/' . $deleteImage))) {
-                                unlink(public_path('gambar/area/' . $deleteImage));
-                            }
-                            unset($currentImages[$key]);
-                        }
-                    }
-                }
+            $area->update($data);
+            DB::commit();
 
-                return redirect()->route('area.index')->with('success', 'Area berhasil diperbarui');
-            }
-
-            DB::rollback();
-            return redirect()->route('area.index')->with('error', 'Area gagal diperbarui');
+            return redirect()->route('area.index')->with('success', 'Area berhasil diperbarui');
         } catch (Exception $e) {
             DB::rollback();
-            Log::error('AreaController update error: ' . $e->getMessage());
+            Log::error('AreaController update() error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Area gagal diperbarui: ' . $e->getMessage());
         }
     }
@@ -200,25 +179,19 @@ class AreaController extends Controller
         try {
             DB::beginTransaction();
 
-            // Hapus gambar dari server jika ada
-            if ($area->img_location) {
-                $images = explode(',', $area->img_location);
-                foreach ($images as $image) {
-                    if (file_exists(public_path('gambar/area/' . $image))) {
-                        unlink(public_path('gambar/area/' . $image));
-                    }
+           // Hapus gambar dari server jika ada
+           if ($area->img_location) {
+                if (file_exists(public_path('gambar/area/' . $area->img_location))) {
+                    unlink(public_path('gambar/area/' . $area->img_location));
                 }
             }
 
             // Hapus data area
-            if($area->delete()){
-                DB::commit();
-                return redirect()->route('area.index')->with('success', 'Area berhasil dihapus');
-            }
+            $area->delete();
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->route('area.index')->with('error', 'Area gagal dihapus');
-        } catch (\Exception $e) {
+            return redirect()->route('area.index')->with('success', 'Area berhasil dihapus');
+        } catch (Exception $e) {
             DB::rollback();
             Log::error('AreaController destroy() error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Data area gagal dihapus: ' . $e->getMessage());
@@ -236,11 +209,11 @@ class AreaController extends Controller
             ->addColumn('status', '{{$status}}')
             ->addColumn('project', '{{$project_id ? $project["name"] : "-"}}')
             ->addColumn('image', function ($row) {
-                $images = explode(',', $row->img_location); 
+                $images = $row->img_location; 
                 $imgHtml = '';
 
-                if ($images[0] && file_exists(public_path('gambar/area/' . $images[0]))) {
-                    $url = asset('gambar/area/' . $images[0]);
+                if ($images && file_exists(public_path('gambar/area/' . $images))) {
+                    $url = asset('gambar/area/' . $images);
                 } else {
                     $url = asset('gambar/no-image.png'); // Gambar default
                 }

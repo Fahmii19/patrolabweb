@@ -26,7 +26,7 @@
                             <!-- Project -->
                             <div class="mb-3">
                                 <label for="project_id" class="form-label">Nama Project <span class="text-danger">*</span></label>
-                                <select class="form-select @error('project_id') is-invalid @enderror" name="project_id" id="project_id">
+                                <select class="form-select @error('project_id') is-invalid @enderror" name="project_id" id="project_id" required>
                                     <option value="" disabled selected>Pilih Project</option>
                                     @foreach ($projects as $project)
                                     <option value="{{ $project->id }}" {{ old('project_id', $area->project_id) == $project->id ? 'selected' : '' }}>{{ $project->name }}</option>
@@ -46,16 +46,11 @@
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ old('name', $area->name) }}" placeholder="Masukkan Nama Area" required>
                                 @error('name') <span class="text-danger d-block">{{$message}}</span> @enderror
                             </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Deskripsi Lengkap <span class="text-danger">*</span></label>
-                                <textarea class="form-control @error('description') is-invalid @enderror" name="description" id="description" placeholder="Masukkan deskripsi lengkap" rows="4" required>{{ old('description', $area->description) }}</textarea>
-                                @error('description') <span class="text-danger d-block">{{ $message }}</span> @enderror
-                            </div>
                             <!-- Status -->
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="ACTIVED" name="status" @if($area->status == 'ACTIVED') checked @endif>
+                                    <input class="form-check-input" type="checkbox" value="ACTIVED" id="status" name="status" @if($area->status == 'ACTIVED') checked @endif>
                                     <label class="form-check-label" for="status">
                                         ACTIVED
                                     </label>
@@ -66,39 +61,26 @@
                         <div class="col">
                             <!-- Gambar -->
                             <div class="mb-3">
-                                <label for="img_location" class="form-label">Tambah Gambar Area</label>
-                                <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location[]" id="img_location" multiple>
-                                <small class="form-text">Ekstensi gambar yang diperbolehkan: jpeg, png & jpg</small>
-                                @error('img_location') <span class="text-danger d-block">{{$message}}</span> @enderror
-
-                                <!-- Tampilkan gambar saat ini atau gambar default -->
-                                <div class="row align-items-strecth mt-3">
-                                    @foreach(explode(',', $area->img_location) as $index => $image)
-                                        <div class="col-6 col-sm-4 col-md-3 col-lg-6 col-xxl-4 img-container d-inline-block mr-2">
-                                            <img src="{{ $image ? asset('gambar/area/' . $image) : asset('gambar/no-image.png') }}" class="img-thumbnail">
-                                            <!-- Checkbox untuk menghapus gambar -->
-                                            @if ($image)
-                                            <div class="form-check mt-2">
-                                                <input class="form-check-input" type="checkbox" name="delete_images[]" id="deleteImage{{ $index }}" value="{{ $image }}">
-                                                <label class="form-check-label" for="deleteImage{{ $index }}">Hapus gambar</label>
-                                            </div>
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                </div>
+                                <label for="img_location" class="form-label">Gambar Area</label>
+                                <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location" accept="image/jpeg, image/jpg, image/png" id="img_location">
+                                <small class="form-text d-block mb-2">Ekstensi gambar yang diperbolehkan: jpeg, png & jpg</small>
+                                @error('img_location') <span class="text-danger d-block">{{$message}}</span> @enderror                                    
+                                <img src="{{ $area->img_location ? asset('gambar/area/' . $area->img_location) : asset('gambar/no-image.png') }}" width="200">
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <div class="d-block text-end">
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
     <!-- Container-fluid Ends-->
 
-@push('js')
-<script>
-    active_menu("#data_master", "#area")
-</script>
-@endpush
+    @push('js')
+    <script>
+        active_menu("#data_master", "#area")
+    </script>
+    @endpush
 @endsection

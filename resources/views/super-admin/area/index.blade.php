@@ -22,8 +22,8 @@
                         <thead>
                             <tr>
                                 <th class="text-nowrap" style="max-width: 40px;">No</th>
-                                <th class="text-nowrap">Kode Area</th>
-                                <th class="text-nowrap">Nama Area</th>
+                                <th class="text-nowrap">Kode</th>
+                                <th class="text-nowrap">Nama</th>
                                 <th class="text-nowrap">Status</th>
                                 <th class="text-nowrap">Gambar</th>
                                 <th class="text-nowrap">Nama Project</th>
@@ -69,11 +69,8 @@
                 {
                     data: 'status',
                     render: function(data, type, row) {
-                        if (row.status == 'ACTIVED') {
-                            return '<span class="badge badge-success">' + row.status + '</span>'
-                        }
-                        
-                        return '<span class="badge badge-danger">' + row.status + '</span>'
+                        if (row.status == 'ACTIVED') return `<span class="badge badge-success">${row.status}</span>`
+                        return `<span class="badge badge-danger">${row.status}</span>`
                     }
                 },
                 {
