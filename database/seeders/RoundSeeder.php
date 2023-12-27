@@ -25,7 +25,7 @@ class RoundSeeder extends Seeder
         ]);
         
         Round::create([
-            'name' => 'Round 01',
+            'name' => 'Round 02',
             'status' => 'ACTIVED',
             'patrol_area_id' => 2,
             'status' => 'ACTIVED',

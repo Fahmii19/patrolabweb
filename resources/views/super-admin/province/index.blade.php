@@ -9,39 +9,39 @@
             <li class="breadcrumb-item">{{ $title }}</li>
         @endslot
     @endcomponent
-<!-- Container-fluid starts-->
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-body">
-            <div class="d-flex mb-3 justify-content-end">
-                <a href="{{route('province.create')}}" class="btn btn-success">Tambah Provinsi</a>
-            </div>
-            <div class="table-responsive">
-                <table id="mytable" class="display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th style="max-width: 40px;">No</th>
-                            <th>Name</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                </table>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex mb-3 justify-content-end">
+                    <a href="{{route('province.create')}}" class="btn btn-success">Tambah Provinsi</a>
+                </div>
+                <div class="table-responsive">
+                    <table id="mytable" class="display" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th style="max-width: 40px;">No</th>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div id="actionbase" class="d-none">
-    <div class="d-flex">
-        <form method="post" class="d-flex">
-            @csrf
-            @method('delete')
-            <a id="edit" class="btn btn-warning me-2 text-dark">Edit</a>
-            <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
-        </form>
+    <div id="actionbase" class="d-none">
+        <div class="d-flex">
+            <form method="post" class="d-flex">
+                @csrf
+                @method('delete')
+                <a id="edit" class="btn btn-warning me-2 text-dark">Edit</a>
+                <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
+            </form>
+        </div>
     </div>
-</div>
-
-<!-- Container-fluid Ends-->
+    <!-- Container-fluid Ends-->
+@endsection
 @push('js')
 <script>
     $('#mytable').DataTable({
@@ -76,4 +76,3 @@
     active_menu("#data_master", "#province")
 </script>
 @endpush
-@endsection
