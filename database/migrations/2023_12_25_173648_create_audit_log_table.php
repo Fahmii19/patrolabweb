@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users');
+            $table->string('activity', 255);
             $table->timestamps();
         });
     }

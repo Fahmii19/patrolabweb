@@ -40,16 +40,14 @@ class ShiftController extends Controller
 
             $data = $validator->validated();
 
-            if(Shift::create($data)) {
-                DB::commit();
-                return redirect()->route('shift.index')->with('success', 'Shift berhasil ditambahkan');
-            }
+            Shift::create($data);
+            DB::commit();
             
-            DB::rollback();
-            return redirect()->back()->with('error', 'Shift gagal ditambahkan');
+            insert_audit_log('Create new shift data');
+            return redirect()->route('shift.index')->with('success', 'Shift berhasil ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('ShiftController store() ' . $e->getMessage());
+            Log::debug('ShiftController store() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -84,16 +82,14 @@ class ShiftController extends Controller
 
             $data = $validator->validated();
 
-            if(Shift::find($id)->update($data)) {
-                DB::commit();
-                return redirect()->route('shift.index')->with('success', 'Shift berhasil diedit');
-            }
-            
-            DB::rollback();
-            return redirect()->back()->with('error', 'Shift gagal diedit');
+            Shift::find($id)->update($data);
+            DB::commit();
+
+            insert_audit_log('Update shift data');
+            return redirect()->route('shift.index')->with('success', 'Shift berhasil diedit');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('ShiftController update() ' . $e->getMessage());
+            Log::debug('ShiftController update() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -103,16 +99,14 @@ class ShiftController extends Controller
         try {
             DB::beginTransaction();
 
-            if(Shift::find($id)->delete()){
-                DB::commit();
-                return redirect()->route('shift.index')->with('success', 'Shift berhasil dihapus');
-            }
+            Shift::find($id)->delete();
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Shift gagal dihapus');
+            insert_audit_log('Delete shift data');
+            return redirect()->route('shift.index')->with('success', 'Shift berhasil dihapus');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('ShiftController destroy() ' . $e->getMessage());
+            Log::debug('ShiftController destroy() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
