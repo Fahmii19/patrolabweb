@@ -94,9 +94,9 @@
                         
                         <li class="sidebar-list mb-2 active" id="menu-ai"><a class="sidebar-link sidebar-title active" href="#"><i data-feather="cpu"></i><span>AI CAPTURE</span></a>
                             <ul class="sidebar-submenu">
-                                <li><a href="">Register</a></li>
-                                <li><a href="{{ route('ai-master.index') }}" id="sub-data-ai">Master Data</a></li>
-                                <li><a href="">Register DPO</a></li>
+                                <li><a href="{{ route('ai-master.register') }}" id="sub-register">Register</a></li>
+                                <li><a href="{{ route('ai-master.master-data') }}" id="sub-master-data">Master Data</a></li>
+                                <li><a href="{{ route('ai-master.register-dpo') }}" id="sub-register-dpo">Register DPO</a></li>
                             </ul>
                         </li>
                         <li class="sidebar-list mb-2" id="menu-report"><a class="sidebar-link sidebar-title" href="#"><i data-feather="flag"></i><span>Reporting</span></a>

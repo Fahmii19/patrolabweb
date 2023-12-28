@@ -8,6 +8,26 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AiMasterDataController extends Controller
 {
+    public function register()
+    {
+        return view('super-admin.ai-data.register', [
+            'title' => 'Register'
+        ]);
+    }
+
+    public function master_data()
+    {
+        return view('super-admin.ai-data.master-data', [
+            'title' => 'Master Data'
+        ]);
+    }
+
+    public function register_dpo()
+    {
+        return view('super-admin.ai-data.register-dpo', [
+            'title' => 'Register DPO'
+        ]);
+    }
     /**
      * Display a listing of the resource.
      *

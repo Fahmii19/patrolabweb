@@ -124,6 +124,11 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'atensi' => AtensiController::class,
     ]);
 
+    // AI Capture
+    Route::get('ai-register', [AiMasterDataController::class, 'register'])->name('ai-master.register');
+    Route::get('ai-master-data', [AiMasterDataController::class, 'master_data'])->name('ai-master.master-data');
+    Route::get('ai-register-dpo', [AiMasterDataController::class, 'register_dpo'])->name('ai-master.register-dpo');
+
     // Route Data Table
     // Master Data
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
