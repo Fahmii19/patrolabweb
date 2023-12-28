@@ -206,6 +206,10 @@ class AreaController extends Controller
             ->escapeColumns('active')
             ->addColumn('code', '{{$code}}')
             ->addColumn('name', '{{$name}}')
+            ->addColumn('patrol_area', function($data){
+                $patrol_area = Area::find($data->id)->patrol_area;
+                return $patrol_area->count();
+            })
             ->addColumn('status', '{{$status}}')
             ->addColumn('project', '{{$project_id ? $project["name"] : "-"}}')
             ->addColumn('image', function ($row) {

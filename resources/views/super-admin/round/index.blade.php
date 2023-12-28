@@ -21,7 +21,7 @@
                         <tr>
                             <th style="max-width: 40px;">No</th>
                             <th>Nama Rute</th>
-                            <th>Jumlah Check Point</th>
+                            <th>Jumlah Checkpoint</th>
                             <th>Status</th>
                             <th>Patrol Area</th>
                             <th>Area</th>
