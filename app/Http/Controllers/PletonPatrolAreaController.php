@@ -104,12 +104,8 @@ class PletonPatrolAreaController extends Controller
 
         $data['pleton_patrol'] = $pletonPatrol;
         $data['patrol_area'] = PatrolArea::all();
+        $data['pleton'] = Pleton::where('id', $pletonPatrol->pleton_id)->first();
 
-        $selectedPletonIds = PletonPatrolArea::pluck('pleton_id')->toArray();
-        $pletonNotSelected = Pleton::whereNotIn('id', $selectedPletonIds)->get();
-        $pletonSelected = Pleton::where('id', $pletonPatrol->pleton_id)->get();
-
-        $data['pleton'] = $pletonNotSelected->merge($pletonSelected);
         return view('super-admin.pleton-patrol.edit', $data);
     }
 

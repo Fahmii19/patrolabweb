@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('patrol_checkpoint_log', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('created_by');
+            $table->foreign('created_by')->references('id')->on('users');
             $table->unsignedBigInteger('pleton_id');
             $table->foreign('pleton_id')->references('id')->on('pleton');
             $table->unsignedBigInteger('shift_id');
@@ -33,9 +35,6 @@ return new class extends Migration
             $table->string('safe_asset_client_code_log', 255)->nullable();
             $table->string('safe_asset_client_name_log', 255)->nullable();
             $table->timestamps();
-            // Ada di ERD
-            // $table->unsignedBigInteger('created_by');
-            // $table->foreign('created_by')->references('id')->on('guards');
         });
     }
 

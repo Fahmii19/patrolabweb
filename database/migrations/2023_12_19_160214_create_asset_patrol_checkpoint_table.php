@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('asset_patrol_checkpoint', function (Blueprint $table) {
             $table->id();
-            $table->text('checkpoint_note');
-            $table->enum('status', ['ACTIVED', 'INACTIVED']);
-            $table->unsignedBigInteger('checkpoint_id');
-            $table->foreign('checkpoint_id')->references('id')->on('checkpoint');
             $table->unsignedBigInteger('asset_master_id');
             $table->foreign('asset_master_id')->references('id')->on('asset_patrol_master');
+            $table->unsignedBigInteger('checkpoint_id');
+            $table->foreign('checkpoint_id')->references('id')->on('checkpoint');
+            $table->text('checkpoint_note')->nullable();
+            $table->enum('status', ['ACTIVED', 'INACTIVED']);
             $table->timestamps();
         });
     }

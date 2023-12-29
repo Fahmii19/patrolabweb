@@ -50,6 +50,7 @@ class AssetPatrolCheckpointController extends Controller
             $validator = Validator::make($request->all(), [
                 'asset_id' => 'required|numeric',
                 'insert_checkpoint' => 'required|numeric',
+                'short_desc' => 'nullable|string'
             ]);
 
             if ($validator->fails()) {
@@ -58,23 +59,20 @@ class AssetPatrolCheckpointController extends Controller
 
             $data = $validator->validated();
             $data = [
-                "asset_master_id" => $request->asset_id,
-                "checkpoint_id" => $request->insert_checkpoint,
-                "checkpoint_note" => $request->short_desc,
-                "status" => 'ACTIVED'    
+                'asset_master_id' => $request->asset_id,
+                'checkpoint_id' => $request->insert_checkpoint,
+                'checkpoint_note' => $request->short_desc,
+                'status' => 'ACTIVED',
+                'updated_at' => null,
             ];
 
-            $action = CheckpointAssetPatrol::create($data);
+            CheckpointAssetPatrol::create($data);
             DB::commit();
-            if ($action) {
-                return redirect()->route('asset-patrol-detail')->with('success', 'Asset Berhasil Ditambahkan');
-            }
-            
-            DB::rollback();
-            return redirect()->back()->with('error', 'Asset gagal ditambahkan');
+
+            return redirect()->route('asset-patrol-detail')->with('success', 'Asset Berhasil Ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('CheckpointAssetPatrol store() ' . $e->getMessage());
+            Log::debug('CheckpointAssetPatrol store() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -125,10 +123,11 @@ class AssetPatrolCheckpointController extends Controller
             DB::beginTransaction();
             CheckpointAssetPatrol::find($id)->delete();
             DB::commit();
+
             return redirect()->route('asset-patrol-detail')->with('success', 'Asset Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();
-            Log::debug('CheckpointAssetPatrol destroy() ' . $e->getMessage());
+            Log::debug('CheckpointAssetPatrol destroy() error:' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -206,7 +205,7 @@ class AssetPatrolCheckpointController extends Controller
                 '<td>'. $assetDetail['name'] . '</td>'.
                 '<td>'. $assetDetail['short_desc'] . '</td>'.
                 '<td>'. $assetDetail['asset_master_type'] . '</td>'.
-                '<td>'. $asset[$i]['checkpoint_note'] . '</td>'.
+                '<td>'. ($asset[$i]['checkpoint_note'] ?? '-') . '</td>'.
                 '<td><span class="badge '.$badge.'">'. $assetStatus . '</span></td>'.
                 '<td>'.
                     '<form method="post" action="'.route("checkpoint-aset-patrol.destroy",$asset[$i]['id']).'" class="d-inline" id="delete_form'.$asset[$i]['id'].'">

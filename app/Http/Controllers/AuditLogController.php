@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Throwable;
+use App\Models\User;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ class AuditLogController extends Controller
     public function index()
     {
         $data['title'] = 'Daftar Audit Log';
+        $data['page'] = 'audit-log';
         $data['audit_log'] = AuditLog::all();
         return view('super-admin.audit-log.index', $data);
     }
@@ -103,6 +105,7 @@ class AuditLogController extends Controller
             DB::beginTransaction();
             AuditLog::find($id)->delete();
             DB::commit();
+
             return redirect()->route('audit-log.index')->with('success', 'Data Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();
@@ -113,24 +116,21 @@ class AuditLogController extends Controller
 
     public function datatable()
     {
-        $data = AuditLog::all();
+        $data = AuditLog::with(['users' => function($query){
+            $query->select('id', 'name');
+        }])->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('activity', '{{$activity}}')
-            ->addColumn('subject', '{{$subject}}')
-            ->addColumn('causer', '{{$causer}}')
-            ->addColumn('role_causer', '{{$role_causer}}')
-            ->addColumn('note', '{{$note}}')
-            ->addColumn('date', '{{$date}}')
-            ->addColumn('time', '{{$time}}')
-            ->addColumn('action', function (AuditLog $audit_log) {
-                $data = [
-                    'editurl' => route('audit-log.edit', $audit_log->id),
-                    'deleteurl' => route('audit-log.destroy', $audit_log->id)
-                ];
-                return $data;
+            ->addColumn('subject', '{{$users["name"]}}')
+            ->addColumn('role', function(AuditLog $audit){
+                $userRoles = $audit->users->getRoleNames()->toArray();
+                return !empty($userRoles) ? $userRoles[0] : 'No Role';
             })
-            ->toJson();
+            ->addColumn('activity', '{{$activity}}')
+            ->addColumn('datetime', function ($data) {
+                return date('m/d/Y H:i:s', strtotime($data->created_at));
+            })
+        ->toJson();
     }
 }

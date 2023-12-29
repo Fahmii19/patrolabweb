@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         $super_admin = User::create([
-            'name' => 'super-admin',
+            'name' => 'Super Admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('123456'),
             'status' => 'ACTIVED',
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         ]);
 
         $admin_area = User::create([
-            'name' => 'admin-area',
+            'name' => 'Admin Area',
             'access_area' => '1,2',
             'email' => 'admin.area@gmail.com',
             'password' => Hash::make('123456'),

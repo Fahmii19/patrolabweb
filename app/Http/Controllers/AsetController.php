@@ -49,7 +49,7 @@ class AsetController extends Controller
                 'name' => 'required|string',
                 'short_desc' => 'nullable',
                 'asset_master_type' => 'required|in:PATROL,CLIENT',
-                'image' => 'image|mimes:jpeg,png,jpg',
+                'images' => 'image|mimes:jpeg,png,jpg',
             ]);
 
             if ($validator->fails()) {
@@ -60,8 +60,8 @@ class AsetController extends Controller
             $filename = null;
     
             // Menangani upload gambar
-            if ($request->hasFile('image')) {
-                $file = $request->file('image');
+            if ($request->hasFile('images')) {
+                $file = $request->file('images');
                 $currentDateTime = date('Ymd_His');
                 $filename = $currentDateTime . '_' . $file->getClientOriginalName();
     
@@ -70,16 +70,14 @@ class AsetController extends Controller
             }
 
             $data = $validator->validated();
+            $data['images'] = $filename;
             $data['status'] = 'ACTIVED';
-            $data['image'] = $filename;
+            $data['updated_at'] = null;
 
-            if(Aset::create($data)){
-                DB::commit();
-                return redirect()->route('aset.index')->with('success', 'Aset berhasil ditambahkan');
-            }
+            Aset::create($data);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->route('aset.index')->with('error', 'Aset gagal ditambahkan');
+            return redirect()->route('aset.index')->with('success', 'Aset berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
             Log::debug('AsetController store ' . $e->getMessage());
@@ -128,7 +126,7 @@ class AsetController extends Controller
                 'asset_master_type' => 'required|in:PATROL,CLIENT',
                 'short_desc' => 'nullable',
                 'status' => 'nullable|in:ACTIVED,INACTIVED',
-                'image' => 'image|mimes:jpeg,png,jpg',
+                'images' => 'image|mimes:jpeg,png,jpg',
             ]);
 
             if ($validator->fails()) {
@@ -137,8 +135,8 @@ class AsetController extends Controller
 
             $data = $validator->validated();
 
-            if ($request->hasFile('image')) {
-                $file = $request->file('image');
+            if ($request->hasFile('images')) {
+                $file = $request->file('images');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $file->move(public_path('gambar/aset'), $filename); // Sesuaikan path sesuai kebutuhan
 
@@ -148,18 +146,15 @@ class AsetController extends Controller
                 }
 
                 // Menyimpan nama file gambar baru
-                $data['image'] = $filename; 
+                $data['images'] = $filename; 
             }
 
             $data['status'] = $request->status ?? 'INACTIVED';
 
-            if($aset->update($data)){
-                DB::commit();
-                return redirect()->route('aset.index')->with('success', 'Aset berhasil diupdate');
-            }
+            $aset->update($data);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Aset gagal diupdate');
+            return redirect()->route('aset.index')->with('success', 'Aset berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
             Log::debug('AsetController update() error: ' . $e->getMessage());
@@ -181,8 +176,8 @@ class AsetController extends Controller
 
             // Hapus gambar dari server jika ada
             if ($aset->image) {
-                if (file_exists(public_path('gambar/area/' . $aset->image))) {
-                    unlink(public_path('gambar/area/' . $aset->image));
+                if (file_exists(public_path('gambar/aset/' . $aset->image))) {
+                    unlink(public_path('gambar/aset/' . $aset->image));
                 }
             }
 
@@ -222,8 +217,8 @@ class AsetController extends Controller
             ->addColumn('image', function ($row) {
                 $imgHtml = '';
                 // Cek jika file gambar ada
-                if ($row->image && file_exists(public_path('gambar/aset/' . $row->image))) {
-                    $url = asset('gambar/aset/' . $row->image);
+                if ($row->images && file_exists(public_path('gambar/aset/' . $row->images))) {
+                    $url = asset('gambar/aset/' . $row->images);
                 } else {
                     // Jika tidak ada, gunakan gambar default
                     $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar

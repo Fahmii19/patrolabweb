@@ -27,7 +27,7 @@
                         <th>Kode Aset</th>
                         <th>Nama Aset</th>
                         <th>Tipe</th>
-                        <th>Guard</th>
+                        <th>Pleton</th>
                         <th>Tanggal Patrol</th>
                         <th>Status</th>
                         <th>Laporan</th>
@@ -59,8 +59,8 @@
                 data: 'asset_type',
                 name: 'Tipe Aset'
             }, {
-                data: 'guard',
-                name: 'Nama Guard'
+                data: 'pleton',
+                name: 'Nama Pleton'
             }, {
                 data: 'patrol_date',
                 name: 'Tanggal Patrol'

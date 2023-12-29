@@ -49,6 +49,7 @@ class AssetClientCheckpointController extends Controller
             $validator = Validator::make($request->all(), [
                 'asset_id' => 'required|numeric',
                 'insert_checkpoint' => 'required|numeric',
+                'short_desc' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
