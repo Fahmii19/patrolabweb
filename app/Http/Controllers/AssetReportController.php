@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssetCheckpointLog;
+use App\Models\AssetPatrolCheckpointLog;
 use Dotenv\Repository\RepositoryInterface;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -88,16 +89,15 @@ class AssetReportController extends Controller
 
     public function datatable()
     {
-        
-        $data = AssetCheckpointLog::with('asset', 'asset_unsafe_option', 'patrol_checkpoint.guards')->get();
+        $data = AssetPatrolCheckpointLog::with('asset_patrol_checkpoint.asset', 'asset_unsafe_option', 'patrol_checkpoint_log.pleton')->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('asset_code', '{{$asset["code"]}}')
-            ->addColumn('asset_name', '{{$asset["name"]}}')
-            ->addColumn('asset_type', '{{$asset["asset_master_type"]}}')
-            ->addColumn('guard', '{{$patrol_checkpoint["guards"]["name"]}}')
-            ->addColumn('patrol_date', '{{$patrol_checkpoint["patrol_date"]}}')
+            ->addColumn('asset_code', '{{$asset_code_log}}')
+            ->addColumn('asset_name', '{{$asset_name_log}}')
+            ->addColumn('asset_type', '{{$asset_patrol_checkpoint["asset"]["asset_master_type"]}}')
+            ->addColumn('pleton', '{{$patrol_checkpoint_log["pleton"]["name"]}}')
+            ->addColumn('patrol_date', '{{$patrol_checkpoint_log["business_date"]}}')
             ->addColumn('asset_status', '{{$status}}')
             ->addColumn('asset_info', '{{$asset_unsafe_option_id ? $asset_unsafe_option["option_condition"] : "-"}}')
             ->addColumn('description', '{{$unsafe_description ? $unsafe_description : "-"}}')

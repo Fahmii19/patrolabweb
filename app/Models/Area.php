@@ -53,6 +53,6 @@ class Area extends Model
 
     public function patrol_area()
     {
-        return $this->hasMany(PatrolArea::class, 'patrol_area_id');
+        return $this->hasMany(PatrolArea::class, 'area_id', 'id');
     }
 }

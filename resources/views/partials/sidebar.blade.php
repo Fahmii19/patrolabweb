@@ -94,21 +94,21 @@
                         
                         <li class="sidebar-list mb-2 active" id="menu-ai"><a class="sidebar-link sidebar-title active" href="#"><i data-feather="cpu"></i><span>AI CAPTURE</span></a>
                             <ul class="sidebar-submenu">
-                                <li><a href="">Register</a></li>
-                                <li><a href="{{ route('ai-master.index') }}" id="sub-data-ai">Master Data</a></li>
-                                <li><a href="">Register DPO</a></li>
+                                <li><a href="{{ route('ai-master.register') }}" id="sub-register">Register</a></li>
+                                <li><a href="{{ route('ai-master.master-data') }}" id="sub-master-data">Master Data</a></li>
+                                <li><a href="{{ route('ai-master.register-dpo') }}" id="sub-register-dpo">Register DPO</a></li>
                             </ul>
                         </li>
                         <li class="sidebar-list mb-2" id="menu-report"><a class="sidebar-link sidebar-title" href="#"><i data-feather="flag"></i><span>Reporting</span></a>
                             <ul class="sidebar-submenu">
-                                <li><a href="{{ route('self-patrol.create') }}" id="sub-report-self-patrol">Self Patrol</a></li>
                                 <li><a href="{{ route('checkpoint-report.index') }}" id="sub-list-checkpoint-report">Checkpoint Report</a></li>
                                 <li><a href="{{ route('asset-report.index') }}" id="sub-list-asset-report">Asset Report</a></li>
+                                <li><a href="{{ route('self-patrol.create') }}" id="sub-report-self-patrol">Self Patrol</a></li>
                                 <li><a href="">Shift Patrol Report</a></li>
                             </ul>
                         </li>
-                        <li>
-                            <a class="{{ isset($page) && $page == 'audit_log' ? 'active-menu' : '' }} d-block" href="{{ route('audit-log.index') }}" id="menu-audit" data-original-title="" title=""> <i data-feather="activity"></i><span>Audit Log </span></a>
+                        <li class="sidebar-list">
+                            <a class="{{ isset($page) && $page == 'audit-log' ? 'active-menu' : '' }} d-block" href="{{ route('audit-log.index') }}" data-original-title="" title="" id="menu-audit" > <i data-feather="activity"></i><span>Audit Log </span></a>
                         </li>
                     @endrole
 

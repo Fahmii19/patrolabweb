@@ -15,17 +15,17 @@ return new class extends Migration
     {
         Schema::create('asset_patrol_checkpoint_log', function (Blueprint $table) {
             $table->id();
-            $table->string('asset_code_log', 255);
-            $table->string('asset_name_log', 255);
-            $table->text('checkpoint_note_log');
-            $table->text('unsafe_description');
-            $table->text('unsafe_image');
+            $table->string('asset_code_log', 255)->nullable();
+            $table->string('asset_name_log', 255)->nullable();
+            $table->text('checkpoint_note_log')->nullable();
+            $table->text('unsafe_description')->nullable();
+            $table->text('unsafe_image')->nullable();
             $table->enum('status', ['SAFE', 'UNSAFE']);
-            $table->unsignedBigInteger('patrol_checkpoint_log_id');
+            $table->unsignedBigInteger('patrol_checkpoint_log_id')->nullable();
             $table->foreign('patrol_checkpoint_log_id')->references('id')->on('patrol_checkpoint_log');
-            $table->unsignedBigInteger('asset_unsafe_option_id');
+            $table->unsignedBigInteger('asset_unsafe_option_id')->nullable();
             $table->foreign('asset_unsafe_option_id')->references('id')->on('asset_unsafe_option');
-            $table->unsignedBigInteger('asset_patrol_checkpoint_id');
+            $table->unsignedBigInteger('asset_patrol_checkpoint_id')->nullable();
             $table->foreign('asset_patrol_checkpoint_id')->references('id')->on('asset_patrol_checkpoint');
             $table->timestamps();
         });

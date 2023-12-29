@@ -71,13 +71,10 @@ class AreaController extends Controller
             $data['status'] = 'ACTIVED';
             $data['img_location'] = $filename;
 
-            if (Area::create($data)){
-                DB::commit();
-                return redirect()->route('area.index')->with('success', 'Area berhasil disimpan');    
-            }
-
-            DB::rollback();
-            return redirect()->route('area.index')->with('error', 'Area gagal ditambahkan');
+            Area::create($data);
+            DB::commit();
+            
+            return redirect()->route('area.index')->with('success', 'Area berhasil disimpan');    
         } catch (Exception $e) {
             DB::rollback();
             Log::error('AreaController store() error: ' . $e->getMessage());
@@ -206,6 +203,10 @@ class AreaController extends Controller
             ->escapeColumns('active')
             ->addColumn('code', '{{$code}}')
             ->addColumn('name', '{{$name}}')
+            ->addColumn('patrol_area', function($data){
+                $patrol_area = Area::find($data->id)->patrol_area;
+                return $patrol_area->count();
+            })
             ->addColumn('status', '{{$status}}')
             ->addColumn('project', '{{$project_id ? $project["name"] : "-"}}')
             ->addColumn('image', function ($row) {

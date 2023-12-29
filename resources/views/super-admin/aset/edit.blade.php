@@ -47,9 +47,9 @@
                                 @error('short_desc') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
+                                <label for="status" class="form-label">Status Aset</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="ACTIVED" name="status" @if($aset->status == 'ACTIVED') checked @endif>
+                                    <input class="form-check-input" type="checkbox" value="ACTIVED" name="status" id="status" @if($aset->status == 'ACTIVED') checked @endif>
                                     <label class="form-check-label" for="status">
                                         ACTIVED
                                     </label>
@@ -59,12 +59,13 @@
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="image" class="form-label">Gambar Aset</label>
-                                <input type="file" class="form-control @error('image') is-invalid @enderror" name="image" id="image">
-                                @error('image') <span class="text-danger d-block">{{ $message }}</span> @enderror
+                                <label for="images" class="form-label">Gambar Aset</label>
+                                <input type="file" class="form-control @error('images') is-invalid @enderror" name="images" id="images">
+                                <small class="form-text d-block">Ekstensi gambar yang diperbolehkan: jpeg, png & jpg</small>
+                                @error('images') <span class="text-danger d-block">{{ $message }}</span> @enderror
 
                                 <!-- Tampilkan gambar saat ini jika ada, jika tidak, tampilkan gambar default -->
-                                <img src="{{ $aset->image ? asset('gambar/aset/' . $aset->image) : asset('gambar/no-image.png') }}" width="200" class="img-thumbnail mt-2">
+                                <img src="{{ $aset->images ? asset('gambar/aset/' . $aset->images) : asset('gambar/no-image.png') }}" width="200" class="mt-2">
                             </div>
                         </div>
                     </div>

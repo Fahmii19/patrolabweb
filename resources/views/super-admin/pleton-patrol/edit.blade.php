@@ -25,12 +25,14 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label for="pleton_id" class="form-label">Nama Pleton <span class="text-danger">*</span></label>
-                                <select class="form-select" name="pleton_id" id="pleton_id" required>
+                                <input type="hidden" name="pleton_id" value="{{ $pleton_patrol->pleton_id }}">
+                                <input type="text" class="form-control" value="{{ $pleton->name }}" readonly>
+                                {{-- <select class="form-select" name="pleton_id" id="pleton_id" required>
                                     <option value="" selected disabled>--Pilih--</option>
                                     @foreach ($pleton as $item)
                                         <option value="{{ $item->id }}" {{ old('pleton_id', $pleton_patrol->pleton_id) == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                                 @error('pleton_id') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
                             <div class="mb-3">

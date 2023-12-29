@@ -24,6 +24,7 @@
                                 <th class="text-nowrap" style="max-width: 40px;">No</th>
                                 <th class="text-nowrap">Kode</th>
                                 <th class="text-nowrap">Nama</th>
+                                <th class="text-nowrap">Patrol Area</th>
                                 <th class="text-nowrap">Status</th>
                                 <th class="text-nowrap">Gambar</th>
                                 <th class="text-nowrap">Nama Project</th>
@@ -65,6 +66,10 @@
                 {
                     data: 'name',
                     name: 'Nama Area',
+                },
+                {
+                    data: 'patrol_area',
+                    name: 'Jumlah Patrol Area',
                 },
                 {
                     data: 'status',

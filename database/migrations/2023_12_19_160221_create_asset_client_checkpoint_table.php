@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('asset_master_id')->references('id')->on('asset_patrol_master');
             $table->unsignedBigInteger('checkpoint_id');
             $table->foreign('checkpoint_id')->references('id')->on('checkpoint');
-            $table->text('checkpoint_note');
+            $table->text('checkpoint_note')->nullable();
             $table->enum('status', ['ACTIVED', 'INACTIVED']);
             $table->timestamps();
         });

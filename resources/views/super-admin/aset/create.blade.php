@@ -35,7 +35,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="asset_master_type" class="form-label">Tipe Aset <span class="text-danger">*</span></label>
-                                <select class="form-select @error('asset_master_type') is-invalid @enderror" name="asset_master_type" id="asset_master_type">
+                                <select class="form-select @error('asset_master_type') is-invalid @enderror" name="asset_master_type" id="asset_master_type" required>
                                     <option value="" disabled selected>Pilih tipe aset</option>
                                     <option value="PATROL" {{ old('asset_master_type') == 'PATROL' ? 'selected' : '' }}>Patrol</option>
                                     <option value="CLIENT" {{ old('asset_master_type') == 'CLIENT' ? 'selected' : '' }}>Client</option>
@@ -43,9 +43,10 @@
                                 @error('asset_master_type') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="image" class="form-label">Gambar Aset</label>
-                                <input type="file" class="form-control @error('image') is-invalid @enderror" name="image" id="image">
-                                @error('image') <span class="text-danger d-block">{{ $message }}</span> @enderror
+                                <label for="images" class="form-label">Gambar Aset</label>
+                                <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control @error('images') is-invalid @enderror" name="images" id="images">
+                                <small class="form-text d-block">Ekstensi gambar yang diperbolehkan: jpeg, png & jpg</small>
+                                @error('images') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="short_desc" class="form-label">Deskripsi Singkat</label>

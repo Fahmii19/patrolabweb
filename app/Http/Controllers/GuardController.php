@@ -44,8 +44,9 @@ class GuardController extends Controller
         $data['wilayah'] = Wilayah::all();
 
         // Dapatkan daftar ID pleton yang sudah dipilih
-        $selectedPletonIds = Guard::pluck('pleton_id')->toArray();
-        $data['pletons'] = Pleton::whereNotIn('id', $selectedPletonIds)->get();
+        // $selectedPletonIds = Guard::pluck('pleton_id')->toArray();
+        // $data['pletons'] = Pleton::whereNotIn('id', $selectedPletonIds)->get();
+        $data['pletons'] = Pleton::all();
 
         return view('super-admin.guard-page.create', $data);
     }

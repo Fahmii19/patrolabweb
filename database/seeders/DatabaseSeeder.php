@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\PatrolCheckpointLog;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -36,6 +37,8 @@ class DatabaseSeeder extends Seeder
             CheckpointSeeder::class,
             AssetClientCheckpointSeeder::class,
             AssetPatrolCheckpointSeeder::class,
+            PatrolCheckpointLogSeeder::class,
+            AssetPatrolCheckpointLogSeeder::class
         ]);
     }
 }
