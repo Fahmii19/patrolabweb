@@ -174,6 +174,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
 
     // Another Route
     Route::get('/patrol-area-by-area/{id}', [PatrolAreaController::class, 'by_area']);
+    Route::get('/round-by-patrol-area/{id}', [RoundController::class, 'by_patrol_area']);
     Route::get('/round/detail/', [RoundController::class, 'detail'])->name('round.detail');
     Route::delete('/checkpoint/remove-round/{id}', [CheckPointController::class, 'remove_round'])->name('checkpoint-remove-round');
     Route::put('/checkpoint/update-round/{id}', [CheckPointController::class, 'update_round'])->name('checkpoint-update-round');
@@ -186,6 +187,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('/asset-patrol-by-checkpoint/{id}', [AssetPatrolCheckpointController::class, 'asset_by_checkpoint']);
     Route::get('checkpoint-get-all-asset/{id}', [CheckPointController::class, 'get_all_asset']);
     Route::get('checkpoint-by-round/{id}', [CheckPointController::class, 'by_round']);
+    Route::get('select-checkpoint-by-round/{id}', [CheckPointController::class, 'select_by_round']);
     Route::get('guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
     Route::post('get-hak-akses', [HakAksesController::class, 'get_hak_akses'])->name('get-hak-akses');
 });
