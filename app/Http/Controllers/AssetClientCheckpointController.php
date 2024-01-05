@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use Exception;
 use Throwable;
 use App\Models\Aset;
 use App\Models\CheckPoint;
 use App\Models\CheckpointAssetClient;
+use App\Models\PatrolArea;
+use App\Models\Round;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -136,6 +139,9 @@ class AssetClientCheckpointController extends Controller
     public function detail()
     {
         $data['title'] = "Detail Asset Checkpoint";
+        $data['area'] = Area::all();
+        $data['patrol_area'] = PatrolArea::all();
+        $data['round'] = Round::all();
         $data['checkpoint'] = CheckPoint::all();
         return view('super-admin.checkpoint-aset.detail-client', $data);
     }
