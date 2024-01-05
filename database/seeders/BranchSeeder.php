@@ -16,21 +16,21 @@ class BranchSeeder extends Seeder
     public function run()
     {
         Branch::create([
-            'code' => 'koranch01',
+            'code' => 'kode branch01',
             'name' => 'Branch 01',
             'status' => 'ACTIVED',
             'created_at' => now(),
             'updated_at' => null,
         ]);
         Branch::create([
-            'code' => 'koranch02',
+            'code' => 'kode branch02',
             'name' => 'Branch 02',
             'status' => 'ACTIVED',
             'created_at' => now(),
             'updated_at' => null,
         ]);
         Branch::create([
-            'code' => 'koranch03',
+            'code' => 'kode branch03',
             'name' => 'Branch 03',
             'status' => 'INACTIVED',
             'created_at' => now(),

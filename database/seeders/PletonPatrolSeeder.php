@@ -23,15 +23,15 @@ class PletonPatrolSeeder extends Seeder
         ]);
 
         PletonPatrolArea::create([
-            'pleton_id' => 2,
-            'patrol_area_id' => 1,
+            'pleton_id' => 3,
+            'patrol_area_id' => 4,
             'created_at' => now(),
             'updated_at' => null,
         ]);
 
         PletonPatrolArea::create([
-            'pleton_id' => 3,
-            'patrol_area_id' => 2,
+            'pleton_id' => 5,
+            'patrol_area_id' => 7,
             'created_at' => now(),
             'updated_at' => null,
         ]);
