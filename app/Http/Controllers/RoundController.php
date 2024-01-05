@@ -60,6 +60,8 @@ class RoundController extends Controller
     public function show($id)
     {
         $data['title'] = 'Detail Round';
+        $data['area'] = Area::all();
+        $data['patrol_area'] = PatrolArea::all();
         $data['round'] = Round::all();
         return view('super-admin.round.show', $data);
     }
@@ -151,5 +153,38 @@ class RoundController extends Controller
                 return $data;
             })
         ->toJson();
+    }
+
+    public function by_patrol_area(Request $request, $id)
+    {
+        try {
+            $old = [];
+            if ($id != 0) {
+                $old = $request->patrol_area_id;
+                $data = Round::where('patrol_area_id', $id)->get();
+            } else {
+                $data = Round::all();
+            }
+
+            if ($data->count() <= 0) {
+                return response()->json([
+                    "status" => "false",
+                    "messege" => "gagal mengambil data round",
+                    "data" => []
+                ], 404);
+            }
+            $html = '<option value="0" selected>--Semua--</option>';
+            foreach ($data as $item) {
+                $selected = $item->id == $old ? 'selected' : '';
+                $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->name . '</option>';
+            }
+            return response()->json([
+                "status" => "true",
+                "messege" => "berhasil mengambil data round",
+                "data" => [$html]
+            ], 200);
+        } catch (Throwable $th) {
+            Log::debug($th->getMessage());
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\AssetCheckpointLog;
+use App\Models\AssetPatrolCheckpointLog;
 use App\Models\AssetUnsafeOption;
 use App\Models\CheckPoint;
 use App\Models\Guard;
@@ -167,7 +168,7 @@ class SelfPatrolController extends Controller
 
             // $result = [];
             foreach($request['asset_id'] as $index => $value){
-                $assetCheckpointLog = new AssetCheckpointLog();
+                $assetCheckpointLog = new AssetPatrolCheckpointLog();
                 $assetCheckpointLog->patrol_checkpoint_id = $patrolId;
                 $assetCheckpointLog->asset_id = $value;
                 $assetCheckpointLog->status = $request['asset_status'][$index];

@@ -27,15 +27,43 @@
                     <div class="card-body row switch-showcase height-equal">
                         <h2 class="fs-5 mb-4">Daftar Checkpoint</h2>
                         <div class="mb-3">
-                            <label for="id_rute" class="form-label">Pilih Round<span class="text-danger">*</span></label>
-                            <select class="form-select @error('id_round') is-invalid @enderror" name="id_round" onchange="get_checkpoint(this.value)" id="id_rute">
-                                <option value="" selected disabled>--Pilih--</option>
-                                @foreach ($round as $item)
-                                    <option value="{{ $item->id }}" {{ old('id_round') == $item->id ? 'selected' : '' }}>{{ $item->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <span class="mt-2 d-block" id="round-alert"></span>
+                            <div class="row">
+                                <div class="col-4">
+                                    <label class="form-label" for="area">Area</label>
+                                    <select class="form-select" id="area" name="area" onchange="get_patrol_area(this.value)">
+                                        <option selected value="0">---Semua---</option>
+                                        @foreach ($area as $item)
+                                            <option value="{{ $item->id }}" {{ old('area') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label" for="selectPatrolArea">Patrol Area</label>
+                                    <select class="form-select" id="selectPatrolArea" name="patrol_area" onchange="get_round(this.value)">
+                                        <option selected value="0">---Semua---</option>
+                                        @foreach ($patrol_area as $item)
+                                            <option value="{{ $item->id }}" {{ old('patrol_area') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <span class="text-danger d-block" id="patrol-area-alert"></span>
+                                </div>
+                                <div class="col-4">
+                                    <label for="id_rute" class="form-label">Round</label>
+                                    <select class="form-select @error('id_round') is-invalid @enderror" name="id_round" onchange="get_checkpoint(this.value)" id="id_rute">
+                                        <option value="" selected disabled>--Pilih--</option>
+                                        @foreach ($round as $item)
+                                            <option value="{{ $item->id }}" {{ old('id_round') == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>  
+                                    <span class="mt-2 d-block" id="round-alert"></span>
+                                </div>
+                            </div>
                             <div class="table-responsive mt-3">
                                 <table class="table" id="tableCheckpoint">
                                     <thead>
@@ -122,6 +150,61 @@
 
 @push('js')
     <script>
+        function get_patrol_area(area_id) {
+            let patrol_area_base = $('#selectPatrolArea')
+            let patrol_area_alert = $('#patrol-area-alert')
+            $.ajax({
+                url: "{{ url('/super-admin/patrol-area-by-area') }}/" + area_id,
+                method: 'get',
+                data: {
+                    area_id: "{{ old('area') }}"
+                },
+                beforeSend: function() {
+                    patrol_area_alert.removeClass('text-danger').addClass('text-black').text('Mengambil data patrol area')
+                },
+
+                success: function(response) {
+                    let data = response.data
+                    patrol_area_base.html(data)
+                    patrol_area_alert.text('')
+                },
+                error: function(response) {
+                    patrol_area_base.html('<option value="" selected disabled hidden>--Tidak Ada--</option>')
+                    patrol_area_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data patrol area di area ini')
+                }
+            })
+        }
+
+        function get_round(patrol_area_id) {
+            let round_base = $('#id_rute')
+            let round_alert = $('#round-alert')
+            $.ajax({
+                url: "{{ url('/super-admin/round-by-patrol-area') }}/" + patrol_area_id,
+                method: 'get',
+                data: {
+                    patrol_area_id: "{{ old('patrol_area') }}"
+                },
+                beforeSend: function() {
+                    round_alert.removeClass('text-danger').addClass('text-black').text('Mengambil data round')
+                },
+
+                success: function(response) {
+                    let data = response.data
+                    round_base.html(data)
+                    round_base.find('option:first')
+                        .prop('disabled', true)
+                        .prop('hidden', true)
+                        .text('--Pilih--');
+                    round_alert.text('')
+                },
+                error: function(response) {
+                    round_base.html('<option value="" selected disabled hidden>--Tidak Ada--</option>')
+                    round_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data round di patrol area ini')
+                    get_checkpoint(0)
+                }
+            })
+        }
+
         function get_checkpoint(id_round) {
             const area_table = $('#tableCheckpoint tbody');
             const select_alert = $('#round-alert');
@@ -135,7 +218,6 @@
                     select_alert.text('Mengambil data checkpoint');
                 },
                 success: function(response) {
-                    console.log(response.data);
                     let data = response.data;
                     area_table.html(data);
                     select_alert.text('');
@@ -166,12 +248,8 @@
             }, {
                 data: 'status',
                 render: function(data, type, row) {
-                    if(row.status == 'ACTIVED') {
-                        return '<span class="badge badge-success">' + row.status + '</span>'
-                    } 
-                    if(row.status == 'INACTIVED'){
-                        return '<span class="badge badge-danger">' + row.status + '</span>'
-                    }
+                    if (row.status == 'ACTIVED') return `<span class="badge badge-success">${row.status}</span>`
+                    return `<span class="badge badge-danger">${row.status}</span>`
                 }
             }, {
                 data: 'danger_status',

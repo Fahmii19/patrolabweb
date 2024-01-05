@@ -20,7 +20,7 @@ class PatrolCheckpointLogSeeder extends Seeder
             'pleton_id' => 1,
             'shift_id' => 1,
             'checkpoint_id' => 1,
-            'business_date' => date('Y-m-d', strtotime('2023-12-20')),
+            'business_date' => date('Y-m-d', strtotime('2023-12-19')),
             'shift_start_time_log' => date('H:i:s', strtotime('23:59:00')),
             'shift_end_time_log' => date('H:i:s', strtotime('09:01:00')),
             'checkpoint_name_log' => 'Checkpoint 01',

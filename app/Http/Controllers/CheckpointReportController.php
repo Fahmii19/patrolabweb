@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Round;
+use App\Models\Pleton;
 use App\Models\CheckpointReport;
+use App\Models\PatrolArea;
 use App\Models\PatrolCheckpointLog;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -17,6 +21,10 @@ class CheckpointReportController extends Controller
     public function index()
     {
         $data['title'] = "Daftar CheckPoint Report";
+        $data['area'] = Area::all();
+        $data['patrol_area'] = PatrolArea::all();
+        $data['round'] = Round::all();
+        $data['pleton'] = Pleton::all();
         return view('super-admin.checkpoint-report.index', $data);
     }
 
@@ -47,9 +55,22 @@ class CheckpointReportController extends Controller
      * @param  \App\Models\CheckpointReport  $checkpointReport
      * @return \Illuminate\Http\Response
      */
-    public function show(CheckpointReport $checkpointReport)
+    public function show(PatrolCheckpointLog $checkpointReport)
     {
-        //
+        $data['title'] = "Detail CheckPoint Report";
+        $data['report'] = PatrolCheckpointLog::with([
+            'user' => function($query){
+                $query->select('id','name');
+            },
+            'pleton' => function($query){
+                $query->select('id','code','name');
+            },
+            'checkpoint.round.patrol_area.area',
+            'asset_patrol_checkpoint_log.asset_unsafe_option'
+        ])->find($checkpointReport->id);
+
+        // return response()->json($data);
+        return view('super-admin.checkpoint-report.show', $data);
     }
 
     /**
@@ -86,20 +107,71 @@ class CheckpointReportController extends Controller
         //
     }
 
-    public function datatable()
+    public function datatable(Request $request)
     {
+        $query = PatrolCheckpointLog::with(
+            ['user' => function($query){
+                $query->select('id', 'name');
+            }, 'pleton' => function($query){        
+                $query->select('id', 'name');
+        }]);
+
+        if($request->has('patrol_date')){
+            if($request->patrol_date !== null && $request->patrol_date !== '') {
+                // Split the date range into start and end dates
+                list($startDate, $endDate) = explode(' - ', $request->patrol_date);
+
+                // Convert the date strings to the format expected by the database
+                $startDate = date('Y-m-d', strtotime($startDate));
+                $endDate = date('Y-m-d', strtotime($endDate));
+
+                $query->whereBetween('business_date', [$startDate, $endDate]);
+            }
+        }
+
+        if($request->has('round')){
+            if($request->round !== null && $request->round !== '') {
+                $query->whereHas('checkpoint.round', function ($query) use ($request) {
+                    $query->where('id', $request->round);
+                });
+            }
+        }
+
+        if($request->has('pleton')){
+            if($request->pleton !== null && $request->pleton !== '') {
+               $query->where('pleton_id', $request->pleton);
+            }
+        }
         
-        $data = PatrolCheckpointLog::with(['checkpoint', 'guards.shift'])->get();
-        return DataTables::of($data)
+        $data = $query->get();
+        
+        // Menambahkan atribut 'status' ke setiap instance PatrolCheckpointLog
+        $data->each(function ($log) {
+            $log->append('status');
+        });
+
+        $filteredData = $data;
+
+        if($request->has('status')){
+            if($request->status !== null && $request->status !== '') {
+                $filteredData = $data->filter(function ($log) use ($request) {
+                    return $log->status === $request->status;
+                })->values()->all();
+            }
+        }
+
+        return DataTables::of($filteredData)
             ->addIndexColumn()
             ->escapeColumns('active')
-            ->addColumn('checkpoint_name', '{{$checkpoint["name"]}}')
-            ->addColumn('checkpoint_loc', '{{$checkpoint["location"]}}')
-            ->addColumn('guard', '{{$guards["name"]}}')
-            ->addColumn('shift', '{{$guards["shift"]["name"]}}')
-            ->addColumn('patrol_date', '{{$patrol_date}}')
-            ->addColumn('start_time', '{{$start_time}}')
-            ->addColumn('finish_time', '{{$finish_time}}')
+            ->addColumn('created_by', '{{$user["name"]}}')
+            ->addColumn('pleton', '{{$pleton["name"]}}')
+            ->addColumn('business_date', '{{$business_date}}')
+            ->addColumn('checkpoint', '{{$checkpoint_name_log}}')
+            ->addColumn('location', '{{$checkpoint_location_log}}')
+            ->addColumn('status', '{{$status}}')
+            ->addColumn('reported_at', function ($data) {
+                return date('m/d/Y H:i:s', strtotime($data->created_at));
+            })
         ->toJson();
     }
 }
