@@ -12,7 +12,7 @@ class PatrolCheckpointLog extends Model
     protected $guarded = ['id'];
     protected $table = 'patrol_checkpoint_log';
 
-    public function created_by()
+    public function user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
@@ -20,6 +20,11 @@ class PatrolCheckpointLog extends Model
     public function pleton()
     {
         return $this->belongsTo(Pleton::class, 'pleton_id', 'id');
+    }
+
+    public function checkpoint()
+    {
+        return $this->belongsTo(CheckPoint::class, 'checkpoint_id', 'id');
     }
 
     public function shift()
@@ -34,6 +39,13 @@ class PatrolCheckpointLog extends Model
 
     public function asset_patrol_checkpoint_log()
     {
-        return $this->hasMany(AssetPatrolCheckpointLog::class, 'patrol_checkpoint_id', 'id');
+        return $this->hasMany(AssetPatrolCheckpointLog::class, 'patrol_checkpoint_log_id', 'id');
+    }
+
+    public function getStatusAttribute()
+    {
+        $unsafeCount = $this->asset_patrol_checkpoint_log->where('status', 'UNSAFE')->count();
+
+        return ($unsafeCount > 0) ? 'unsafe' : 'safe';
     }
 }

@@ -190,6 +190,39 @@ class CheckPointController extends Controller
         ->toJson();
     }
 
+    public function select_by_round(Request $request, $id)
+    {
+        try {
+            $old = [];
+            if ($id != 0) {
+                $old = $request->patrol_area_id;
+                $data = CheckPoint::where('round_id', $id)->get();
+            } else {
+                $data = CheckPoint::all();
+            }
+
+            if ($data->count() <= 0) {
+                return response()->json([
+                    "status" => "false",
+                    "messege" => "gagal mengambil data checkpoint",
+                    "data" => []
+                ], 404);
+            }
+            $html = '<option value="0" selected>--Semua--</option>';
+            foreach ($data as $item) {
+                $selected = $item->id == $old ? 'selected' : '';
+                $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->name . '</option>';
+            }
+            return response()->json([
+                "status" => "true",
+                "messege" => "berhasil mengambil data checkpoint",
+                "data" => [$html]
+            ], 200);
+        } catch (Throwable $th) {
+            Log::debug($th->getMessage());
+        }
+    }
+
     public function by_round(Request $request, $id)
     {
         $old = [];

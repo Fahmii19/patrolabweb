@@ -404,11 +404,13 @@ class PatrolAreaController extends Controller
     {
         try {
             $old = [];
-            if ($request->id_project) {
-                $old = $request->id_project;
+            if ($id != 0) {
+                $old = $request->area_id;
+                $data = PatrolArea::where('area_id', $id)->get();
+            } else {
+                $data = PatrolArea::all();
             }
 
-            $data = PatrolArea::where('area_id', $id)->get();
             if ($data->count() <= 0) {
                 return response()->json([
                     "status" => "false",
@@ -416,7 +418,7 @@ class PatrolAreaController extends Controller
                     "data" => []
                 ], 404);
             }
-            $html = '<option value="" selected disabled>--Pilih--</option>';
+            $html = '<option value="0" selected>--Semua--</option>';
             foreach ($data as $item) {
                 $selected = $item->id == $old ? 'selected' : '';
                 $html .= '<option value="' . $item->id . '"' . $selected . '>' . $item->name . '</option>';
