@@ -169,6 +169,7 @@ class PletonPatrolAreaController extends Controller
             $pletonPatrol->delete();
             DB::commit();
 
+            redis_reset_api('pleton-patrolarea');
             return redirect()->route('pleton-patrol-area.index')->with('success', 'Pleton patrol area berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

@@ -339,6 +339,7 @@ class PatrolAreaController extends Controller
             $patrolArea->delete();
             DB::commit();
 
+            redis_reset_api('patrolarea');
             return redirect()->route('patrol-area.index')->with('success', 'Patrol Area berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

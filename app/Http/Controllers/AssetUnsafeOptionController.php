@@ -148,6 +148,7 @@ class AssetUnsafeOptionController extends Controller
             AssetUnsafeOption::find($id)->delete();
             DB::commit();
 
+            redis_reset_api('asset-unsafe-option');
             return redirect()->route('aset-unsafe-option.index')->with('success', 'Aset unsafe option berhasil dihapus');
         } catch (Throwable $e) {
             DB::rollback();

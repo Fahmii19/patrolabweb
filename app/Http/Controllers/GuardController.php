@@ -253,6 +253,7 @@ class GuardController extends Controller
             $guard->update($update);
             DB::commit();
 
+            redis_reset_api('guard/spesific/'.$guard->id);
             return $this->update_user($validated, $guard->id);
         } catch (Exception $e) {
             DB::rollback();
@@ -285,6 +286,7 @@ class GuardController extends Controller
             $user->update($data_user);
             DB::commit();
 
+            redis_reset_api('guard');
             return redirect()->route('guard.index')->with('success', 'User guard berhasil diperbarui');
         } catch (Throwable $e) {
             DB::rollback();

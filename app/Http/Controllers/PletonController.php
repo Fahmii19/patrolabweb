@@ -155,6 +155,7 @@ class PletonController extends Controller
             $pleton->save();
             DB::commit();
 
+            redis_reset_api('pleton/spesific/'.$id);
             return redirect()->route('pleton.index')->with('success', 'Pleton berhasil diperbarui.');
         } catch (Exception $e) {
             DB::rollback();

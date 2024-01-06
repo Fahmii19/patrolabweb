@@ -155,6 +155,7 @@ class AreaController extends Controller
             $area->update($data);
             DB::commit();
 
+            redis_reset_api('area/spesific/'.$area->id);
             return redirect()->route('area.index')->with('success', 'Area berhasil diperbarui');
         } catch (Exception $e) {
             DB::rollback();
@@ -187,6 +188,7 @@ class AreaController extends Controller
             $area->delete();
             DB::commit();
 
+            redis_reset_api('area');
             return redirect()->route('area.index')->with('success', 'Area berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

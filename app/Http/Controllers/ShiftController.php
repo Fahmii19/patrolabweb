@@ -86,6 +86,7 @@ class ShiftController extends Controller
             DB::commit();
 
             insert_audit_log('Update shift data');
+            redis_reset_api('shift/spesific/'.$id);
             return redirect()->route('shift.index')->with('success', 'Shift berhasil diedit');
         } catch (Throwable $e) {
             DB::rollback();
@@ -103,6 +104,7 @@ class ShiftController extends Controller
             DB::commit();
 
             insert_audit_log('Delete shift data');
+            redis_reset_api('shift');
             return redirect()->route('shift.index')->with('success', 'Shift berhasil dihapus');
         } catch (Throwable $e) {
             DB::rollback();
