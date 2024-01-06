@@ -82,12 +82,18 @@
         {
             name: "action",
             render: function(data, type, row) {
+                console.log(row);
                 let html = $('#actionbase').clone()
                 html = html.find('.d-flex')
                 html.find('#btnEdit').attr('href', row.action.editurl)
-                let form = html.find('form').attr('action', row.action.deleteurl)
-                .attr('id', 'delete_form' + row.id)
-                form.find('button').attr('form-id', '#delete_form' + row.id)
+                if(row.jumlah > 0) {
+                    html.find('form').addClass('d-none');
+                } else {
+                    html.find('form').removeClass('d-none');
+                    let form = html.find('form').attr('action', row.action.deleteurl).attr('id', 'delete_form' + row.id)
+                    form.find('button').attr('form-id', '#delete_form' + row.id)
+                }
+                
                 return html.html()
             }
         }]
