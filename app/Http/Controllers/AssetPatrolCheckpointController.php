@@ -65,12 +65,14 @@ class AssetPatrolCheckpointController extends Controller
                 'checkpoint_id' => $request->insert_checkpoint,
                 'checkpoint_note' => $request->short_desc,
                 'status' => 'ACTIVED',
+                'created_at' => now(),
                 'updated_at' => null,
             ];
 
             CheckpointAssetPatrol::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data asset patrol ' . $request->asset_id . ' to checkpoint ' . $request->insert_checkpoint);
             return redirect()->route('asset-patrol-detail')->with('success', 'Asset Berhasil Ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
@@ -126,6 +128,7 @@ class AssetPatrolCheckpointController extends Controller
             CheckpointAssetPatrol::find($id)->delete();
             DB::commit();
 
+            insert_audit_log('Delete asset patrol checkpoint data');
             return redirect()->route('asset-patrol-detail')->with('success', 'Asset Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();

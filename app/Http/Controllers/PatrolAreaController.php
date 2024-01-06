@@ -7,15 +7,11 @@ use Throwable;
 use App\Models\Area;
 use App\Models\PatrolArea;
 use App\Models\PatrolAreaDescription;
-use App\Models\Wilayah;
-use Dotenv\Repository\RepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use JsonIncrementalParser;
-use Mockery\Expectation;
 
 class PatrolAreaController extends Controller
 {
@@ -93,6 +89,7 @@ class PatrolAreaController extends Controller
             $patrolAreaId = PatrolArea::insertGetId($data);
             DB::commit();
             
+            insert_audit_log('Insert data patrol area');
             return $this->store_desc($request, $patrolAreaId);
         } catch(Exception $e){
             DB::rollback();
@@ -130,6 +127,7 @@ class PatrolAreaController extends Controller
             PatrolAreaDescription::create($desc);
             DB::commit();
 
+            insert_audit_log('Automated insert data patrol area description after insert patrol area');
             return redirect()->route('patrol-area.index')->with('success', 'Patrol Area berhasil disimpan');   
         } catch(Exception $e) {
             DB::rollback();
@@ -155,7 +153,6 @@ class PatrolAreaController extends Controller
 
         $data['patrol_area_desc'] = PatrolAreaDescription::where('patrol_area_id', $data['patrol_area']->id)->first();
 
-        return response()->json($data);
         return view('super-admin.patrol-area.show', $data);
     }
 
@@ -241,6 +238,7 @@ class PatrolAreaController extends Controller
             $patrolArea->update($data);
             DB::commit();
             
+            insert_audit_log('Update data patrol area');
             return $this->update_desc($request, $id);
         } catch(Exception $e){
             DB::rollback();
@@ -294,6 +292,7 @@ class PatrolAreaController extends Controller
             $patrolAreaDesc->update($desc);
             DB::commit();
 
+            insert_audit_log('Automated update data patrol area description after update patrol area');
             return redirect()->route('patrol-area.index')->with('success', 'Patrol Area berhasil diubah');
         } catch(Exception $e) {
             DB::rollback();
@@ -339,6 +338,8 @@ class PatrolAreaController extends Controller
             $patrolArea->delete();
             DB::commit();
 
+            insert_audit_log('Delete data patrol area');
+            insert_audit_log('Delete data patrol area description after patrol area was deleted');
             redis_reset_api('patrolarea');
             return redirect()->route('patrol-area.index')->with('success', 'Patrol Area berhasil dihapus');
         } catch (Exception $e) {

@@ -66,14 +66,13 @@ class ProjectController extends Controller
             $data = $validator->validated();
             $data['status'] = "ACTIVED";
             $data['created_at'] = now();
+            $data['updated_at'] = null;
 
-            if (Project::create($data)) {
-                DB::commit();
-                return redirect()->route('project.index')->with('success', 'Proyek berhasil ditambahkan');
-            }
+            Project::create($data);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->route('project.index')->with('success', 'Proyek gagal ditambahkan');
+            insert_audit_log('Insert data project');
+            return redirect()->route('project.index')->with('success', 'Proyek berhasil ditambahkan');
         } catch (\Throwable $e) {
             DB::rollback();
             Log::error('ProjectController store() -' . $e->getMessage());
@@ -128,7 +127,7 @@ class ProjectController extends Controller
                 'name' => 'required|string|max:255',
                 'address' => 'required|string|max:255',
                 'location_long_lat' => 'string|string',
-                'wilayah_id' => 'required|integer',
+                'city_id' => 'required|integer',
                 'branch_id' => 'required|integer',
                 'status' => 'nullable|string|in:ACTIVED,INACTIVED',
             ]);
@@ -145,14 +144,14 @@ class ProjectController extends Controller
             // Update project data
             $data = $validator->validated();
             $data['status'] = $data['status'] ?? 'INACTIVED';
+            $data['created_at'] = $project->created_at;
+            $data['updated_at'] = now();
 
-            if ($project->update($data)) {
-                DB::commit();
-                return redirect()->route('project.index')->with('success', 'Proyek berhasil diedit');
-            }
+            $project->update($data);
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->route('project.index')->with('success', 'Proyek gagal diedit');
+            insert_audit_log('Update data project');
+            return redirect()->route('project.index')->with('success', 'Proyek berhasil diedit');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('ProjectController update() ' . $e->getMessage());
@@ -171,13 +170,11 @@ class ProjectController extends Controller
         try {
             DB::beginTransaction();
 
-            if(Project::find($id)->delete()) {
-                DB::commit();
-                return redirect()->route('project.index')->with('success', 'Proyek berhasil dihapus');
-            }
+            Project::find($id)->delete();
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->route('project.index')->with('success', 'Proyek gagal dihapus');
+            insert_audit_log('Delete data project');
+            return redirect()->route('project.index')->with('success', 'Proyek berhasil dihapus');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('ProjectController destroy() ' . $e->getMessage());

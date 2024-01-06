@@ -72,6 +72,8 @@ class CheckPointController extends Controller
 
             CheckPoint::create($data);
             DB::commit();
+
+            insert_audit_log('Insert data checkpoint');
             return redirect()->route('check-point.index')->with('success', 'Checkpoint berhasil ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
@@ -138,6 +140,7 @@ class CheckPointController extends Controller
             $checkpoint->update($data);
             DB::commit();
 
+            insert_audit_log('Update data checkpoint');
             return redirect()->route('check-point.index')->with('success', 'Checkpoint berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
@@ -159,6 +162,7 @@ class CheckPointController extends Controller
             CheckPoint::find($id)->delete();
             DB::commit();
 
+            insert_audit_log('Delete data checkpoint');
             return redirect()->route('check-point.index')->with('success', 'Checkpoint Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();
@@ -277,6 +281,7 @@ class CheckPointController extends Controller
             CheckPoint::find($id)->update(['round_id' => null]);
             DB::commit();
 
+            insert_audit_log('Delete round from checkpoint '.$id);
             return redirect()->route('round.detail')->with('success', 'Round Pada Checkpoint Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();
@@ -319,6 +324,7 @@ class CheckPointController extends Controller
             CheckPoint::find($id)->update(['round_id' => $round_id]);
             DB::commit();
 
+            insert_audit_log('Update round_id for checkpoint '.$id);
             return redirect()->route('round.detail')->with('success', 'Round Pada Checkpoint Berhasil Diperbaharui');
         } catch (Exception $e) {
             DB::rollback();

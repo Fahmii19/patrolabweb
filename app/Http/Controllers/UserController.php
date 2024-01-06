@@ -82,6 +82,7 @@ class UserController extends Controller
             $user->assignRole('admin-area');
             DB::commit();
 
+            insert_audit_log('Insert data user');
             return redirect()->route('user.index')->with('success', 'Admin Area berhasil ditambahkan');            
         } catch (Throwable $e) {
             DB::rollback();
@@ -180,6 +181,7 @@ class UserController extends Controller
             $user->update($data_user);
             DB::commit();
 
+            insert_audit_log('Update data user');
             redis_reset_api('user/spesific/'.$id);
             return redirect()->route('user.index')->with('success', 'User berhasil diedit');
         } catch (Throwable $e) {
@@ -204,6 +206,7 @@ class UserController extends Controller
             $user->delete();
             DB::commit();
 
+            insert_audit_log('Delete data user');
             redis_reset_api('user');
             return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
         } catch (Exception $e) {

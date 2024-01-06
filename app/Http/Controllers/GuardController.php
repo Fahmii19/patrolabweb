@@ -111,6 +111,7 @@ class GuardController extends Controller
             $guardId = $guard->id;
             DB::commit();
 
+            insert_audit_log('Insert data guard');
             return $this->store_user($validatedData, $guardId);
         } catch (Exception $e) {
             DB::rollback();
@@ -140,6 +141,7 @@ class GuardController extends Controller
             $user->assignRole('user');
             DB::commit();
 
+            insert_audit_log('Automated insert data user after data guard was created');
             return redirect()->route('guard.index')->with('success', 'User guard berhasil ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
@@ -253,6 +255,7 @@ class GuardController extends Controller
             $guard->update($update);
             DB::commit();
 
+            insert_audit_log('Update data guard');
             redis_reset_api('guard/spesific/'.$guard->id);
             return $this->update_user($validated, $guard->id);
         } catch (Exception $e) {
@@ -286,6 +289,7 @@ class GuardController extends Controller
             $user->update($data_user);
             DB::commit();
 
+            insert_audit_log('Automated update data user after data guard was updated');
             redis_reset_api('guard');
             return redirect()->route('guard.index')->with('success', 'User guard berhasil diperbarui');
         } catch (Throwable $e) {
@@ -327,6 +331,7 @@ class GuardController extends Controller
 
             DB::commit();
 
+            insert_audit_log('Delete data guard');
             return redirect()->route('guard.index')->with('success', 'Guard berhasil dihapus.');
         } catch (Exception $e) {
             DB::rollback();

@@ -61,10 +61,13 @@ class GateController extends Controller
 
             $data = $validator->validated();
             $data['status'] = "ACTIVED";
+            $data['created_at'] = now();
+            $data['updated_at'] = null;
 
             Gate::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data gate');
             return redirect()->route('gate.index')->with('success', 'Gate berhasil ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
@@ -139,10 +142,13 @@ class GateController extends Controller
 
             $data = $validator->validated();
             $data['status'] = $data['status'] ?? 'INACTIVED';
+            $data['created_at'] = $gate->created_at;
+            $data['updated_at'] = now();
 
             $gate->update($data);
-
             DB::commit();
+
+            insert_audit_log('Update data gate');
             return redirect()->route('gate.index')->with('success', 'Gate berhasil diperbarui');
         } catch (Throwable $e) {
             DB::rollback();
@@ -166,6 +172,7 @@ class GateController extends Controller
             $gate->delete();
             DB::commit();
 
+            insert_audit_log('Delete data gate');
             return redirect()->route('gate.index')->with('success', 'Gate berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

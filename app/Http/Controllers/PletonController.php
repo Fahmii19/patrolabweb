@@ -64,10 +64,13 @@ class PletonController extends Controller
             $pleton->code = $validatedData['code'];
             $pleton->status = 'ACTIVED';
             $pleton->area_id = $validatedData['area_id'];
+            $pleton->created_at = now();
+            $pleton->updated_at = null;
 
             $pleton->save();
             DB::commit();
 
+            insert_audit_log('Insert data pleton');
             return redirect()->route('pleton.index')->with('success', 'Pleton berhasil ditambahkan.');
         } catch (Throwable $e) {
             DB::rollback();
@@ -151,10 +154,13 @@ class PletonController extends Controller
             $pleton->code = $data['code'];
             $pleton->status = $data['status'] ?? 'INACTIVED';
             $pleton->area_id = $data['area_id'];
+            $pleton->created_at = $pleton->created_at;
+            $pleton->updated_at = now();
 
             $pleton->save();
             DB::commit();
 
+            insert_audit_log('Update data pleton');
             redis_reset_api('pleton/spesific/'.$id);
             return redirect()->route('pleton.index')->with('success', 'Pleton berhasil diperbarui.');
         } catch (Exception $e) {
@@ -180,6 +186,7 @@ class PletonController extends Controller
             $pleton->delete();
             DB::commit();
 
+            insert_audit_log('Delete data pleton');
             return redirect()->route('pleton.index')->with('success', 'Pleton berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

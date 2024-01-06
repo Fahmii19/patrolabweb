@@ -56,9 +56,13 @@ class WilayahController extends Controller
             }
 
             $data = $validator->validated();
+            $data['created_at'] = now();
+            $data['updated_at'] = null;
+
             Wilayah::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data city / region');
             return redirect()->route('wilayah.index')->with('success', 'Wilayah berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
@@ -119,10 +123,13 @@ class WilayahController extends Controller
             }
 
             $data = $validator->validated();
+            $data['created_at'] = $wilayah->created_at;
+            $data['updated_at'] = now();
 
             $wilayah->update($data);
             DB::commit();
 
+            insert_audit_log('Update data city / region');
             return redirect()->route('wilayah.index')->with('success', 'Wilayah berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
@@ -149,6 +156,7 @@ class WilayahController extends Controller
             $wilayah->delete();
             DB::commit();
 
+            insert_audit_log('Delete data city / region');
             return redirect()->route('wilayah.index')->with('success', 'Wilayah berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

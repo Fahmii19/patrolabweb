@@ -68,6 +68,7 @@ class PletonPatrolAreaController extends Controller
             PletonPatrolArea::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data pleton patrol area');
             return redirect()->route('pleton-patrol-area.index')->with('success', 'Pleton patrol area berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
@@ -143,6 +144,7 @@ class PletonPatrolAreaController extends Controller
             $pletonPatrol->update($data);
             DB::commit();
 
+            insert_audit_log('Update pleton patrol area');
             return redirect()->route('pleton-patrol-area.index')->with('success', 'Pleton patrol area berhasil diperbarui');
         } catch (Exception $e) {
             DB::rollback();
@@ -169,6 +171,7 @@ class PletonPatrolAreaController extends Controller
             $pletonPatrol->delete();
             DB::commit();
 
+            insert_audit_log('Delete data pleton patrol area');
             redis_reset_api('pleton-patrolarea');
             return redirect()->route('pleton-patrol-area.index')->with('success', 'Pleton patrol area berhasil dihapus');
         } catch (Exception $e) {

@@ -72,11 +72,13 @@ class AsetController extends Controller
             $data = $validator->validated();
             $data['images'] = $filename;
             $data['status'] = 'ACTIVED';
+            $data['created_at'] = now();
             $data['updated_at'] = null;
 
             Aset::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data aset '.$data['asset_master_type']);
             return redirect()->route('aset.index')->with('success', 'Aset berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
@@ -150,10 +152,13 @@ class AsetController extends Controller
             }
 
             $data['status'] = $request->status ?? 'INACTIVED';
+            $data['created_at'] = $aset->created_at;
+            $data['updated_at'] = now();
 
             $aset->update($data);
             DB::commit();
 
+            insert_audit_log('Update data aset '.$data['asset_master_type']);
             return redirect()->route('aset.index')->with('success', 'Aset berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
@@ -182,13 +187,11 @@ class AsetController extends Controller
             }
 
             // Hapus data area
-            if($aset->delete()){
-                DB::commit();
-                return redirect()->route('aset.index')->with('success', 'Aset berhasil dihapus');
-            }
+            $aset->delete();
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->route('aset.index')->with('error', 'Aset gagal dihapus');
+            insert_audit_log('Delete data aset '. $aset->asset_mmaster_type);
+            return redirect()->route('aset.index')->with('success', 'Aset berhasil dihapus');
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('AsetController destroy() error: ' . $e->getMessage());

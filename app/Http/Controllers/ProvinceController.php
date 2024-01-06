@@ -53,10 +53,13 @@ class ProvinceController extends Controller
             }
 
             $data = $validator->validated();
+            $data['created_at'] = now();
+            $data['updated_at'] = null;
 
             Province::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data province');
             return redirect()->route('province.index')->with('success', 'Provinsi berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
@@ -115,11 +118,14 @@ class ProvinceController extends Controller
             }
 
             $data = $validator->validated();
-            $province = Province::find($id);            
+            $province = Province::find($id);
+            $data['created_at'] = $province->created_at;
+            $data['updated_at'] = now();
 
             $province->update($data);
             DB::commit();
 
+            insert_audit_log('Update data province');
             return redirect()->route('province.index')->with('success', 'Provinsi berhasil diedit');
         } catch (Exception $e) {
             DB::rollback();
@@ -146,6 +152,7 @@ class ProvinceController extends Controller
             $province->delete();
             DB::commit();
 
+            insert_audit_log('Delete data province');
             return redirect()->route('province.index')->with('success', 'Provinsi berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

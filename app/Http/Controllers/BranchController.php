@@ -59,10 +59,13 @@ class BranchController extends Controller
 
             $data = $validator->validated();
             $data['status'] = 'ACTIVED';
+            $data['created_at'] = now();
+            $data['updated_at'] = null;
 
             Branch::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data branch');
             return redirect()->route('branch.index')->with('success', 'Branch berhasil ditambahhkan');
         } catch (Exception $e) {
             DB::rollback();
@@ -127,11 +130,14 @@ class BranchController extends Controller
 
             $data = $validator->validated();
             $data['status'] = $data['status'] ?? 'INACTIVED';
+            $data['created_at'] = $branch->created_at;
+            $data['updated_at'] = now();
 
             // Update data branch
             $branch->update($data);
             DB::commit();
 
+            insert_audit_log('Update data branch');
             return redirect()->route('branch.index')->with('success', 'Branch berhasil diperbarui');
         } catch (Exception $e) {
             DB::rollback();
@@ -151,13 +157,11 @@ class BranchController extends Controller
         try {
             DB::beginTransaction();
 
-            if ($branch->delete()) {
-                DB::commit();
-                return redirect()->route('branch.index')->with('success', 'Branch berhasil dihapus');
-            }
+            $branch->delete();
+            DB::commit();
 
-            DB::rollback();
-            return redirect()->back()->with('error', 'Branch gagal dihapus');
+            insert_audit_log('Delete data branch');
+            return redirect()->route('branch.index')->with('success', 'Branch berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();
             Log::error('BranchController destroy() error: ' . $e->getMessage());
