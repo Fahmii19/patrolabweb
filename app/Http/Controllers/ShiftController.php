@@ -39,6 +39,8 @@ class ShiftController extends Controller
             }
 
             $data = $validator->validated();
+            $data['created_at'] = now();
+            $data['updated_at'] = null;
 
             Shift::create($data);
             DB::commit();
@@ -80,12 +82,16 @@ class ShiftController extends Controller
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
 
+            $shift = Shift::find($id);
             $data = $validator->validated();
+            $data['created_at'] = $shift->created_at;
+            $data['updated_at'] = now();
 
-            Shift::find($id)->update($data);
+            $shift->update($data);
             DB::commit();
 
             insert_audit_log('Update shift data');
+            redis_reset_api('shift/spesific/'.$id);
             return redirect()->route('shift.index')->with('success', 'Shift berhasil diedit');
         } catch (Throwable $e) {
             DB::rollback();
@@ -103,6 +109,7 @@ class ShiftController extends Controller
             DB::commit();
 
             insert_audit_log('Delete shift data');
+            redis_reset_api('shift');
             return redirect()->route('shift.index')->with('success', 'Shift berhasil dihapus');
         } catch (Throwable $e) {
             DB::rollback();

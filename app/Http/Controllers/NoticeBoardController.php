@@ -61,10 +61,13 @@ class NoticeBoardController extends Controller
             }
 
             $data = $validator->validated();
+            $data['created_at'] = now();
+            $data['updated_at'] = null;
 
             NoticeBoard::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data notice board');
             return redirect()->route('notice-boards.index')->with('success', 'Notice Board berhasil ditambahhkan');
         } catch (Exception $e) {
             DB::rollback();
@@ -126,12 +129,16 @@ class NoticeBoardController extends Controller
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
             }
 
-            $data = $validator->validated();
-
             $noticeBoard = NoticeBoard::find($id);
+
+            $data = $validator->validated();
+            $data['created_at'] = $noticeBoard->created_at;
+            $data['updated_at'] = now();
+            
             $noticeBoard->update($data);
             DB::commit();
 
+            insert_audit_log('Update data notice board');
             return redirect()->route('notice-boards.index')->with('success', 'Notice Board berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
@@ -156,6 +163,7 @@ class NoticeBoardController extends Controller
             $noticeBoard->delete();
             DB::commit();
 
+            insert_audit_log('Delete data notice board');
             return redirect()->route('notice-boards.index')->with('success', 'Notice Board berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

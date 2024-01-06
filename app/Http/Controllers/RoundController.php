@@ -49,6 +49,7 @@ class RoundController extends Controller
             Round::create($data);
             DB::commit();
 
+            insert_audit_log('Insert data round');
             return redirect()->route('round.index')->with('success', 'Round berhasil ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
@@ -108,6 +109,7 @@ class RoundController extends Controller
             $round->update($data);
             DB::commit();
 
+            insert_audit_log('Update data round');
             return redirect()->route('round.index')->with('success', 'Round berhasil diperbarui');
         } catch (Throwable $e) {
             DB::rollback();
@@ -123,6 +125,7 @@ class RoundController extends Controller
             Round::find($id)->delete();
             DB::commit();
 
+            insert_audit_log('Delete data round');
             return redirect()->route('round.index')->with('success', 'Route Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();

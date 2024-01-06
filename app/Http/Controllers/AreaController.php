@@ -70,10 +70,13 @@ class AreaController extends Controller
             $data = $validator->validated();
             $data['status'] = 'ACTIVED';
             $data['img_location'] = $filename;
+            $data['created_at'] = now();
+            $data['updated_at'] = null;
 
             Area::create($data);
             DB::commit();
             
+            insert_audit_log('Insert data area');
             return redirect()->route('area.index')->with('success', 'Area berhasil disimpan');    
         } catch (Exception $e) {
             DB::rollback();
@@ -151,10 +154,14 @@ class AreaController extends Controller
             $data = $validator->validated();
             $data['img_location'] = $imgLocation;
             $data['status'] = $data['status'] ?? 'INACTIVED';
+            $data['created_at'] = $area->created_at;
+            $data['updated_at'] = now();
 
             $area->update($data);
             DB::commit();
 
+            insert_audit_log('Update data area');
+            redis_reset_api('area/spesific/'.$area->id);
             return redirect()->route('area.index')->with('success', 'Area berhasil diperbarui');
         } catch (Exception $e) {
             DB::rollback();
@@ -162,8 +169,6 @@ class AreaController extends Controller
             return redirect()->back()->with('error', 'Area gagal diperbarui: ' . $e->getMessage());
         }
     }
-
-
 
     /**
      * Remove the specified resource from storage.
@@ -187,6 +192,8 @@ class AreaController extends Controller
             $area->delete();
             DB::commit();
 
+            insert_audit_log('Delete data area');
+            redis_reset_api('area');
             return redirect()->route('area.index')->with('success', 'Area berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

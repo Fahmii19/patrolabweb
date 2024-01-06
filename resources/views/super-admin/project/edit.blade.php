@@ -65,14 +65,14 @@
                         <div class="col">
                             <!-- Wilayah ID -->
                             <div class="mb-3">
-                                <label for="wilayah_id" class="form-label">Wilayah ID <span class="text-danger">*</span></label>
-                                <select class="form-select @error('wilayah_id') is-invalid @enderror" name="wilayah_id" required>
+                                <label for="city_id" class="form-label">Wilayah ID <span class="text-danger">*</span></label>
+                                <select class="form-select @error('city_id') is-invalid @enderror" name="city_id" required>
                                     <option value="" disabled>--Pilih--</option>
                                     @foreach ($wilayah as $item)
-                                        <option value="{{ $item->id }}" {{ old('wilayah_id', $project->wilayah_id) == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}" {{ old('city_id', $project->city_id) == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('wilayah_id') <span class="text-danger d-block">{{ $message }}</span> @enderror
+                                @error('city_id') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
 
                             <!-- Branch -->

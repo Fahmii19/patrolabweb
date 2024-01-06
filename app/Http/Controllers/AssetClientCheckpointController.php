@@ -64,17 +64,16 @@ class AssetClientCheckpointController extends Controller
                 "asset_master_id" => $request->asset_id,
                 "checkpoint_id" => $request->insert_checkpoint,
                 "checkpoint_note" => $request->short_desc,
-                "status" => 'ACTIVED'    
+                "status" => 'ACTIVED',
+                "created_at" => now(),
+                "updated_at" => null
             ];
 
-            $action = CheckpointAssetClient::create($data);
+            CheckpointAssetClient::create($data);
             DB::commit();
-            if ($action) {
-                return redirect()->route('asset-client-detail')->with('success', 'Asset Berhasil Ditambahkan');
-            }
-            
-            DB::rollback();
-            return redirect()->back()->with('error', 'Asset gagal ditambahkan');
+
+            insert_audit_log('Insert data asset client ' . $request->asset_id . ' to checkpoint ' . $request->insert_checkpoint);
+            return redirect()->route('asset-client-detail')->with('success', 'Asset Berhasil Ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
             Log::debug('CheckpointAssetClient store() ' . $e->getMessage());
@@ -128,6 +127,8 @@ class AssetClientCheckpointController extends Controller
             DB::beginTransaction();
             CheckpointAssetClient::find($id)->delete();
             DB::commit();
+
+            insert_audit_log('Delete asset client checkpoint data');
             return redirect()->route('asset-client-detail')->with('success', 'Asset Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();
