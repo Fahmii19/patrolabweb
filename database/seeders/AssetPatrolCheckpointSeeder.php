@@ -53,8 +53,8 @@ class AssetPatrolCheckpointSeeder extends Seeder
 
         CheckpointAssetPatrol::create([
             'asset_master_id' => 4,
-            'checkpoint_id' => 3,
-            'checkpoint_note' => 'note asset 4 checkpoint 3',
+            'checkpoint_id' => 4,
+            'checkpoint_note' => 'note asset 4 checkpoint 4',
             'status' => 'ACTIVED',
             'created_at' => now(),
             'updated_at' => null,

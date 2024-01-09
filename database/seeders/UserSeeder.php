@@ -26,9 +26,27 @@ class UserSeeder extends Seeder
             'updated_at' => null,
         ]);
 
-        $admin_area = User::create([
-            'name' => 'Admin Area',
-            'access_area' => '1,2',
+        $admin_area1 = User::create([
+            'name' => 'Admin Area1',
+            'access_area' => '1',
+            'email' => 'admin.area1@gmail.com',
+            'password' => Hash::make('123456'),
+            'status' => 'ACTIVED',
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
+        $admin_area2 = User::create([
+            'name' => 'Admin Area2',
+            'access_area' => '2',
+            'email' => 'admin.area2@gmail.com',
+            'password' => Hash::make('123456'),
+            'status' => 'ACTIVED',
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
+        $admin_area3 = User::create([
+            'name' => 'Admin Area3',
+            'access_area' => '1,2,3',
             'email' => 'admin.area@gmail.com',
             'password' => Hash::make('123456'),
             'status' => 'ACTIVED',
@@ -64,7 +82,9 @@ class UserSeeder extends Seeder
         ]);
 
         $super_admin->assignRole('super-admin');
-        $admin_area->assignRole('admin-area');
+        $admin_area1->assignRole('admin-area');
+        $admin_area2->assignRole('admin-area');
+        $admin_area3->assignRole('admin-area');
         $user->assignRole('user');
     }
 }
