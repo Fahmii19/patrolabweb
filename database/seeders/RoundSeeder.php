@@ -32,5 +32,23 @@ class RoundSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => null,
         ]);
+
+        Round::create([
+            'name' => 'Round 03',
+            'status' => 'ACTIVED',
+            'patrol_area_id' => 4,
+            'status' => 'ACTIVED',
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
+
+        Round::create([
+            'name' => 'Round 04',
+            'status' => 'ACTIVED',
+            'patrol_area_id' => 7,
+            'status' => 'ACTIVED',
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
     }
 }

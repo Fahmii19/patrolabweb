@@ -48,5 +48,17 @@ class CheckpointSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => null,
         ]);
+
+        CheckPoint::create([
+            'name' => 'Checkpoint 04',
+            'location' => 'Location Checkpoint 04',
+            'location_long_lat' => '104.735846710;-2.9588216',
+            'qr_code' => 'AABBCC005588',
+            'danger_status' => 'HIGH',
+            'status' => 'ACTIVED',
+            'round_id' => 4,
+            'created_at' => now(),
+            'updated_at' => null,
+        ]);
     }
 }

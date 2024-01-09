@@ -140,25 +140,47 @@ class AssetPatrolCheckpointController extends Controller
     public function detail()
     {
         $data['title'] = "Detail Asset Checkpoint";
-        $data['area'] = Area::all();
-        $data['patrol_area'] = PatrolArea::all();
-        $data['round'] = Round::all();
-        $data['checkpoint'] = CheckPoint::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_id = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_id)->get();
+            $data['patrol_area'] = PatrolArea::whereIn('area_id', $area_id)->get();
+            $data['round'] = Round::with('patrol_area.area')
+                ->whereHas('patrol_area', function ($query) use ($area_id) {
+                    $query->whereIn('area_id', $area_id);
+                })->get();
+            $data['checkpoint'] = CheckPoint::with('round.patrol_area.area')
+                ->whereHas('round.patrol_area', function ($query) use ($area_id) {
+                    $query->whereIn('area_id', $area_id);
+                })->get();
+        } else {
+            $data['area'] = Area::all();
+            $data['patrol_area'] = PatrolArea::all();
+            $data['round'] = Round::all();
+            $data['checkpoint'] = CheckPoint::all();
+        }
+        
         return view('super-admin.checkpoint-aset.detail-patrol', $data);
     }
 
     public function asset_patrol_datatable()
     {
-        $data = CheckpointAssetPatrol::with(['checkpoint'])
+        $data = CheckpointAssetPatrol::with(['checkpoint.round.patrol_area.area'])
         ->select(
             'asset_patrol_checkpoint.checkpoint_id',
             DB::raw('COUNT(asset_patrol_checkpoint.asset_master_id) as jumlah_asset')
-        )
-        ->groupBy('asset_patrol_checkpoint.checkpoint_id')
-        ->get();
+        )->groupBy('asset_patrol_checkpoint.checkpoint_id');
 
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
 
-        return DataTables::of($data)
+            $data->whereHas('checkpoint.round.patrol_area', function ($query) use ($area_id) {
+                $query->whereIn('area_id', $area_id);
+            });
+        }
+
+        $row = $data->get();
+        return DataTables::of($row)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('checkpoint_name', '{{$checkpoint["name"]}}')

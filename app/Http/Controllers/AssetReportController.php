@@ -89,8 +89,17 @@ class AssetReportController extends Controller
 
     public function datatable()
     {
-        $data = AssetPatrolCheckpointLog::with('asset_patrol_checkpoint.asset', 'asset_unsafe_option', 'patrol_checkpoint_log.pleton')->get();
-        return DataTables::of($data)
+        $data = AssetPatrolCheckpointLog::with('asset_patrol_checkpoint.asset', 'asset_unsafe_option', 'patrol_checkpoint_log.pleton', 'patrol_checkpoint_log.checkpoint.round.patrol_area.area');
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
+
+            $data->whereHas('patrol_checkpoint_log.checkpoint.round.patrol_area', function ($query) use ($area_id) {
+                $query->whereIn('area_id', $area_id);
+            });
+        }
+
+        $row = $data->get();
+        return DataTables::of($row)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('asset_code', '{{$asset_code_log}}')

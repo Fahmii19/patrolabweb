@@ -33,7 +33,13 @@ class PletonController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Pleton';
-        $data['area'] = Area::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_ids = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_ids)->get();
+        } else {
+            $data['area'] = Area::all();
+        }
         return view('super-admin.pleton-page.create', $data);
     }
 
@@ -109,7 +115,13 @@ class PletonController extends Controller
     public function edit($id)
     {
         $pleton = Pleton::findOrFail($id);
-        $areas = Area::all(); // Get all areas
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_ids = explode(',', auth()->user()->access_area);
+        
+            $area = Area::whereIn('id', $area_ids)->get();
+        } else {
+            $area = Area::all();
+        }
 
         if (!$pleton) {
             return redirect()->back()->with('error', 'Pleton tidak ditemukan.');
@@ -118,7 +130,7 @@ class PletonController extends Controller
         return view('super-admin.pleton-page.edit', [
             'title' => 'Edit Pleton',
             'pleton' => $pleton,
-            'areas' => $areas
+            'areas' => $area
         ]);
     }
 
@@ -198,8 +210,17 @@ class PletonController extends Controller
 
     public function datatable()
     {
-        $data = Pleton::with('area')->get();
-        return DataTables::of($data)
+        $data = Pleton::with('area');
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
+
+            $data->whereHas('area', function ($query) use ($area_id) {
+                $query->whereIn('area_id', $area_id);
+            });
+        }
+
+        $row = $data->get();
+        return DataTables::of($row)
             ->addIndexColumn()
             ->addColumn('name', function ($pleton) {
                 return $pleton->name;

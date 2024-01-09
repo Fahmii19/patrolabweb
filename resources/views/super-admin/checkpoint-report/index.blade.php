@@ -163,7 +163,7 @@
             let patrol_area_base = $('#selectPatrolArea')
             let patrol_area_alert = $('#patrol-area-alert')
             $.ajax({
-                url: "{{ url('/super-admin/patrol-area-by-area') }}/" + area_id,
+                url: "{{ url('/patrol-area-by-area') }}/" + area_id,
                 method: 'get',
                 data: {
                     area_id: "{{ old('area') }}"
@@ -188,7 +188,7 @@
             let round_base = $('#selectRound')
             let round_alert = $('#round-alert')
             $.ajax({
-                url: "{{ url('/super-admin/round-by-patrol-area') }}/" + patrol_area_id,
+                url: "{{ url('/round-by-patrol-area') }}/" + patrol_area_id,
                 method: 'get',
                 data: {
                     patrol_area_id: "{{ old('patrol_area') }}"

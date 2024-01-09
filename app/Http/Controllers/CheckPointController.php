@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use Exception;
 use Throwable;
 use App\Models\Round;
@@ -9,6 +10,7 @@ use App\Models\CheckPoint;
 use App\Models\AssetUnsafeOption;
 use App\Models\CheckpointAssetClient;
 use App\Models\CheckpointAssetPatrol;
+use App\Models\PatrolArea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -36,7 +38,22 @@ class CheckPointController extends Controller
     public function create()
     {
         $data['title'] = "Tambah Checkpoint";
-        $data['round'] = Round::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_id = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_id)->get();
+            $data['patrol_area'] = PatrolArea::whereIn('area_id', $area_id)->get();
+            $data['round'] = Round::with('patrol_area.area')->whereIn('patrol_area_id', 
+                function ($query) use ($area_id) {
+                    $query->select('id')->from('patrol_area')
+                        ->whereIn('area_id', $area_id);
+                })
+            ->get();
+        } else {
+            $data['area'] = Area::all();
+            $data['patrol_area'] = PatrolArea::all();
+            $data['round'] = Round::all();
+        }
         return view('super-admin.check-point.create', $data);
     }
 
@@ -102,8 +119,24 @@ class CheckPointController extends Controller
     public function edit($id)
     {
         $data['title'] = "Edit Checkpoint";
-        $data['round'] = Round::all();
-        $data['checkpoint'] = CheckPoint::findOrFail($id);
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_id = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_id)->get();
+            $data['patrol_area'] = PatrolArea::whereIn('area_id', $area_id)->get();
+            $data['round'] = Round::with('patrol_area.area')->whereIn('patrol_area_id', 
+                function ($query) use ($area_id) {
+                    $query->select('id')->from('patrol_area')
+                        ->whereIn('area_id', $area_id);
+                })
+            ->get();
+        } else {
+            $data['area'] = Area::all();
+            $data['patrol_area'] = PatrolArea::all();
+            $data['round'] = Round::all();
+        }
+
+        $data['checkpoint'] = CheckPoint::with('round.patrol_area.area')->findOrFail($id);
         return view('super-admin.check-point.edit', $data);
     }
 
@@ -173,8 +206,17 @@ class CheckPointController extends Controller
 
     public function datatable()
     {
-        $data = CheckPoint::with('round')->get();
-        return DataTables::of($data)
+        $data = CheckPoint::with('round.patrol_area.area');
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
+
+            $data->whereHas('round.patrol_area', function ($query) use ($area_id) {
+                $query->whereIn('area_id', $area_id);
+            });
+        }
+
+        $row = $data->get();
+        return DataTables::of($row)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('name', '{{$name}}')
@@ -202,7 +244,17 @@ class CheckPointController extends Controller
                 $old = $request->patrol_area_id;
                 $data = CheckPoint::where('round_id', $id)->get();
             } else {
-                $data = CheckPoint::all();
+                if (auth()->user()->hasRole('admin-area')) {
+                    $area_id = explode(',', auth()->user()->access_area);
+                
+                    $data = CheckPoint::with('round.patrol_area.area')
+                        ->whereHas('round.patrol_area', function ($query) use ($area_id) {
+                            $query->whereIn('area_id', $area_id);
+                        })->get();
+                }  else {
+                    $data = CheckPoint::all();
+                }
+                
             }
 
             if ($data->count() <= 0) {
