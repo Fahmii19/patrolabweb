@@ -116,12 +116,42 @@
                         <li class="mb-2">
                             <a class="{{ isset($page) && $page == 'dashboard' ? 'active-menu' : '' }} d-block" href="{{ route('admin-area.dashboard') }}" data-original-title="" title="" id="menu_dashboard"> <i data-feather="bar-chart-2"></i><span>Dashboard </span></a>
                         </li>
-                        <li class="sidebar-list mb-2" id="data_master">
-                            <a class="sidebar-link sidebar-title" href="#"><i class="menu-icon" data-feather="home"></i><span>Master Data</span></a>
+                        <li class="sidebar-list mb-2" id="menu-patrol"><a class="sidebar-link sidebar-title" href="#"><i data-feather="shield"></i><span>Patrol</span></a>
                             <ul class="sidebar-submenu">
-                                <li><a href="{{ route('area.index') }}" id="area">Areas</a></li>
-                                <li><a href="{{ route('branch.index') }}" id="branch">Branch</a></li>
-                                <li><a href="{{ route('project.index') }}" id="project">Projects</a></li>
+                                <li><a href="{{ route('patrol-area.index') }}" id="sub-patrol-area">Patrol Area</a></li>
+                                <li><a href="{{ route('notice-boards.index') }}" id="sub-notice">Notice Boards</a></li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-list mb-2" id="menu-guard"><a class="sidebar-link sidebar-title" href="#"><i data-feather="users"></i><span>Guard Management</span></a>
+                            <ul class="sidebar-submenu">
+                                <li><a href="{{ route('pleton.index') }}" id="sub-list-pleton">Pleton List</a></li>
+                                <li><a href="{{ route('pleton-patrol-area.index') }}" id="sub-pleton-patrol">Pleton Patrol</a></li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-list mb-2" id="menu-round"><a class="sidebar-link sidebar-title" href="#"><i data-feather="arrow-right-circle"></i><span>Round</span></a>
+                            <ul class="sidebar-submenu">
+                                <li><a href="{{ route('round.create') }}" id="sub-round-create">Add Route</a></li>
+                                <li><a href="{{ route('round.index') }}" id="sub-round-list">Route List</a></li>
+                                <li><a href="{{ route('round.detail') }}" id="sub-round-detail">Route Detail</a></li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-list mb-2" id="menu-checkpoint"><a class="sidebar-link sidebar-title" href="#"><i data-feather="map-pin"></i><span>Check Point</span></a>
+                            <ul class="sidebar-submenu">
+                                <li><a href="{{ route('check-point.create') }}" id="sub-add-checkpoint">Add Checkpoint</a></li>
+                                <li><a href="{{ route('check-point.index') }}" id="sub-list-checkpoint">Checkpoint List</a></li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-list mb-2" id="menu-checkpointaset-patrol"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Patrol Asset</span></a>
+                            <ul class="sidebar-submenu">
+                                {{-- <li><a href="{{ route('checkpoint-aset-client.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li> --}}
+                                <li><a href="{{ route('checkpoint-aset-patrol.index') }}" id="sub-checkpoint-patrol-aset-list">Asset CheckPoint</a></li>
+                                <li><a href="{{ route('asset-patrol-detail') }}" id="sub-checkpoint-patrol-aset-detail">Detail Checkpoint</a></li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-list mb-2" id="menu-report"><a class="sidebar-link sidebar-title" href="#"><i data-feather="flag"></i><span>Reporting</span></a>
+                            <ul class="sidebar-submenu">
+                                <li><a href="{{ route('checkpoint-report.index') }}" id="sub-list-checkpoint-report">Checkpoint Report</a></li>
+                                <li><a href="{{ route('asset-report.index') }}" id="sub-list-asset-report">Asset Report</a></li>
                             </ul>
                         </li>
                     @endrole

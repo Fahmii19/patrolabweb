@@ -77,7 +77,7 @@ Route::get('/dashboard', function () {
     return redirect()->route('login'); 
 })->middleware(['auth', 'verified']);
 
-//Grup Rute untuk Super Admin
+//Grup Rute untuk khusus super admin
 Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'role:super-admin']], function () {
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::resources([
@@ -93,15 +93,15 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'shift' => ShiftController::class,
         // Patrol
         'schedule' => ScheduleController::class,
-        'patrol-area' => PatrolAreaController::class,
-        'notice-boards' => NoticeBoardController::class,
+        // 'patrol-area' => PatrolAreaController::class,
+        // 'notice-boards' => NoticeBoardController::class,
         // Guard Management
         'guard' => GuardController::class,
-        'pleton' => PletonController::class,
-        'pleton-patrol-area' => PletonPatrolAreaController::class,
+        // 'pleton' => PletonController::class,
+        // 'pleton-patrol-area' => PletonPatrolAreaController::class,
         // Round & Checkpoint
-        'round' => RoundController::class,
-        'check-point' => CheckPointController::class,
+        // 'round' => RoundController::class,
+        // 'check-point' => CheckPointController::class,
         // Gate Access
         'incoming-vehicle' => IncomingVehicleController::class,
         'outcoming-vehicle' => OutcomingVehicleController::class,
@@ -109,11 +109,11 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'aset-location' => AsetLocationController::class,
         'aset-unsafe-option' => AssetUnsafeOptionController::class,
         'checkpoint-aset-client' => AssetClientCheckpointController::class,
-        'checkpoint-aset-patrol' => AssetPatrolCheckpointController::class,
+        // 'checkpoint-aset-patrol' => AssetPatrolCheckpointController::class,
         // Report
         'self-patrol' => SelfPatrolController::class,
-        'checkpoint-report' => CheckpointReportController::class,
-        'asset-report' => AssetReportController::class,
+        // 'checkpoint-report' => CheckpointReportController::class,
+        // 'asset-report' => AssetReportController::class,
 
         'audit-log' => AuditLogController::class,
         
@@ -139,16 +139,16 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('area-datatable', [AreaController::class, 'datatable'])->name('area.datatable');
     Route::get('gate-datatable', [GateController::class, 'datatable'])->name('gate.datatable');
     // Patrol
-    Route::get('patrol-area-datatable', [PatrolAreaController::class, 'datatable'])->name('patrol-area.datatable');
-    Route::get('notice-boards-datatable', [NoticeBoardController::class, 'datatable'])->name('notice-boards.datatable');
+    // Route::get('patrol-area-datatable', [PatrolAreaController::class, 'datatable'])->name('patrol-area.datatable');
+    // Route::get('notice-boards-datatable', [NoticeBoardController::class, 'datatable'])->name('notice-boards.datatable');
     // Guard Management
     Route::get('guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');
-    Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
-    Route::get('pleton-patrol-datatable', [PletonPatrolAreaController::class, 'datatable'])->name('pleton-patrol.datatable');
+    // Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
+    // Route::get('pleton-patrol-datatable', [PletonPatrolAreaController::class, 'datatable'])->name('pleton-patrol.datatable');
     // Round & Checkpoint
-    Route::get('round-datatable', [RoundController::class, 'datatable'])->name('round.datatable');
-    Route::get('check-point-datatable', [CheckPointController::class, 'datatable'])->name('check-point.datatable');
-    Route::get('checkpoint-without-round-datatable', [CheckPointController::class, 'datatable_without_round'])->name('check-point.without-round-datatable');
+    // Route::get('round-datatable', [RoundController::class, 'datatable'])->name('round.datatable');
+    // Route::get('check-point-datatable', [CheckPointController::class, 'datatable'])->name('check-point.datatable');
+    // Route::get('checkpoint-without-round-datatable', [CheckPointController::class, 'datatable_without_round'])->name('check-point.without-round-datatable');
     // Gate Access
     Route::get('incoming-vehicle.datatable', [IncomingVehicleController::class, 'datatable'])->name('incoming-vehicle.datatable');
     Route::get('outcoming-vehicle.datatable', [OutcomingVehicleController::class, 'datatable'])->name('outcoming-vehicle.datatable');
@@ -158,13 +158,13 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('aset-location-datatable', [AsetLocationController::class, 'datatable'])->name('aset-location.datatable');
     Route::get('check-point-aset.datatable', [CheckpointAsetController::class, 'datatable'])->name('check-point-aset.datatable');
     Route::get('checkpoint-aset-client-datatable', [AssetClientCheckpointController::class, 'asset_client_datatable'])->name('checkpoint-aset-client.datatable');
-    Route::get('checkpoint-aset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_patrol_datatable'])->name('checkpoint-aset-patrol.datatable');
+    // Route::get('checkpoint-aset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_patrol_datatable'])->name('checkpoint-aset-patrol.datatable');
     Route::get('asset-client-datatable', [AssetClientCheckpointController::class, 'asset_datatable'])->name('asset-client-datatable');
-    Route::get('asset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_datatable'])->name('asset-patrol-datatable');
+    // Route::get('asset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_datatable'])->name('asset-patrol-datatable');
     // Report
-    Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
+    // Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
     Route::get('self-patrol-datatable', [SelfPatrolController::class, 'datatable'])->name('self-patrol.datatable');
-    Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
+    // Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
     //Audit Log
     Route::get('audit-log-datatable', [AuditLogController::class, 'datatable'])->name('audit-log.datatable');
 
@@ -173,53 +173,80 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     Route::get('atensi-datatable', [AtensiController::class, 'datatable'])->name('atensi.datatable');
 
     // Another Route
-    Route::get('/patrol-area-by-area/{id}', [PatrolAreaController::class, 'by_area']);
-    Route::get('/round-by-patrol-area/{id}', [RoundController::class, 'by_patrol_area']);
-    Route::get('/round/detail/', [RoundController::class, 'detail'])->name('round.detail');
-    Route::delete('/checkpoint/remove-round/{id}', [CheckPointController::class, 'remove_round'])->name('checkpoint-remove-round');
-    Route::put('/checkpoint/update-round/{id}', [CheckPointController::class, 'update_round'])->name('checkpoint-update-round');
+    // Route::get('/patrol-area-by-area/{id}', [PatrolAreaController::class, 'by_area']);
+    // Route::get('/round-by-patrol-area/{id}', [RoundController::class, 'by_patrol_area']);
+    // Route::get('/round/detail/', [RoundController::class, 'detail'])->name('round.detail');
+    // Route::delete('/checkpoint/remove-round/{id}', [CheckPointController::class, 'remove_round'])->name('checkpoint-remove-round');
+    // Route::put('/checkpoint/update-round/{id}', [CheckPointController::class, 'update_round'])->name('checkpoint-update-round');
     Route::get('/project-by-wilayah/{id}', [ProjectController::class, 'by_wilayah'])->name('project-by-wilayah');
     Route::get('/project-by-wilayah-select/{id}', [ProjectController::class, 'by_wilayah_select'])->name('project-by-wilayah-select');
     Route::get('/area-by-project/{id}', [AreaController::class, 'by_project'])->name('area-by-project');
     Route::get('/asset-client-detail', [AssetClientCheckpointController::class, 'detail'])->name('asset-client-detail');
     Route::get('/asset-client-by-checkpoint/{id}', [AssetClientCheckpointController::class, 'asset_by_checkpoint']);
+    // Route::get('/asset-patrol-detail', [AssetPatrolCheckpointController::class, 'detail'])->name('asset-patrol-detail');
+    // Route::get('/asset-patrol-by-checkpoint/{id}', [AssetPatrolCheckpointController::class, 'asset_by_checkpoint']);
+    // Route::get('checkpoint-get-all-asset/{id}', [CheckPointController::class, 'get_all_asset']);
+    // Route::get('checkpoint-by-round/{id}', [CheckPointController::class, 'by_round']);
+    // Route::get('select-checkpoint-by-round/{id}', [CheckPointController::class, 'select_by_round']);
+    Route::get('guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
+    Route::post('get-hak-akses', [HakAksesController::class, 'get_hak_akses'])->name('get-hak-akses');
+});
+
+// Rute untuk super admin dan admin area
+Route::group(['middleware' => ['auth', 'verified', 'role:super-admin|admin-area']], function () {
+    Route::get('/admin-area/dashboard', [AdminAreaController::class, 'dashboard'])->name('admin-area.dashboard');
+    Route::resources([
+        'patrol-area' => PatrolAreaController::class,
+        'notice-boards' => NoticeBoardController::class,
+        'round' => RoundController::class,
+        'check-point' => CheckPointController::class,
+        'pleton' => PletonController::class,
+        'pleton-patrol-area' => PletonPatrolAreaController::class,
+        'checkpoint-aset-patrol' => AssetPatrolCheckpointController::class,
+        'checkpoint-report' => CheckpointReportController::class,
+        'asset-report' => AssetReportController::class,
+    ]);
+
+    // Datatable
+    Route::get('patrol-area-datatable', [PatrolAreaController::class, 'datatable'])->name('patrol-area.datatable');
+    Route::get('notice-boards-datatable', [NoticeBoardController::class, 'datatable'])->name('notice-boards.datatable');
+    Route::get('round-datatable', [RoundController::class, 'datatable'])->name('round.datatable');
+    Route::get('check-point-datatable', [CheckPointController::class, 'datatable'])->name('check-point.datatable');
+    Route::get('checkpoint-without-round-datatable', [CheckPointController::class, 'datatable_without_round'])->name('check-point.without-round-datatable');
+    Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
+    Route::get('pleton-patrol-datatable', [PletonPatrolAreaController::class, 'datatable'])->name('pleton-patrol.datatable');
+    Route::get('checkpoint-aset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_patrol_datatable'])->name('checkpoint-aset-patrol.datatable');
+    Route::get('asset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_datatable'])->name('asset-patrol-datatable');
+    Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
+    Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
+
+    Route::get('/patrol-area-by-area/{id}', [PatrolAreaController::class, 'by_area']);
+    Route::get('/round-by-patrol-area/{id}', [RoundController::class, 'by_patrol_area']);
+    Route::get('/round/detail/', [RoundController::class, 'detail'])->name('round.detail');
+    Route::delete('/checkpoint/remove-round/{id}', [CheckPointController::class, 'remove_round'])->name('checkpoint-remove-round');
+    Route::put('/checkpoint/update-round/{id}', [CheckPointController::class, 'update_round'])->name('checkpoint-update-round');
     Route::get('/asset-patrol-detail', [AssetPatrolCheckpointController::class, 'detail'])->name('asset-patrol-detail');
     Route::get('/asset-patrol-by-checkpoint/{id}', [AssetPatrolCheckpointController::class, 'asset_by_checkpoint']);
     Route::get('checkpoint-get-all-asset/{id}', [CheckPointController::class, 'get_all_asset']);
     Route::get('checkpoint-by-round/{id}', [CheckPointController::class, 'by_round']);
     Route::get('select-checkpoint-by-round/{id}', [CheckPointController::class, 'select_by_round']);
-    Route::get('guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
-    Route::post('get-hak-akses', [HakAksesController::class, 'get_hak_akses'])->name('get-hak-akses');
-});
-
-Route::group(['prefix' => 'admin-area', 'middleware' => ['auth', 'verified', 'role:super-admin|admin-area']], function () {
-    Route::get('/dashboard', [AdminAreaController::class, 'dashboard'])->name('admin-area.dashboard');
-    Route::resources([
-        'area' => AreaController::class,
-        'branch' => BranchController::class,
-        'project' => ProjectController::class,
-    ]);
-
-    Route::get('area-datatable', [AreaController::class, 'datatable'])->name('area.datatable');
-    Route::get('branch-datatable', [BranchController::class, 'datatable'])->name('branch.datatable');
-    Route::get('project-datatable', [ProjectController::class, 'datatable'])->name('project.datatable');
 });
 
 // Grup Rute untuk Guard
-Route::group(['prefix' => 'guard', 'middleware' => ['auth', 'verified', 'role:super-admin|guard|user']], function () {
-    Route::get('/dashboard', [DefaultController::class, 'dashboard'])->name('default.dashboard');
+// Route::group(['prefix' => 'guard', 'middleware' => ['auth', 'verified', 'role:super-admin|guard|user']], function () {
+//     Route::get('/dashboard', [DefaultController::class, 'dashboard'])->name('default.dashboard');
     
-    Route::resources([
-        'guard' => GuardController::class,
-        'pleton' => PletonController::class,
-    ]);
-    // Guard
-    Route::get('/guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');
-    Route::get('/guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
+//     Route::resources([
+//         'guard' => GuardController::class,
+//         'pleton' => PletonController::class,
+//     ]);
+//     // Guard
+//     Route::get('/guard-datatable', [GuardController::class, 'datatable'])->name('guard.datatable');
+//     Route::get('/guards/{guard}', [GuardController::class, 'show'])->name('guard.show');
 
-    //Pleton
-    Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
-});
+//     //Pleton
+//     Route::get('pleton-datatable', [PletonController::class, 'datatable'])->name('pleton.datatable');
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
