@@ -34,10 +34,18 @@ class PletonPatrolAreaController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Pleton Patrol';
-        $data['patrol_area'] = PatrolArea::all();
         $selectedPletonIds = PletonPatrolArea::pluck('pleton_id')->toArray();
-        $data['pleton'] = Pleton::whereNotIn('id', $selectedPletonIds)->get();
 
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_ids = explode(',', auth()->user()->access_area);
+        
+            $data['patrol_area'] = PatrolArea::whereIn('area_id', $area_ids)->get();
+            $data['pleton'] = Pleton::whereNotIn('id', $selectedPletonIds)->whereIn('area_id', $area_ids)->get();
+        } else {
+            $data['patrol_area'] = PatrolArea::all();
+            $data['pleton'] = Pleton::whereNotIn('id', $selectedPletonIds)->get();
+        }
+        
         return view('super-admin.pleton-patrol.create', $data);
     }
 
@@ -104,7 +112,13 @@ class PletonPatrolAreaController extends Controller
         }
 
         $data['pleton_patrol'] = $pletonPatrol;
-        $data['patrol_area'] = PatrolArea::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_ids = explode(',', auth()->user()->access_area);
+        
+            $data['patrol_area'] = PatrolArea::whereIn('area_id', $area_ids)->get();
+        } else {
+            $data['patrol_area'] = PatrolArea::all();
+        }
         $data['pleton'] = Pleton::where('id', $pletonPatrol->pleton_id)->first();
 
         return view('super-admin.pleton-patrol.edit', $data);
@@ -183,8 +197,18 @@ class PletonPatrolAreaController extends Controller
 
     public function datatable()
     {
-        $data = PletonPatrolArea::with('pleton', 'patrol_area')->get();
-        return DataTables::of($data)
+        $data = PletonPatrolArea::with('pleton', 'patrol_area');
+
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
+
+            $data->whereHas('patrol_area', function ($query) use ($area_id) {
+                $query->whereIn('area_id', $area_id);
+            });
+        }
+
+        $row = $data->get();
+        return DataTables::of($row)
             ->addIndexColumn()
             ->escapeColumns([])
             ->addColumn('patrol_area', '{{$pleton["name"]}}')
