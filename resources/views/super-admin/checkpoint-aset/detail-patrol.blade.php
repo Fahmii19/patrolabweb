@@ -130,7 +130,7 @@
         let patrol_area_base = $('#filterPatrolArea')
         let patrol_area_alert = $('#patrol-area-alert')
         $.ajax({
-            url: "{{ url('/super-admin/patrol-area-by-area') }}/" + area_id,
+            url: "{{ url('/patrol-area-by-area') }}/" + area_id,
             method: 'get',
             data: {
                 area_id: "{{ old('area') }}"
@@ -154,7 +154,7 @@
         let round_base = $('#filterRound')
         let round_alert = $('#round-alert')
         $.ajax({
-            url: "{{ url('/super-admin/round-by-patrol-area') }}/" + patrol_area_id,
+            url: "{{ url('/round-by-patrol-area') }}/" + patrol_area_id,
             method: 'get',
             data: {
                 patrol_area_id: "{{ old('id_round') }}"
@@ -179,7 +179,7 @@
         let checkpoint_base = $('#filterCheckpoint')
         let checkpoint_alert = $('#checkpoint-alert')
         $.ajax({
-            url: "{{ url('/super-admin/select-checkpoint-by-round') }}/" + round_id,
+            url: "{{ url('/select-checkpoint-by-round') }}/" + round_id,
             method: 'get',
             data: {
                 round_id: "{{ old('round_id') }}"
@@ -209,7 +209,7 @@
         const area_table = $('#tableAsset tbody');
         const select_alert = $('#checkpoint-alert');
         $.ajax({
-            url: "{{ url('/super-admin/asset-patrol-by-checkpoint') }}/" + id_checkpoint,
+            url: "{{ url('/asset-patrol-by-checkpoint') }}/" + id_checkpoint,
             method: 'get',
             data: {
                 id_checkpoint: "{{ old('id_checkpoint') }}"
@@ -239,7 +239,7 @@
         let patrol_area_base = formParent.find('.modalPatrolArea');
         let patrol_area_alert = formParent.find('.patrol-area-modal');
         $.ajax({
-            url: "{{ url('/super-admin/patrol-area-by-area') }}/" + area_id,
+            url: "{{ url('/patrol-area-by-area') }}/" + area_id,
             method: 'get',
             data: {
                 area_id: "{{ old('area') }}"
@@ -268,7 +268,7 @@
         let checkpoint_base = formParent.find('.modalCheckpoint')
         let checkpoint_alert = formParent.find('.checkpoint-modal')
         $.ajax({
-            url: "{{ url('/super-admin/round-by-patrol-area') }}/" + patrol_area_id,
+            url: "{{ url('/round-by-patrol-area') }}/" + patrol_area_id,
             method: 'get',
             data: {
                 patrol_area_id: "{{ old('id_round') }}"
@@ -300,7 +300,7 @@
         let checkpoint_base = formParent.find('.modalCheckpoint')
         let checkpoint_alert = formParent.find('.checkpoint-modal')
         $.ajax({
-            url: "{{ url('/super-admin/select-checkpoint-by-round') }}/" + round_id,
+            url: "{{ url('/select-checkpoint-by-round') }}/" + round_id,
             method: 'get',
             data: {
                 round_id: "{{ old('round_id') }}"
