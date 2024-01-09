@@ -154,7 +154,7 @@
             let patrol_area_base = $('#selectPatrolArea')
             let patrol_area_alert = $('#patrol-area-alert')
             $.ajax({
-                url: "{{ url('/super-admin/patrol-area-by-area') }}/" + area_id,
+                url: "{{ url('/patrol-area-by-area') }}/" + area_id,
                 method: 'get',
                 data: {
                     area_id: "{{ old('area') }}"
@@ -179,7 +179,7 @@
             let round_base = $('#id_rute')
             let round_alert = $('#round-alert')
             $.ajax({
-                url: "{{ url('/super-admin/round-by-patrol-area') }}/" + patrol_area_id,
+                url: "{{ url('/round-by-patrol-area') }}/" + patrol_area_id,
                 method: 'get',
                 data: {
                     patrol_area_id: "{{ old('patrol_area') }}"
@@ -209,7 +209,7 @@
             const area_table = $('#tableCheckpoint tbody');
             const select_alert = $('#round-alert');
             $.ajax({
-                url: "{{ url('/super-admin/checkpoint-by-round') }}/" + id_round,
+                url: "{{ url('/checkpoint-by-round') }}/" + id_round,
                 method: 'get',
                 data: {
                     id_area: "{{ old('id_round') }}"

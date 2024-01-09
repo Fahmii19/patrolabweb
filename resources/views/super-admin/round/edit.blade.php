@@ -78,7 +78,7 @@
             let patrol_area_base = $('#selectPatrolArea')
             let patrol_area_alert = $('#patrol-area-alert')
             $.ajax({
-                url: "{{ url('/super-admin/patrol-area-by-area') }}/" + area_id,
+                url: "{{ url('/patrol-area-by-area') }}/" + area_id,
                 method: 'get',
                 data: {
                     area_id: "{{ old('area_id') }}"

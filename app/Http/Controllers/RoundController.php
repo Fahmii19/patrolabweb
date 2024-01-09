@@ -23,7 +23,14 @@ class RoundController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Round';
-        $data['area'] = Area::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_id = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_id)->get();
+        } else {
+            $data['area'] = Area::all();
+        }
+
         return view('super-admin.round.create', $data);
     }
 
@@ -61,9 +68,23 @@ class RoundController extends Controller
     public function show($id)
     {
         $data['title'] = 'Detail Round';
-        $data['area'] = Area::all();
-        $data['patrol_area'] = PatrolArea::all();
-        $data['round'] = Round::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_id = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_id)->get();
+            $data['patrol_area'] = PatrolArea::whereIn('area_id', $area_id)->get();
+            $data['round'] = Round::with('patrol_area.area')->whereIn('patrol_area_id', 
+                function ($query) use ($area_id) {
+                    $query->select('id')->from('patrol_area')
+                        ->whereIn('area_id', $area_id);
+                })
+            ->get();
+        } else {
+            $data['area'] = Area::all();
+            $data['patrol_area'] = PatrolArea::all();
+            $data['round'] = Round::all();
+        }
+        
         return view('super-admin.round.show', $data);
     }
 
@@ -78,7 +99,14 @@ class RoundController extends Controller
             return redirect()->back()->with('error', 'Round tidak ditemukan.');
         }
 
-        $data['area'] = Area::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_id = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_id)->get();
+        } else {
+            $data['area'] = Area::all();
+        }
+
         $data['patrol_area'] = PatrolArea::where('area_id', $data['round']->patrol_area->area_id)->get();
 
         return view('super-admin.round.edit', $data);
@@ -136,8 +164,18 @@ class RoundController extends Controller
 
     public function datatable()
     {
-        $data = Round::with('patrol_area.area')->get();
-        return DataTables::of($data)
+        $data = Round::with('patrol_area.area');
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
+
+            $data->whereIn('patrol_area_id', function ($query) use ($area_id) {
+                $query->select('id')->from('patrol_area')
+                    ->whereIn('area_id', $area_id);
+            });
+        }
+
+        $row = $data->get();
+        return DataTables::of($row)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('name', '{{$name}}')
@@ -166,7 +204,16 @@ class RoundController extends Controller
                 $old = $request->patrol_area_id;
                 $data = Round::where('patrol_area_id', $id)->get();
             } else {
-                $data = Round::all();
+                if (auth()->user()->hasRole('admin-area')) {
+                    $area_id = explode(',', auth()->user()->access_area);
+                
+                    $data = Round::with('patrol_area.area')
+                        ->whereHas('patrol_area', function ($query) use ($area_id) {
+                            $query->whereIn('area_id', $area_id);
+                        })->get();
+                }  else {
+                    $data = Round::all();
+                }
             }
 
             if ($data->count() <= 0) {
