@@ -34,7 +34,14 @@ class PatrolAreaController extends Controller
     public function create()
     {
         $data['title'] = "Tambah Patrol Area";
-        $data['area'] = Area::all(); // Data area untuk admin-area
+
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_ids = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_ids)->get();
+        } else {
+            $data['area'] = Area::all();
+        }
         return view('super-admin.patrol-area.create', $data);
     }
 
@@ -165,14 +172,21 @@ class PatrolAreaController extends Controller
     public function edit($id)
     {
         $data['title'] = "Edit Patrol Area";
-        $data['area'] = Area::all();
         $data['patrol_area'] = PatrolArea::find($id);
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_ids = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_ids)->get();
+        } else {
+            $data['area'] = Area::all();
+        }
 
         if (!$data['patrol_area']) {
             return redirect()->back()->with('error', 'Patrol Area tidak ditemukan.');
         }
 
-        $data['patrol_area_desc'] = PatrolAreaDescription::where('patrol_area_id', $data['patrol_area']->id)->first();
+        // $data['patrol_area_desc'] = PatrolAreaDescription::where('patrol_area_id', $data['patrol_area']->id)->first();
+        $data['patrol_area_desc'] = PatrolAreaDescription::firstOrNew(['patrol_area_id' => $data['patrol_area']->id]);
 
         return view('super-admin.patrol-area.edit', $data);
     }
@@ -353,9 +367,18 @@ class PatrolAreaController extends Controller
     {
         $data = PatrolArea::with(['area'], function($query){
             $query->select('id', 'name');
-        })->get();
+        });
+
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',' ,auth()->user()->access_area);
+
+            $data->whereHas('area', function ($query) use ($area_id) {
+                $query->whereIn('area_id', $area_id);
+            });
+        }
         
-        return DataTables::of($data)
+        $row = $data->get();
+        return DataTables::of($row)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('code', '{{$code}}')
@@ -410,7 +433,13 @@ class PatrolAreaController extends Controller
                 $old = $request->area_id;
                 $data = PatrolArea::where('area_id', $id)->get();
             } else {
-                $data = PatrolArea::all();
+                if (auth()->user()->hasRole('admin-area')) {
+                    $area_id = explode(',', auth()->user()->access_area);
+                
+                    $data = PatrolArea::whereIn('area_id', $area_id)->get();
+                }  else {
+                    $data = PatrolArea::all();
+                }
             }
 
             if ($data->count() <= 0) {

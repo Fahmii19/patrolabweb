@@ -34,7 +34,13 @@ class NoticeBoardController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Notice Board';
-        $data['area'] = Area::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_ids = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_ids)->get();
+        } else {
+            $data['area'] = Area::all();
+        }
         return view('super-admin.notice-board.create', $data);
     }
 
@@ -96,7 +102,13 @@ class NoticeBoardController extends Controller
     public function edit($id)
     {
         $data['title'] = "Edit Notice Board";
-        $data['area'] = Area::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_ids = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_ids)->get();
+        } else {
+            $data['area'] = Area::all();
+        }
         $data['notice_board'] = NoticeBoard::find($id);
 
         if (!$data['notice_board']) {
@@ -176,8 +188,18 @@ class NoticeBoardController extends Controller
     {
         $data = NoticeBoard::with(['area'], function($query){
             $query->select('id', 'name');
-        })->get();
-        return DataTables::of($data)
+        });
+
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
+
+           $data->whereHas('area', function ($query) use ($area_id) {
+                $query->whereIn('area_id', $area_id);
+            });
+        }
+
+        $row = $data->get();
+        return DataTables::of($row)
             ->addIndexColumn()
             ->escapeColumns('active')
             ->addColumn('area', '{{$area["name"]}}')
