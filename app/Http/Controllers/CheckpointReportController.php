@@ -21,10 +21,24 @@ class CheckpointReportController extends Controller
     public function index()
     {
         $data['title'] = "Daftar CheckPoint Report";
-        $data['area'] = Area::all();
-        $data['patrol_area'] = PatrolArea::all();
-        $data['round'] = Round::all();
-        $data['pleton'] = Pleton::all();
+        if (auth()->user()->hasRole('admin-area')) {
+            $area_id = explode(',', auth()->user()->access_area);
+        
+            $data['area'] = Area::whereIn('id', $area_id)->get();
+            $data['patrol_area'] = PatrolArea::whereIn('area_id', $area_id)->get();
+            $data['round'] = Round::with('patrol_area.area')->whereIn('patrol_area_id', 
+                function ($query) use ($area_id) {
+                    $query->select('id')->from('patrol_area')
+                        ->whereIn('area_id', $area_id);
+                })
+            ->get();
+            $data['pleton'] = Pleton::whereIn('area_id', $area_id)->get();
+        } else {
+            $data['area'] = Area::all();
+            $data['patrol_area'] = PatrolArea::all();
+            $data['round'] = Round::all();
+            $data['pleton'] = Pleton::all();
+        }
         return view('super-admin.checkpoint-report.index', $data);
     }
 
