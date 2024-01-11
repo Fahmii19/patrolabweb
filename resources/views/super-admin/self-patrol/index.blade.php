@@ -1,44 +1,40 @@
 @extends('layouts.admin')
 @section('content')
-<div class="container-fluid">
-    <div class="page-title">
-        <div class="row">
-            <div class="col-6">
-                <h3>{{ $title }}</h3>
-            </div>
-            <div class="col-6">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"> <i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Self Patrol</li>
-                    <li class="breadcrumb-item">{{ $title }}</li>
-                </ol>
+    @component('components.dashboard.headpage')
+        @slot('title')
+            {{ $title }}
+        @endslot
+        @slot('bread')
+            <li class="breadcrumb-item">Reporting</li>
+            <li class="breadcrumb-item">{{ $title }}</li>
+        @endslot
+    @endcomponent
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="mytable" class="display" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th style="max-width: 40px;">No</th>
+                                <th>Guard</th>
+                                <th>Pleton</th>
+                                <th>Koordinat</th>
+                                <th>Deskripsi</th>
+                                <th>Kondisi</th>
+                                <th>Gambar</th>
+                                <th>Reported at</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Container-fluid starts-->
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-body">
-            <table id="mytable" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th style="max-width: 40px;">No</th>
-                        <th>Petugas</th>
-                        <th>Wilayah</th>
-                        <th>Project</th>
-                        <th>Area</th>
-                        <th>Tanggal</th>
-                        <th>Status</th>
-                        <th>Deskripsi</th>
-                        <th>Foto</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
-</div>
-<!-- Container-fluid Ends-->
+    <!-- Container-fluid Ends-->
+@endsection
+
 @push('js')
 <script>
     $('#mytable').DataTable({
@@ -50,48 +46,37 @@
                 name: 'No'
             },
             {
-                data: 'petugas',
-                name: ''
+                data: 'guard',
+                name: 'Nama Guard'
             },
             {
-                data: 'wilayah',
-                name: ''
+                data: 'pleton',
+                name: 'Nama Pleton'
             },
             {
-                data: 'project',
-                name: ''
+                data: 'coordinat',
+                name: 'Titik Koordinat Lokasi'
             },
             {
-                data: 'area',
-                name: ''
+                data: 'description',
+                name: 'Deskripsi Laporan'
             },
             {
-                data: 'tanggal',
-                name: ''
+                data: 'condition',
+                name: 'Kondisi Lokasi'
             },
             {
-                data: 'status',
-                render: function(data, type, row) {
-                    if (row.status == 'aman') {
-                        return '<span class="badge badge-success">' + row.status + '</span>'
-                    } else {
-                        return '<span class="badge badge-danger">' + row.status + '</span>'
-                    }
-                }
+                data: 'image',
+                name: 'Foto Laporan',
+                orderable: false,
+                searchable: false,
             },
             {
-                data: 'deskripsi',
-                name: ''
+                data: 'reported_at',
+                name: 'Tanggal dan Waktu Laporan'
             },
-            {
-                data: 'foto',
-                name: ''
-            }
         ]
     });
     active_menu("#menu-report", "#sub-report-self-patrol")
 </script>
-
 @endpush
-
-@endsection
