@@ -90,18 +90,20 @@
                     <div class="card-body">
                         <h2 class="fs-5 mb-4">Checkpoint Tanpa Round</h2>
 
-                        <table id="mytable" class="display" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th style="max-width: 40px;">No</th>
-                                    <th>CheckPoint</th>
-                                    <th>Lokasi</th>
-                                    <th>Status</th>
-                                    <th>Danger Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="mytable" class="display" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="max-width: 40px;">No</th>
+                                        <th>CheckPoint</th>
+                                        <th>Lokasi</th>
+                                        <th>Status</th>
+                                        <th>Danger Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

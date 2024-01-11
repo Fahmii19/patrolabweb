@@ -5,7 +5,7 @@
             {{ $title }}
         @endslot
         @slot('bread')
-            <li class="breadcrumb-item">Gate Access</li>
+            <li class="breadcrumb-item">Asset Management</li>
             <li class="breadcrumb-item">{{ $title }}</li>
         @endslot
     @endcomponent
