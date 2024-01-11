@@ -56,7 +56,8 @@
                                     <small class="form-text">Ekstensi gambar yang diperbolehkan: jpeg, png & jpg</small>
                                     @error('img_location') <span class="text-danger d-block">{{$message}}</span> @enderror
                                 </div>
-                                <img src="{{ $patrol_area->img_location ? asset('gambar/patrol-area/' . $patrol_area->img_location) : asset('gambar/no-image.png') }}" width="200">
+                                <img src="{{ $patrol_area->img_location ? check_img_path($patrol_area->img_location) : asset('gambar/no-image.png') }}" width="200">
+                                
                                 <!-- Status -->
                                 <div class="mb-3">
                                     <label for="status" class="form-label">Status</label>
@@ -85,7 +86,8 @@
                                     <div class="row align-items-strecth mt-3">
                                         @foreach(explode(',', $patrol_area_desc->img_desc_location) as $index => $image)
                                             <div class="col-6 col-sm-4 col-md-3 col-lg-6 col-xxl-4 img-container d-inline-block mr-2">
-                                                <img src="{{ $image ? asset('gambar/patrol-area/' . $image) : asset('gambar/no-image.png') }}" class="img-fluid" data-test="{{ $index }}">
+                                                <img src="{{ $image ? check_img_path($image) : asset('gambar/no-image.png') }} " class="img-fluid" data-test="{{ $index }}">
+                                                
                                                 <!-- Checkbox untuk menghapus gambar -->
                                                 @if ($image)
                                                 <div class="form-check mt-2">

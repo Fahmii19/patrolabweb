@@ -65,7 +65,7 @@
                                 <input type="file" class="form-control @error('img_location') is-invalid @enderror" name="img_location" accept="image/jpeg, image/jpg, image/png" id="img_location">
                                 <small class="form-text d-block mb-2">Ekstensi gambar yang diperbolehkan: jpeg, png & jpg</small>
                                 @error('img_location') <span class="text-danger d-block">{{$message}}</span> @enderror                                    
-                                <img src="{{ $area->img_location ? asset('gambar/area/' . $area->img_location) : asset('gambar/no-image.png') }}" width="200">
+                                <img src="{{ $area->img_location ? check_img_path($area->img_location) : asset('gambar/no-image.png') }}" width="200">
                             </div>
                         </div>
                     </div>
