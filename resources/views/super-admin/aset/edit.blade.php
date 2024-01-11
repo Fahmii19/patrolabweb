@@ -65,7 +65,7 @@
                                 @error('images') <span class="text-danger d-block">{{ $message }}</span> @enderror
 
                                 <!-- Tampilkan gambar saat ini jika ada, jika tidak, tampilkan gambar default -->
-                                <img src="{{ $aset->images ? asset('gambar/aset/' . $aset->images) : asset('gambar/no-image.png') }}" width="200" class="mt-2">
+                                <img src="{{ $aset->images ? check_img_path($aset->images) : asset('gambar/no-image.png') }}" width="200" class="mt-2">
                             </div>
                         </div>
                     </div>

@@ -16,19 +16,21 @@
                 <div class="d-flex mb-3 justify-content-end">
                     <a href="{{route('round.create')}}" class="btn btn-success">Tambah Rute</a>
                 </div>
-                <table id="mytable" class="display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th style="max-width: 40px;">No</th>
-                            <th>Nama Rute</th>
-                            <th>Jumlah Checkpoint</th>
-                            <th>Status</th>
-                            <th>Patrol Area</th>
-                            <th>Area</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                </table>
+                <div class="table-responsive">
+                    <table id="mytable" class="display" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th style="max-width: 40px;">No</th>
+                                <th>Nama Rute</th>
+                                <th>Jumlah Checkpoint</th>
+                                <th>Status</th>
+                                <th>Patrol Area</th>
+                                <th>Area</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

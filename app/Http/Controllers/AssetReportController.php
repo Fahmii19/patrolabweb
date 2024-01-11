@@ -112,11 +112,12 @@ class AssetReportController extends Controller
             ->addColumn('description', '{{$unsafe_description ? $unsafe_description : "-"}}')
             ->addColumn('image', function ($row) {
                 // Cek jika file gambar ada
-                if ($row->unsafe_image && file_exists(public_path('gambar/aset/' . $row->unsafe_image))) {
-                    $url = asset('gambar/aset/' . $row->unsafe_image);
+                $images = $row->unsafe_image;
+
+                if ($images) {
+                    $url = check_img_path($images);
                 } else {
-                    // Jika tidak ada, gunakan gambar default
-                    $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
+                    $url = asset('gambar/no-image.png'); // Gambar default
                 }
                 return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
             })

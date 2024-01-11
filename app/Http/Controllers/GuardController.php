@@ -84,9 +84,13 @@ class GuardController extends Controller
             $imgAvatar = null;
             if ($request->hasFile('img_avatar')) {
                 $file = $request->file('img_avatar');
-                $currentDateTime = date('Ymd_His');
-                $imgAvatar = $currentDateTime . '_' . $file->getClientOriginalName();
-                $file->move(public_path('gambar/guard'), $imgAvatar);
+
+                $fileName = $file->getClientOriginalName();
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = upload_image_api($fileContent, $fileName);
+
+                $result = json_decode($response, true);
+                $imgAvatar = $result['message'];
             }
 
             $validatedData = $validator->validated();
@@ -228,13 +232,13 @@ class GuardController extends Controller
             $imgAvatar = $guard->img_avatar;
             if ($request->hasFile('img_avatar')) {
                 $file = $request->file('img_avatar');
-                $imgAvatar = date('Ymd_His') . '_' . $file->getClientOriginalName();    
-                $file->move(public_path('gambar/guard'), $imgAvatar);
 
-                // Hapus gambar lama jika ada
-                if ($guard->img_avatar && file_exists(public_path('gambar/guard/' . $guard->img_avatar))) {
-                    unlink(public_path('gambar/guard/' . $guard->img_avatar));
-                }
+                $fileName = $file->getClientOriginalName();
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = upload_image_api($fileContent, $fileName);
+
+                $result = json_decode($response, true);
+                $imgAvatar = $result['message'];
             }
 
             $update = [
@@ -319,12 +323,12 @@ class GuardController extends Controller
             // Hapus hubungan many-to-many dengan projects jika ada
             // $guard->projects()->detach();
 
-            if ($guard->img_avatar) {
-                $image = $guard->img_avatar;
-                if (file_exists(public_path('gambar/guard/' . $image))) {
-                    unlink(public_path('gambar/guard/' . $image));
-                }
-            }
+            // if ($guard->img_avatar) {
+            //     $image = $guard->img_avatar;
+            //     if (file_exists(public_path('gambar/guard/' . $image))) {
+            //         unlink(public_path('gambar/guard/' . $image));
+            //     }
+            // }
 
             // Hapus data Guard
             $guard->delete();

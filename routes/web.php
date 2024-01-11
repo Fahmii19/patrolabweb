@@ -34,12 +34,14 @@ use App\Http\Controllers\AssetReportController;
 use App\Http\Controllers\AssetUnsafeOptionController;
 use App\Http\Controllers\DefaultController;
 use App\Http\Controllers\GateController;
+use App\Http\Controllers\LocationConditionController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PatrolAreaController;
 use App\Http\Controllers\PletonPatrolAreaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\TestingController;
 use App\Models\PatrolArea;
 
 /*
@@ -77,6 +79,16 @@ Route::get('/dashboard', function () {
     return redirect()->route('login'); 
 })->middleware(['auth', 'verified']);
 
+// Route Review Controller
+Route::controller(TestingController::class)->group(function(){    
+    Route::prefix('testing')->group(function() {
+        Route::get('/redis-reset', 'redis_reset');
+        Route::get('/get-image', 'get_image');
+        Route::get('/post-image', 'post_image');
+        Route::post('/store-image', 'store_image');
+    });
+});
+
 //Grup Rute untuk khusus super admin
 Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'role:super-admin']], function () {
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -111,6 +123,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
         'checkpoint-aset-client' => AssetClientCheckpointController::class,
         // 'checkpoint-aset-patrol' => AssetPatrolCheckpointController::class,
         // Report
+        'location-condition' => LocationConditionController::class,
         'self-patrol' => SelfPatrolController::class,
         // 'checkpoint-report' => CheckpointReportController::class,
         // 'asset-report' => AssetReportController::class,
@@ -163,6 +176,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
     // Route::get('asset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_datatable'])->name('asset-patrol-datatable');
     // Report
     // Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
+    Route::get('location-condition-datatable', [LocationConditionController::class, 'datatable'])->name('location-condition.datatable');
     Route::get('self-patrol-datatable', [SelfPatrolController::class, 'datatable'])->name('self-patrol.datatable');
     // Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
     //Audit Log

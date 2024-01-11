@@ -40,11 +40,11 @@
     <!-- Container-fluid Ends-->
     <div id="actionbase" class="d-none">
         <div class="d-flex">
-            <a class="btn btn-warning me-2 text-dark">Edit</a>
+            <a class="btn btn-warning me-2  text-dark">Edit</a>
             <form method="post" class="d-inline">
                 @csrf
                 @method('delete')
-                <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
+                <button onclick="hapus_data(event)" class="btn btn-danger me-2 my-2" type="button">Hapus</button>
             </form>
         </div>
     </div>

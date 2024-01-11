@@ -98,16 +98,9 @@
                                     </div>
                                     <div id="collapse{{ $item->id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $item->id }}">
                                         <div class="accordion-body">
-                                            @php
-                                                if($item->unsafe_image && file_exists(public_path('gambar/aset/'.$item->unsafe_image))){
-                                                    $asset_image = asset('gambar/aset/'.$item->unsafe_image);
-                                                } else {
-                                                    $asset_image = asset('gambar/no-image.png');
-                                                }
-                                            @endphp
                                             <div class="row">
                                                 <div class="col-12 col-sm-6 col-xl-4">
-                                                    <img src="{{ $asset_image }}" class="img-fluid img-rounded" alt="img asset">
+                                                    <img src="{{ $item->unsafe_image ? check_img_path($item->unsafe_image) : asset('gambar/no-image.png') }}" class="img-fluid img-rounded" alt="img asset">
                                                 </div>
                                                 <div class="col-12 col-sm-6 col-xl-8">
                                                     <div class="mb-3">

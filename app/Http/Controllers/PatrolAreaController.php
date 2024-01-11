@@ -72,12 +72,16 @@ class PatrolAreaController extends Controller
             }
 
             // Menangani upload thumbnail patrol area
-            $imgLocation = null;
+            $filename = null;
             if ($request->hasFile('img_location')) {
                 $file = $request->file('img_location');
-                $currentDateTime = date('Ymd_His');
-                $imgLocation = $currentDateTime . '_' . $file->getClientOriginalName();    
-                $file->move(public_path('gambar/patrol-area'), $imgLocation);
+
+                $fileName = $file->getClientOriginalName();
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = upload_image_api($fileContent, $fileName);
+
+                $result = json_decode($response, true);
+                $filename = $result['message'];
             }
 
             $validated = $validator->validated();
@@ -86,7 +90,7 @@ class PatrolAreaController extends Controller
                 'code' => $validated['code'],
                 'name' => $validated['name'],
                 'location_long_lat' => $validated['location_long_lat'],
-                'img_location' => $imgLocation,
+                'img_location' => $filename,
                 'status' => 'ACTIVED',
                 'area_id' => $validated['area_id'],
                 'created_at' => now(),
@@ -114,10 +118,12 @@ class PatrolAreaController extends Controller
             $filenames = [];
             if ($request->hasFile('img_desc_location')) {
                 foreach ($request->file('img_desc_location') as $file) {
-                    $currentDateTime = date('Ymd_His');
-                    $filename = $currentDateTime . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('gambar/patrol-area'), $filename);
-                    $filenames[] = $filename;
+                    $fileName = $file->getClientOriginalName();
+                    $fileContent = file_get_contents($file->getRealPath());
+                    $response = upload_image_api($fileContent, $fileName);
+
+                    $result = json_decode($response, true);
+                    $filenames[] = $result['message'];
                 }
             }
 
@@ -223,17 +229,16 @@ class PatrolAreaController extends Controller
             $patrolArea = PatrolArea::find($id);
 
             // Menangani upload thumbnail patrol area
-            $imgLocation = $patrolArea->img_location;
+            $filename = $patrolArea->img_location;
             if ($request->hasFile('img_location')) {
                 $file = $request->file('img_location');
-                $currentDateTime = date('Ymd_His');
-                $imgLocation = $currentDateTime . '_' . $file->getClientOriginalName();    
-                $file->move(public_path('gambar/patrol-area'), $imgLocation);
+                
+                $fileName = $file->getClientOriginalName();
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = upload_image_api($fileContent, $fileName);
 
-                // Hapus gambar lama jika ada
-                if ($patrolArea->img_location && file_exists(public_path('gambar/patrol-area/' . $patrolArea->img_location))) {
-                    unlink(public_path('gambar/patrol-area/' . $patrolArea->img_location));
-                }
+                $result = json_decode($response, true);
+                $filename = $result['message'];
             }
 
             $validated = $validator->validated();
@@ -242,7 +247,7 @@ class PatrolAreaController extends Controller
                 'code' => $validated['code'],
                 'name' => $validated['name'],
                 'location_long_lat' => $validated['location_long_lat'],
-                'img_location' => $imgLocation,
+                'img_location' => $filename,
                 'status' => $validated['status'] ?? 'INACTIVED',
                 'area_id' => $validated['area_id'],
                 'created_at' => $patrolArea->created_at,
@@ -272,10 +277,12 @@ class PatrolAreaController extends Controller
             // Menangani upload gambar deskripsi patrol area
             if ($request->hasFile('img_desc_location')) {
                 foreach ($request->file('img_desc_location') as $file) {
-                    $currentDateTime = date('Ymd_His');
-                    $filename = $currentDateTime . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('gambar/patrol-area'), $filename);
-                    $currentImages[] = $filename;
+                    $fileName = $file->getClientOriginalName();
+                    $fileContent = file_get_contents($file->getRealPath());
+                    $response = upload_image_api($fileContent, $fileName);
+
+                    $result = json_decode($response, true);
+                    $currentImages[] = $result['message'];
                 }
             }
 
@@ -283,10 +290,6 @@ class PatrolAreaController extends Controller
             if ($request->has('delete_images')) {
                 foreach ($request->delete_images as $deleteImage) {
                     if (($key = array_search($deleteImage, $currentImages)) !== false) {
-                        // Hapus file dari server
-                        if (file_exists(public_path('gambar/area/' . $deleteImage))) {
-                            unlink(public_path('gambar/area/' . $deleteImage));
-                        }
                         unset($currentImages[$key]);
                     }
                 }
@@ -330,22 +333,22 @@ class PatrolAreaController extends Controller
             $patrolAreaDesc = PatrolAreaDescription::where('patrol_area_id', $patrolArea->id)->first();
 
             // Hapus gambar thumbnail patrol area dari server jika ada
-            if ($patrolArea->img_location) {
-                $image = $patrolArea->img_location;
-                if (file_exists(public_path('gambar/patrol-area/' . $image))) {
-                    unlink(public_path('gambar/patrol-area/' . $image));
-                }
-            }
+            // if ($patrolArea->img_location) {
+            //     $image = $patrolArea->img_location;
+            //     if (file_exists(public_path('gambar/patrol-area/' . $image))) {
+            //         unlink(public_path('gambar/patrol-area/' . $image));
+            //     }
+            // }
 
             // Hapus gambar deskripsi patrol area dari server jika ada
-            if ($patrolAreaDesc->img_desc_location) {
-                $images = explode(',', $patrolAreaDesc->img_desc_location);
-                foreach ($images as $image) {
-                    if (file_exists(public_path('gambar/patrol-area/' . $image))) {
-                        unlink(public_path('gambar/patrol-area/' . $image));
-                    }
-                }
-            }
+            // if ($patrolAreaDesc->img_desc_location) {
+            //     $images = explode(',', $patrolAreaDesc->img_desc_location);
+            //     foreach ($images as $image) {
+            //         if (file_exists(public_path('gambar/patrol-area/' . $image))) {
+            //             unlink(public_path('gambar/patrol-area/' . $image));
+            //         }
+            //     }
+            // }
 
             // Hapus data patrol area desc dan patrol area
             $patrolAreaDesc->delete();
@@ -384,13 +387,14 @@ class PatrolAreaController extends Controller
             ->addColumn('code', '{{$code}}')
             ->addColumn('name', '{{$name}}')
             ->addColumn('image', function ($row) {
+                $images = $row->img_location;
                 $imgHtml = '';
+                
                 // Cek jika file gambar ada
-                if ($row->img_location && file_exists(public_path('gambar/patrol-area/' . $row->img_location))) {
-                    $url = asset('gambar/patrol-area/' . $row->img_location);
+                if ($images) {
+                    $url = check_img_path($images);
                 } else {
-                    // Jika tidak ada, gunakan gambar default
-                    $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
+                    $url = asset('gambar/no-image.png'); // Gambar default
                 }
 
                 $imgHtml .= '<span class="btn" data-bs-toggle="modal" data-bs-target="#imageModal' . $row->id . '"><img src="' . $url . '" border="0" width="100" class="img-rounded mr-1" align="center" /></span>';
