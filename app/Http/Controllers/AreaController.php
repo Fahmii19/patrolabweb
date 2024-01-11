@@ -63,8 +63,13 @@ class AreaController extends Controller
             $filename = null;
             if ($request->hasFile('img_location')) {
                 $file = $request->file('img_location');
-                $filename = date('Ymd_His') . '_' . $file->getClientOriginalName();
-                $file->move(public_path('gambar/area'), $filename);
+
+                $fileName = $file->getClientOriginalName();
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = upload_image_api($fileContent, $fileName);
+
+                $result = json_decode($response, true);
+                $filename = $result['message'];
             }
 
             $data = $validator->validated();
@@ -77,7 +82,7 @@ class AreaController extends Controller
             DB::commit();
             
             insert_audit_log('Insert data area');
-            return redirect()->route('area.index')->with('success', 'Area berhasil disimpan');    
+            return redirect()->route('area.index')->with('success', 'Area berhasil disimpan');
         } catch (Exception $e) {
             DB::rollback();
             Log::error('AreaController store() error: ' . $e->getMessage());
@@ -139,16 +144,13 @@ class AreaController extends Controller
             $imgLocation = $area->img_location;
             if ($request->hasFile('img_location')) {
                 $file = $request->file('img_location');
-                $filename = date('Ymd_His') . '_' . $file->getClientOriginalName();
-                $file->move(public_path('gambar/area'), $filename); // Sesuaikan path sesuai kebutuhan
 
-                // Hapus gambar lama jika ada
-                if ($imgLocation && file_exists(public_path('gambar/area/' . $imgLocation))) {
-                    unlink(public_path('gambar/area/' . $imgLocation));
-                }
+                $fileName = $file->getClientOriginalName();
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = upload_image_api($fileContent, $fileName);
 
-                // Menyimpan nama file gambar baru
-                $imgLocation = $filename; 
+                $result = json_decode($response, true);
+                $imgLocation = $result['message'];
             }
 
             $data = $validator->validated();
@@ -182,11 +184,11 @@ class AreaController extends Controller
             DB::beginTransaction();
 
            // Hapus gambar dari server jika ada
-           if ($area->img_location) {
-                if (file_exists(public_path('gambar/area/' . $area->img_location))) {
-                    unlink(public_path('gambar/area/' . $area->img_location));
-                }
-            }
+        //    if ($area->img_location) {
+        //         if (file_exists(public_path('gambar/area/' . $area->img_location))) {
+        //             unlink(public_path('gambar/area/' . $area->img_location));
+        //         }
+        //     }
 
             // Hapus data area
             $area->delete();
@@ -217,14 +219,15 @@ class AreaController extends Controller
             ->addColumn('status', '{{$status}}')
             ->addColumn('project', '{{$project_id ? $project["name"] : "-"}}')
             ->addColumn('image', function ($row) {
-                $images = $row->img_location; 
+                $images = $row->img_location;
                 $imgHtml = '';
 
-                if ($images && file_exists(public_path('gambar/area/' . $images))) {
-                    $url = asset('gambar/area/' . $images);
+                if ($images) {
+                    $url = check_img_path($images);
                 } else {
                     $url = asset('gambar/no-image.png'); // Gambar default
                 }
+
                 $imgHtml .= '<span class="btn" data-bs-toggle="modal" data-bs-target="#imageModal' . $row->id . '"><img src="' . $url . '" border="0" width="100" class="img-rounded mr-1" align="center" /></span>';
 
                 // Modal untuk setiap gambar

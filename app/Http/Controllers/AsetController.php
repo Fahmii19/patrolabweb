@@ -62,11 +62,12 @@ class AsetController extends Controller
             // Menangani upload gambar
             if ($request->hasFile('images')) {
                 $file = $request->file('images');
-                $currentDateTime = date('Ymd_His');
-                $filename = $currentDateTime . '_' . $file->getClientOriginalName();
-    
-                // Pindahkan file ke direktori publik
-                $file->move(public_path('gambar/aset'), $filename);
+                $fileName = $file->getClientOriginalName();
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = upload_image_api($fileContent, $fileName);
+
+                $result = json_decode($response, true);
+                $filename = $result['message'];
             }
 
             $data = $validator->validated();
@@ -139,16 +140,13 @@ class AsetController extends Controller
 
             if ($request->hasFile('images')) {
                 $file = $request->file('images');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('gambar/aset'), $filename); // Sesuaikan path sesuai kebutuhan
 
-                // Hapus gambar lama jika ada
-                if ($aset->image && file_exists(public_path('gambar/aset/' . $aset->image))) {
-                    unlink(public_path('gambar/aset/' . $aset->image));
-                }
+                $fileName = $file->getClientOriginalName();
+                $fileContent = file_get_contents($file->getRealPath());
+                $response = upload_image_api($fileContent, $fileName);
 
-                // Menyimpan nama file gambar baru
-                $data['images'] = $filename; 
+                $result = json_decode($response, true);
+                $data['images'] = $result['message'];
             }
 
             $data['status'] = $request->status ?? 'INACTIVED';
@@ -180,11 +178,11 @@ class AsetController extends Controller
             DB::beginTransaction();
 
             // Hapus gambar dari server jika ada
-            if ($aset->image) {
-                if (file_exists(public_path('gambar/aset/' . $aset->image))) {
-                    unlink(public_path('gambar/aset/' . $aset->image));
-                }
-            }
+            // if ($aset->image) {
+            //     if (file_exists(public_path('gambar/aset/' . $aset->image))) {
+            //         unlink(public_path('gambar/aset/' . $aset->image));
+            //     }
+            // }
 
             // Hapus data area
             $aset->delete();
@@ -218,13 +216,13 @@ class AsetController extends Controller
                 return $data;
             })
             ->addColumn('image', function ($row) {
+                $images = $row->images;
                 $imgHtml = '';
                 // Cek jika file gambar ada
-                if ($row->images && file_exists(public_path('gambar/aset/' . $row->images))) {
-                    $url = asset('gambar/aset/' . $row->images);
+                if ($images) {
+                    $url = check_img_path($images);
                 } else {
-                    // Jika tidak ada, gunakan gambar default
-                    $url = asset('gambar/no-image.png'); // Pastikan gambar no-image.png tersedia di folder public/gambar
+                    $url = asset('gambar/no-image.png'); // Gambar default
                 }
 
                 $imgHtml .= '<span class="btn" data-bs-toggle="modal" data-bs-target="#imageModal' . $row->id . '"><img src="' . $url . '" border="0" width="100" class="img-rounded mr-1" align="center" /></span>';
