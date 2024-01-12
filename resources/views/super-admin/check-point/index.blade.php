@@ -16,21 +16,23 @@
                 <div class="d-flex mb-3 justify-content-end">
                     <a href="{{route('check-point.create')}}" class="btn btn-success">Tambah CheckPoint</a>
                 </div>
-                <table id="mytable" class="display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th style="max-width: 30px;">No.</th>
-                            <th>Checkpoint</th>
-                            <th>QR Kode</th>
-                            <th>Lokasi</th>
-                            <th>Koordinat</th>
-                            <th>Status</th>
-                            <th>Danger Status</th>
-                            <th>Nama Round</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                </table>
+                <div class="table-responsive">
+                    <table id="mytable" class="display" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th style="max-width: 30px;">No.</th>
+                                <th>Checkpoint</th>
+                                <th>QR Kode</th>
+                                <th>Lokasi</th>
+                                <th>Koordinat</th>
+                                <th>Status</th>
+                                <th>Danger Status</th>
+                                <th>Nama Round</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -41,7 +43,7 @@
             <form method="post" class="d-inline">
                 @csrf
                 @method('delete')
-                <button onclick="hapus_data(event)" class="btn btn-danger me-2" type="button">Hapus</button>
+                <button onclick="hapus_data(event)" class="btn btn-danger me-2 my-2" type="button">Hapus</button>
             </form>
         </div>
     </div>

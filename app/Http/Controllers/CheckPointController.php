@@ -155,6 +155,7 @@ class CheckPointController extends Controller
                 'name' => 'required|string',
                 'location' => 'required|string',
                 'location_long_lat' => 'required|string',
+                'qr_code' => 'required|string',
                 'danger_status' => 'required',
                 'status' => 'nullable|in:ACTIVED,INACTIVED',
             ]);
