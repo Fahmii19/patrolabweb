@@ -105,7 +105,7 @@
                                 <li><a href="{{ route('asset-report.index') }}" id="sub-list-asset-report">Asset Report</a></li>
                                 <li><a href="{{ route('location-condition.index') }}" id="sub-report-location-condition">Location Condition</a></li>
                                 <li><a href="{{ route('self-patrol.index') }}" id="sub-report-self-patrol">Self Patrol</a></li>
-                                <li><a href="">Shift Patrol Report</a></li>
+                                <li><a href="{{ route('shift-patrol.index') }}" id="sub-report-shift-patrol">Shift Patrol Report</a></li>
                             </ul>
                         </li>
                         <li class="sidebar-list">
@@ -153,6 +153,7 @@
                             <ul class="sidebar-submenu">
                                 <li><a href="{{ route('checkpoint-report.index') }}" id="sub-list-checkpoint-report">Checkpoint Report</a></li>
                                 <li><a href="{{ route('asset-report.index') }}" id="sub-list-asset-report">Asset Report</a></li>
+                                <li><a href="{{ route('shift-patrol.index') }}" id="sub-report-shift-patrol">Shift Patrol Report</a></li>
                             </ul>
                         </li>
                     @endrole
