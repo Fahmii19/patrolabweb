@@ -118,7 +118,7 @@ class AuditLogController extends Controller
     {
         $data = AuditLog::with(['users' => function($query){
             $query->select('id', 'name');
-        }])->get();
+        }])->latest()->get();
         return DataTables::of($data)
             ->addIndexColumn()
             ->escapeColumns('active')
