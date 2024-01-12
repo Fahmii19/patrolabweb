@@ -60,6 +60,12 @@
                                 <span class="text-danger d-block" id="round-alert"></span>
                             </div>
                             <div class="mb-3">
+                                <label for="qr_code" class="form-label">QR Code <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('qr_code') is-invalid @enderror" name="qr_code" id="qr_code" value="{{$checkpoint->qr_code}}" placeholder="QR Code">
+                                <small class="form-text qr_text"></small>
+                                @error('qr_code') <span class="text-danger d-block">{{$message}}</span> @enderror
+                            </div>
+                            <div class="mb-3">
                                 <label for="status" class="form-label">Status Checkpoint</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="ACTIVED" id="status" name="status" @if(old('status', $checkpoint->status) == 'ACTIVED') checked @endif>
@@ -72,8 +78,8 @@
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="nama" class="form-label">Nama Checkpoint <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="nama" value="{{$checkpoint->name}}" placeholder="Masukkan Nama CheckPoint">
+                                <label for="name" class="form-label">Nama Checkpoint <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{$checkpoint->name}}" placeholder="Masukkan Nama CheckPoint">
                                 @error('name') <span class="text-danger d-block">{{$message}}</span> @enderror
                             </div>
                             <div class="mb-3">
@@ -99,6 +105,7 @@
                         </div>
                     </div>
                     <div class="text-end">
+                        <span class="btn btn-primary" id="generateQR" onclick="generateQR()">Generate QR Code</span>
                         <button type="submit" class="btn btn-success">Simpan</button>
                     </div>
                 </form>
@@ -166,6 +173,24 @@
                     round_alert.removeClass('text-black').addClass('text-danger').text('Tidak ada data round di patrol area ini')
                 }
             })
+        }
+
+        function generateQR() {
+            let inputQr = $('#qr_code');
+            let qrText = $('.qr_text');
+
+            qrText.text(`QR Code sebelumnya : {{ $checkpoint->qr_code }}`);
+            
+            let currentTime = new Date();
+            let hours = currentTime.getHours().toString().padStart(2, '0');
+            let minutes = currentTime.getMinutes().toString().padStart(2, '0');
+            let seconds = currentTime.getSeconds().toString().padStart(2, '0');
+            let currentTimeString = hours + minutes + seconds;
+
+            let capitalizeName = $('#name').val().toUpperCase(); // Pastikan Anda memiliki elemen dengan ID 'name'
+
+            let qrCode = currentTimeString + capitalizeName.replace(/\s/g, '');
+            inputQr.val(qrCode);
         }
 
         active_menu("#menu-checkpoint")

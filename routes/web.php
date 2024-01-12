@@ -41,6 +41,7 @@ use App\Http\Controllers\PletonPatrolAreaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ShiftPatrolController;
 use App\Http\Controllers\TestingController;
 use App\Models\PatrolArea;
 
@@ -144,6 +145,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
 
     // Route Data Table
     // Master Data
+    Route::get('admin-datatable', [SuperAdminController::class, 'datatable'])->name('admin.datatable');
     Route::get('user-datatable', [UserController::class, 'datatable'])->name('user.datatable');
     Route::get('province-datatable', [ProvinceController::class, 'datatable'])->name('province.datatable');
     Route::get('wilayah-datatable', [WilayahController::class, 'datatable'])->name('wilayah.datatable');
@@ -219,9 +221,11 @@ Route::group(['middleware' => ['auth', 'verified', 'role:super-admin|admin-area'
         'checkpoint-aset-patrol' => AssetPatrolCheckpointController::class,
         'checkpoint-report' => CheckpointReportController::class,
         'asset-report' => AssetReportController::class,
+        'shift-patrol' => ShiftPatrolController::class,
     ]);
 
     // Datatable
+    Route::get('admin-area-datatable', [AdminAreaController::class, 'datatable'])->name('admin-area.datatable');
     Route::get('patrol-area-datatable', [PatrolAreaController::class, 'datatable'])->name('patrol-area.datatable');
     Route::get('notice-boards-datatable', [NoticeBoardController::class, 'datatable'])->name('notice-boards.datatable');
     Route::get('round-datatable', [RoundController::class, 'datatable'])->name('round.datatable');
@@ -233,6 +237,7 @@ Route::group(['middleware' => ['auth', 'verified', 'role:super-admin|admin-area'
     Route::get('asset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_datatable'])->name('asset-patrol-datatable');
     Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
     Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
+    Route::get('shift-patrol-datatable', [ShiftPatrolController::class, 'datatable'])->name('shift-patrol.datatable');
 
     Route::get('/patrol-area-by-area/{id}', [PatrolAreaController::class, 'by_area']);
     Route::get('/round-by-patrol-area/{id}', [RoundController::class, 'by_patrol_area']);

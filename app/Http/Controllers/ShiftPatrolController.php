@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
-use App\Models\Round;
-use App\Models\Pleton;
-use App\Models\CheckpointReport;
-use App\Models\PatrolArea;
 use App\Models\PatrolCheckpointLog;
+use App\Models\Shift;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
-class CheckpointReportController extends Controller
+class ShiftPatrolController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,26 +16,10 @@ class CheckpointReportController extends Controller
      */
     public function index()
     {
-        $data['title'] = "Daftar CheckPoint Report";
-        if (auth()->user()->hasRole('admin-area')) {
-            $area_id = explode(',', auth()->user()->access_area);
+        $data['title'] = "Daftar Shift Patrol Report";
         
-            $data['area'] = Area::whereIn('id', $area_id)->get();
-            $data['patrol_area'] = PatrolArea::whereIn('area_id', $area_id)->get();
-            $data['round'] = Round::with('patrol_area.area')->whereIn('patrol_area_id', 
-                function ($query) use ($area_id) {
-                    $query->select('id')->from('patrol_area')
-                        ->whereIn('area_id', $area_id);
-                })
-            ->get();
-            $data['pleton'] = Pleton::whereIn('area_id', $area_id)->get();
-        } else {
-            $data['area'] = Area::all();
-            $data['patrol_area'] = PatrolArea::all();
-            $data['round'] = Round::all();
-            $data['pleton'] = Pleton::all();
-        }
-        return view('super-admin.checkpoint-report.index', $data);
+        $data['shift'] = Shift::all();
+        return view('super-admin.shift-patrol.index', $data);
     }
 
     /**
@@ -66,12 +46,12 @@ class CheckpointReportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\CheckpointReport  $checkpointReport
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(PatrolCheckpointLog $checkpointReport)
+    public function show($id)
     {
-        $data['title'] = "Detail CheckPoint Report";
+        $data['title'] = "Detail Shift Patrol Report";
         $data['report'] = PatrolCheckpointLog::with([
             'user' => function($query){
                 $query->select('id','name');
@@ -79,9 +59,12 @@ class CheckpointReportController extends Controller
             'pleton' => function($query){
                 $query->select('id','code','name');
             },
+            'shift' => function($query){
+                $query->select('id','name');
+            },
             'checkpoint.round.patrol_area.area',
             'asset_patrol_checkpoint_log.asset_unsafe_option'
-        ])->find($checkpointReport->id);
+        ])->find($id);
 
         // return response()->json($data);
         return view('super-admin.checkpoint-report.show', $data);
@@ -90,10 +73,10 @@ class CheckpointReportController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\CheckpointReport  $checkpointReport
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(CheckpointReport $checkpointReport)
+    public function edit($id)
     {
         //
     }
@@ -102,10 +85,10 @@ class CheckpointReportController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CheckpointReport  $checkpointReport
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CheckpointReport $checkpointReport)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -113,10 +96,10 @@ class CheckpointReportController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\CheckpointReport  $checkpointReport
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CheckpointReport $checkpointReport)
+    public function destroy($id)
     {
         //
     }
@@ -127,6 +110,8 @@ class CheckpointReportController extends Controller
             ['user' => function($query){
                 $query->select('id', 'name');
             }, 'pleton' => function($query){        
+                $query->select('id', 'name');
+            }, 'shift' => function($query){
                 $query->select('id', 'name');
         }]);
 
@@ -160,17 +145,9 @@ class CheckpointReportController extends Controller
             }
         }
 
-        if($request->has('round')){
-            if($request->round !== null && $request->round !== '') {
-                $query->whereHas('checkpoint.round', function ($query) use ($request) {
-                    $query->where('id', $request->round);
-                });
-            }
-        }
-
-        if($request->has('pleton')){
-            if($request->pleton !== null && $request->pleton !== '') {
-               $query->where('pleton_id', $request->pleton);
+        if($request->has('shift')){
+            if($request->shift !== null && $request->shift !== '') {
+                $query->where('shift_id', $request->shift);
             }
         }
         
@@ -194,6 +171,7 @@ class CheckpointReportController extends Controller
         return DataTables::of($filteredData)
             ->addIndexColumn()
             ->escapeColumns('active')
+            ->addColumn('shift', '{{$shift["name"]}}')
             ->addColumn('created_by', '{{$user["name"]}}')
             ->addColumn('pleton', '{{$pleton["name"]}}')
             ->addColumn('business_date', '{{$business_date}}')
