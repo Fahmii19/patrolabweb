@@ -59,7 +59,7 @@ $page = 'dashboard';
                             </div>
                             <div class="media-body">
                                 <div class="right-chart-content">
-                                    <h4>100</h4><b>Total Guard </b>
+                                    <h4>{{ $guard }}</h4><b>Total Guard </b>
                                 </div>
                             </div>
                         </div>
@@ -98,7 +98,7 @@ $page = 'dashboard';
                             </div>
                             <div class="media-body">
                                 <div class="right-chart-content">
-                                    <h4>60</h4><b>Round</b>
+                                    <h4>{{ $round }}</h4><b>Round</b>
                                 </div>
                             </div>
                         </div>
@@ -137,7 +137,7 @@ $page = 'dashboard';
                             </div>
                             <div class="media-body">
                                 <div class="right-chart-content">
-                                    <h4>100</h4><b>Check Point</b>
+                                    <h4>{{ $checkpoint }}</h4><b>Check Point</b>
                                 </div>
                             </div>
                         </div>
@@ -176,7 +176,7 @@ $page = 'dashboard';
                             </div>
                             <div class="media-body">
                                 <div class="right-chart-content">
-                                    <h4>101</h4><b>Montly Missed</b>
+                                    <h4>{{ $missed }}</h4><b>Montly Missed</b>
                                 </div>
                             </div>
                         </div>
@@ -187,15 +187,17 @@ $page = 'dashboard';
     </div>
     <div class="card">
         <div class="card-body">
-            <table id="#mytable" class="display" style="width:100%">
+            <table id="mytable" class="display" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Round Name</th>
-                        <th>Check Point</th>
-                        <th>Scanned at</th>
+                        <th style="max-width: 40px;">No</th>
+                        <th>Created By</th>
+                        <th>Pleton</th>
+                        <th>Tanggal Patrol</th>
+                        <th>Checkpoint</th>
+                        <th>Lokasi</th>
                         <th>Status</th>
-                        <th>Keterangan</th>
+                        <th>Reported at</th>
                     </tr>
                 </thead>
             </table>
@@ -218,32 +220,52 @@ $page = 'dashboard';
     $('#mytable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('wilayah.datatable') }}",
+        ajax: "{{ route('admin.datatable') }}",
         columns: [{
                 data: 'DT_RowIndex',
                 name: 'No'
             },
             {
-                data: 'kode',
-                name: 'Kode Wilayah'
+                data: 'created_by',
+                name: 'User Name'
             },
             {
-                data: 'nama',
-                name: 'Nama Wilayah'
+                data: 'pleton',
+                name: 'Pleton Name'
             },
             {
-                name: "Action",
+                data: 'business_date',
+                name: 'Patrol Date'
+            },
+            {
+                data: 'checkpoint',
+                name: 'CheckPoint Name'
+            },
+            {
+                data: 'location',
+                name: 'Checkpoint Location'
+            },
+            {
+                data: 'status',
                 render: function(data, type, row) {
-                    let html = $('#actionbase').clone()
-                    html = html.find('.d-flex')
-                    html.find('a').attr('href', row.action.editurl)
-                    let form = html.find('form').attr('action', row.action.deleteurl)
-                        .attr('id', 'delete_form' + row.id)
-                    form.find('button').attr('form-id', '#delete_form' + row.id)
-                    return html.html()
+                    if (row.status == 'safe') return `<span class="badge badge-success">${row.status.toUpperCase()}</span>`
+                    return `<span class="badge badge-danger">${row.status.toUpperCase()}</span>`
                 }
-            }
-        ]
+            },
+            {
+                data: 'reported_at',
+                name: 'Report Timestamp'
+            },
+        ],
+        rowCallback: function(row, data) {
+            // Set the cursor style to pointer
+            $(row).css('cursor', 'pointer');
+            // Attach a click event handler to each row
+            $(row).on('click', function() {
+                // Handle the row click event
+                location.href = `{{ route('checkpoint-report.show', ':id') }}`.replace(':id', data.id);
+            });
+        }
     });
     menu_active("#menu_dashboard")
 </script>
