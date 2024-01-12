@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-body p-3">
                 <div class="d-flex justify-content-end">
-                    <button onclick="window.location.href='{{ route('checkpoint-report.index') }}'" class="btn btn-warning text-dark">
+                    <button onclick="window.history.back()" class="btn btn-warning text-dark">
                         << Kembali
                     </button>
                 </div>

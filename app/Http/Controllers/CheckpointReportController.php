@@ -130,11 +130,28 @@ class CheckpointReportController extends Controller
                 $query->select('id', 'name');
         }]);
 
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
+
+            $query->whereHas('checkpoint.round.patrol_area', function ($row) use ($area_id) {
+                $row->whereIn('area_id', $area_id);
+            });
+        }
+
         if($request->has('patrol_date')){
             if($request->patrol_date !== null && $request->patrol_date !== '') {
                 // Split the date range into start and end dates
-                list($startDate, $endDate) = explode(' - ', $request->patrol_date);
+                // list($startDate, $endDate) = explode(' - ', $request->patrol_date);
+                $explodedDates = explode(' - ', $request->patrol_date);
 
+                // Memeriksa apakah explode berhasil
+                if (count($explodedDates) === 2) {
+                    // Format sesuai harapan, $startDate dan $endDate diatur
+                    list($startDate, $endDate) = $explodedDates;
+                } else {
+                    $startDate = $request->patrol_date;
+                    $endDate = $startDate;
+                }
                 // Convert the date strings to the format expected by the database
                 $startDate = date('Y-m-d', strtotime($startDate));
                 $endDate = date('Y-m-d', strtotime($endDate));
