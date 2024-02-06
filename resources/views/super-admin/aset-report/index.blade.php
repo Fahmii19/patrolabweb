@@ -47,7 +47,7 @@
         serverSide: true,
         ajax: "{{ route('aset-report.datatable') }}",
         columns: [
-            { data: 'DT_RowIndex', name: 'No', },
+            { data: 'DT_RowIndex', name: 'No' },
             { data: 'asset_code', name: 'Kode Asset' },
             { data: 'asset_name', name: 'Nama Aset' },
             { data: 'asset_type', name: 'Tipe Aset' },
@@ -62,7 +62,16 @@
                 orderable: false,
                 searchable: false,
             }
-        ]
+        ],
+        rowCallback: function(row, data) {
+            // Set the cursor style to pointer
+            $(row).css('cursor', 'pointer');
+            // Attach a click event handler to each row
+            $(row).on('click', function() {
+                // Handle the row click event
+                location.href = `{{ route('checkpoint-report.show', ':id') }}`.replace(':id', data.patrol_checkpoint_log_id);
+            });
+        }
     });
     active_menu("#menu-report", "#sub-list-asset-report")
 </script>
