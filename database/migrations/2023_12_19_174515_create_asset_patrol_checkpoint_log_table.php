@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('asset_name_log', 255)->nullable();
             $table->text('checkpoint_note_log')->nullable();
             $table->text('unsafe_description')->nullable();
-            $table->text('unsafe_image')->nullable();
+            $table->text('unsafe_images')->nullable();
             $table->enum('status', ['SAFE', 'UNSAFE']);
             $table->string('patrol_checkpoint_log_id', 255);
             $table->foreign('patrol_checkpoint_log_id')->references('id')->on('patrol_checkpoint_log');

@@ -100,7 +100,10 @@
                                         <div class="accordion-body">
                                             <div class="row">
                                                 <div class="col-12 col-sm-6 col-xl-4">
-                                                    <img src="{{ $item->unsafe_image ? check_img_path($item->unsafe_image) : asset('gambar/no-image.png') }}" class="img-fluid img-rounded" alt="img asset">
+                                                    @foreach(explode(',', $item->unsafe_images) as $index => $image)
+                                                        <img src="{{ $image ? check_img_path($image) : asset('gambar/no-image.png') }}" class="img-fluid img-rounded" alt="img asset">
+                                                        <p>{{ $image }}</p>
+                                                    @endforeach
                                                 </div>
                                                 <div class="col-12 col-sm-6 col-xl-8">
                                                     <div class="mb-3">
