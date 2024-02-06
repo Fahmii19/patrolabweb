@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('patrol_checkpoint_log', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 255)->primary();
+            $table->index('id');
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users');
             $table->unsignedBigInteger('pleton_id');

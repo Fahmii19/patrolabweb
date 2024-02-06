@@ -16,6 +16,7 @@ class PatrolCheckpointLogSeeder extends Seeder
     public function run()
     {
         PatrolCheckpointLog::create([
+            'id' => 'patrolcheckpoint-id01',
             'created_by' => 5,
             'pleton_id' => 1,
             'shift_id' => 1,
@@ -32,6 +33,7 @@ class PatrolCheckpointLogSeeder extends Seeder
         ]);
 
         PatrolCheckpointLog::create([
+            'id' => 'patrolcheckpoint-id02',
             'created_by' => 5,
             'pleton_id' => 2,
             'shift_id' => 2,
@@ -48,6 +50,7 @@ class PatrolCheckpointLogSeeder extends Seeder
         ]);
 
         PatrolCheckpointLog::create([
+            'id' => 'patrolcheckpoint-id03',
             'created_by' => 5,
             'pleton_id' => 3,
             'shift_id' => 1,
@@ -64,6 +67,7 @@ class PatrolCheckpointLogSeeder extends Seeder
         ]);
 
         PatrolCheckpointLog::create([
+            'id' => 'patrolcheckpoint-id04',
             'created_by' => 5,
             'pleton_id' => 4,
             'shift_id' => 2,
@@ -80,6 +84,7 @@ class PatrolCheckpointLogSeeder extends Seeder
         ]);
 
         PatrolCheckpointLog::create([
+            'id' => 'patrolcheckpoint-id05',
             'created_by' => 5,
             'pleton_id' => 4,
             'shift_id' => 3,
@@ -96,6 +101,7 @@ class PatrolCheckpointLogSeeder extends Seeder
         ]);
 
         PatrolCheckpointLog::create([
+            'id' => 'patrolcheckpoint-id06',
             'created_by' => 5,
             'pleton_id' => 4,
             'shift_id' => 1,
