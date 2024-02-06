@@ -44,6 +44,12 @@
                                 <li><a href="{{ route('notice-boards.index') }}" id="sub-notice">Notice Boards</a></li>
                             </ul>
                         </li>
+                        <li class="sidebar-list mb-2" id="menu-gate"><a class="sidebar-link sidebar-title" href="#"><i data-feather="truck"></i><span>Gate Access</span></a>
+                            <ul class="sidebar-submenu">
+                                <li><a href="{{ route('incoming-vehicle.index') }}" id="sub_incoming_vehichle">Incoming Vehicle</a></li>
+                                <li><a href="{{ route('outcoming-vehicle.index') }}" id="sub-outcoming-vehichle">Outcoming Vehicle</a></li>
+                            </ul>
+                        </li>
                         <li class="sidebar-list mb-2" id="menu-guard"><a class="sidebar-link sidebar-title" href="#"><i data-feather="users"></i><span>Guard Management</span></a>
                             <ul class="sidebar-submenu">
                                 <li><a href="{{ route('guard.index') }}" id="sub-list-guard">Guard List</a></li>
@@ -64,24 +70,11 @@
                                 <li><a href="{{ route('check-point.index') }}" id="sub-list-checkpoint">Checkpoint List</a></li>
                             </ul>
                         </li>
-                        <li class="sidebar-list mb-2" id="menu-gate"><a class="sidebar-link sidebar-title" href="#"><i data-feather="truck"></i><span>Gate Access</span></a>
-                            <ul class="sidebar-submenu">
-                                <li><a href="{{ route('incoming-vehicle.index') }}" id="sub_incoming_vehichle">Incoming Vehicle</a></li>
-                                <li><a href="{{ route('outcoming-vehicle.index') }}" id="sub-outcoming-vehichle">Outcoming Vehicle</a></li>
-                            </ul>
-                        </li>
                         <li class="sidebar-list mb-2" id="menu-aset"><a class="sidebar-link sidebar-title" href="#"><span><i data-feather="command"></i>Asset Management</span></a>
                             <ul class="sidebar-submenu">
                                 {{-- <li><a href="{{ route('aset-patroli.index') }}" id="patroli_asset">Patroli Asset</a></li> --}}
                                 <li><a href="{{ route('aset-location.index') }}" id="location_asset">Location Asset</a></li>
                                 <li><a href="{{ route('aset-unsafe-option.index') }}" id="unsafe-option">Unsafe Option</a></li>
-                            </ul>
-                        </li>
-                        <li class="sidebar-list mb-2" id="menu-checkpointaset-client"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Client Asset</span></a>
-                            <ul class="sidebar-submenu">
-                                {{-- <li><a href="{{ route('checkpoint-aset-client.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li> --}}
-                                <li><a href="{{ route('checkpoint-aset-client.index') }}" id="sub-checkpoint-client-aset-list">Asset CheckPoint</a></li>
-                                <li><a href="{{ route('asset-client-detail') }}" id="sub-checkpoint-client-aset-detail">Detail Checkpoint</a></li>
                             </ul>
                         </li>
                         <li class="sidebar-list mb-2" id="menu-checkpointaset-patrol"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Patrol Asset</span></a>
@@ -91,7 +84,13 @@
                                 <li><a href="{{ route('asset-patrol-detail') }}" id="sub-checkpoint-patrol-aset-detail">Detail Checkpoint</a></li>
                             </ul>
                         </li>
-                        
+                        <li class="sidebar-list mb-2" id="menu-checkpointaset-client"><a class="sidebar-link sidebar-title" href="#"><i data-feather="check-square"></i><span>Client Asset</span></a>
+                            <ul class="sidebar-submenu">
+                                {{-- <li><a href="{{ route('checkpoint-aset-client.create') }}" id="sub-checkpoint-aset">Add CheckAset</a></li> --}}
+                                <li><a href="{{ route('checkpoint-aset-client.index') }}" id="sub-checkpoint-client-aset-list">Asset CheckPoint</a></li>
+                                <li><a href="{{ route('asset-client-detail') }}" id="sub-checkpoint-client-aset-detail">Detail Checkpoint</a></li>
+                            </ul>
+                        </li>
                         <li class="sidebar-list mb-2 active" id="menu-ai"><a class="sidebar-link sidebar-title active" href="#"><i data-feather="cpu"></i><span>AI CAPTURE</span></a>
                             <ul class="sidebar-submenu">
                                 <li><a href="{{ route('ai-master.register') }}" id="sub-register">Register</a></li>

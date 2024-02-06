@@ -37,11 +37,11 @@
                     <div class="form-group w-100">
                         <div class="Typeahead Typeahead--twitterUsers">
                             <div class="u-posRelative">
-                                <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text"
-                                    placeholder="Search Cuba .." name="q" title="" autofocus>
-                                <div class="spinner-border Typeahead-spinner" role="status"><span
-                                        class="sr-only">Loading...</span></div><i class="close-search"
-                                    data-feather="x"></i>
+                                <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text" placeholder="Search Cuba .." name="q" title="" autofocus>
+                                <div class="spinner-border Typeahead-spinner" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <i class="close-search" data-feather="x"></i>
                             </div>
                             <div class="Typeahead-menu"></div>
                         </div>
@@ -59,22 +59,23 @@
                     </div>
                 </div>
                 <div class="left-header col horizontal-wrapper ps-0">
-                    <ul class="horizontal-menu">
-
-                    </ul>
+                    <ul class="horizontal-menu"></ul>
                 </div>
                 <div class="nav-right col-8 pull-right right-header p-0">
                     <ul class="nav-menus me-0">
                         <li class="language-nav">
                             <div class="translate_wrapper">
                                 <div class="current_lang">
-                                    <div class="lang"><i class="flag-icon flag-icon-id"></i><span class="lang-txt">ID
-                                        </span></div>
+                                    <div class="lang">
+                                        <i class="flag-icon flag-icon-id"></i>
+                                        <span class="lang-txt">ID</span>
+                                    </div>
                                 </div>
                                 <div class="more_lang">
-                                    <div class="lang selected" data-value="en"><i
-                                            class="flag-icon flag-icon-us"></i><span class="lang-txt">English<span>
-                                                (US)</span></span></div>
+                                    <div class="lang selected" data-value="en">
+                                        <i class="flag-icon flag-icon-us"></i>
+                                        <span class="lang-txt">English (US) </span>
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -88,7 +89,11 @@
                         </li>
                         <li class="profile-nav onhover-dropdown p-0 me-0">
                             <div class="media profile-media">
-                                <img class="b-r-10" src="{{ URL::asset('/template/assets/images/dashboard/profile.jpg') }}" alt="">
+                                @php
+                                    $userLoggedIn = auth()->user();
+                                    $imgAvatar = $userLoggedIn->img_avatar ? asset('gambar/profile/' . $userLoggedIn->img_avatar) : URL::asset('/template/assets/images/dashboard/profile.jpg');
+                                @endphp
+                                <img class="b-r-10" src="{{ $imgAvatar }}" alt="" style="width:40px;height:40px;object-fit:cover;object-position:center;">
                                 <div class="media-body"><span>{{ auth()->user()->name }}</span>
                                     <p class="mb-0 font-roboto">{{ auth()->user()->getRoleNames()[0] }} 
                                         <i class="middle fa fa-angle-down"></i>
@@ -96,10 +101,12 @@
                                 </div>
                             </div>
                             <ul class="profile-dropdown onhover-show-div">
-                                <li><a href="{{ url('#') }}"><i data-feather="user"></i><span>Account
-                                        </span></a></li>
-                                <li><a href="{{ url('#') }}"><i
-                                            data-feather="settings"></i><span>Settings</span></a></li>
+                                {{-- <li>
+                                    <a href="{{ url('#') }}"><i data-feather="user"></i><span>Account</span></a>
+                                </li> --}}
+                                <li>
+                                    <a href="{{ route('profile.edit', auth()->id()) }}"><i data-feather="settings"></i><span>Settings</span></a>
+                                </li>
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST"
                                         onclick="logout('#form_logout')" id="form_logout">

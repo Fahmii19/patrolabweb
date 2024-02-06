@@ -8,6 +8,7 @@ use App\Models\Area;
 use App\Models\User;
 use App\Models\Guard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
@@ -253,5 +254,14 @@ class UserController extends Controller
                 ];
             })
         ->toJson();
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect('/');
     }
 }
