@@ -205,4 +205,26 @@ class CheckpointReportController extends Controller
             })
         ->toJson();
     }
+
+    public function datatable_test()
+    {
+        $query = PatrolCheckpointLog::with(
+            ['user' => function($query){
+                $query->select('id', 'name');
+            }, 'pleton' => function($query){        
+                $query->select('id', 'name');
+        }]);
+
+        if(auth()->user()->hasRole('admin-area')){
+            $area_id = explode(',', auth()->user()->access_area);
+
+            $query->whereHas('checkpoint.round.patrol_area', function ($row) use ($area_id) {
+                $row->whereIn('area_id', $area_id);
+            });
+        }
+
+        return DataTables::of($filteredData)
+        ->addIndexColumn()
+        ->toJson();
+    }
 }

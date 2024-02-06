@@ -237,6 +237,10 @@ Route::group(['middleware' => ['auth', 'verified', 'role:super-admin|admin-area'
     Route::get('asset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_datatable'])->name('asset-patrol-datatable');
     Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
     Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
+
+    Route::get('aset-report-datatable-test', [AssetReportController::class, 'datatable_test'])->name('aset-report.datatable');
+    Route::get('checkpoint-report-datatable-test', [CheckpointReportController::class, 'datatable_test'])->name('checkpoint-report.datatable');
+
     Route::get('shift-patrol-datatable', [ShiftPatrolController::class, 'datatable'])->name('shift-patrol.datatable');
 
     Route::get('/patrol-area-by-area/{id}', [PatrolAreaController::class, 'by_area']);
