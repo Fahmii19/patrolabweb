@@ -111,15 +111,19 @@ class AssetReportController extends Controller
             ->addColumn('asset_info', '{{$asset_unsafe_option_id ? $asset_unsafe_option["option_condition"] : "-"}}')
             ->addColumn('description', '{{$unsafe_description ? $unsafe_description : "-"}}')
             ->addColumn('image', function ($row) {
-                // Cek jika file gambar ada
-                $images = $row->unsafe_image;
+                $images = $row->unsafe_images;
+                $imageArray = explode(',', $images);
 
-                if ($images) {
-                    $url = check_img_path($images);
+                // Ambil URL gambar pertama
+                $imageUrl = null;
+                if ($images && count($imageArray) > 0) {
+                    $imageUrl = check_img_path(trim($imageArray[0]));
                 } else {
-                    $url = asset('gambar/no-image.png'); // Gambar default
+                    // Jika tidak ada gambar, gunakan gambar default
+                    $imageUrl = asset('gambar/no-image.png');
                 }
-                return '<img src="' . $url . '" border="0" width="100" class="img-rounded" align="center" />';
+
+                return '<img src="' . $imageUrl . '" alt="'.$imageArray[0].'" border="0" width="100" class="img-rounded" align="center" />';
             })
             ->rawColumns(['image'])
         ->toJson();
