@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class AssetPatrolCheckpointLog extends Model
 {
     use HasFactory;
-    protected $guarded = ['id'];
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $table = 'asset_patrol_checkpoint_log';
 
     public function asset_patrol_checkpoint()
