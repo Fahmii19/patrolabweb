@@ -107,41 +107,20 @@
                     data.status = $('#status').val();
                 }
             },
-            columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'No'
-                },
-                {
-                    data: 'created_by',
-                    name: 'User Name'
-                },
-                {
-                    data: 'pleton',
-                    name: 'Pleton Name'
-                },
-                {
-                    data: 'business_date',
-                    name: 'Patrol Date'
-                },
-                {
-                    data: 'checkpoint',
-                    name: 'CheckPoint Name'
-                },
-                {
-                    data: 'location',
-                    name: 'Checkpoint Location'
-                },
-                {
-                    data: 'status',
+            columns: [
+                { data: 'DT_RowIndex', name: 'No' },
+                { data: 'created_by', name: 'User Name' },
+                { data: 'pleton', name: 'Pleton Name' },
+                { data: 'business_date', name: 'Patrol Date' },
+                { data: 'checkpoint', name: 'CheckPoint Name' },
+                { data: 'location', name: 'Checkpoint Location' },
+                { data: 'status',
                     render: function(data, type, row) {
                         if (row.status == 'safe') return `<span class="badge badge-success">${row.status.toUpperCase()}</span>`
                         return `<span class="badge badge-danger">${row.status.toUpperCase()}</span>`
                     }
                 },
-                {
-                    data: 'reported_at',
-                    name: 'Report Timestamp'
-                },
+                { data: 'reported_at', name: 'Report Timestamp' },
             ],
             rowCallback: function(row, data) {
                 // Set the cursor style to pointer

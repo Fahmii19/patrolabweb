@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 class PatrolCheckpointLog extends Model
 {
     use HasFactory;
-    protected $guarded = ['id'];
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $table = 'patrol_checkpoint_log';
 
     public function user()

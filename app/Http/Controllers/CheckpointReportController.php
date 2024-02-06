@@ -223,6 +223,15 @@ class CheckpointReportController extends Controller
             });
         }
 
+        $data = $query->get();
+        
+        // Menambahkan atribut 'status' ke setiap instance PatrolCheckpointLog
+        $data->each(function ($log) {
+            $log->append('status');
+        });
+        
+        $filteredData = $data;
+
         return DataTables::of($filteredData)
         ->addIndexColumn()
         ->toJson();

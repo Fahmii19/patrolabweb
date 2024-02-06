@@ -46,34 +46,17 @@
         processing: true,
         serverSide: true,
         ajax: "{{ route('aset-report.datatable') }}",
-        columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            }, {
-                data: 'asset_code',
-                name: 'Kode Asset'
-            }, {
-                data: 'asset_name',
-                name: 'Nama Aset'
-            }, {
-                data: 'asset_type',
-                name: 'Tipe Aset'
-            }, {
-                data: 'pleton',
-                name: 'Nama Pleton'
-            }, {
-                data: 'patrol_date',
-                name: 'Tanggal Patrol'
-            }, {
-                data: 'asset_status',
-                name: 'Status Patrol'
-            }, {
-                data: 'asset_info',
-                name: 'Info'
-            }, {
-                data: 'description',
-                name: 'Deskripsi'
-            }, {
+        columns: [
+            { data: 'DT_RowIndex', name: 'No', },
+            { data: 'asset_code', name: 'Kode Asset' },
+            { data: 'asset_name', name: 'Nama Aset' },
+            { data: 'asset_type', name: 'Tipe Aset' },
+            { data: 'pleton', name: 'Nama Pleton' },
+            { data: 'patrol_date', name: 'Tanggal Patrol' },
+            { data: 'asset_status', name: 'Status Patrol' },
+            { data: 'asset_info', name: 'Info' },
+            { data: 'description', name: 'Deskripsi' },
+            {
                 data: 'image',
                 name: 'Gambar',
                 orderable: false,
