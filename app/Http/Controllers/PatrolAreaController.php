@@ -141,6 +141,7 @@ class PatrolAreaController extends Controller
             DB::commit();
 
             insert_audit_log('Automated insert data patrol area description after insert patrol area');
+            redis_reset_api('patrolarea');
             return redirect()->route('patrol-area.index')->with('success', 'Patrol Area berhasil disimpan');   
         } catch(Exception $e) {
             DB::rollback();
@@ -310,6 +311,7 @@ class PatrolAreaController extends Controller
             DB::commit();
 
             insert_audit_log('Automated update data patrol area description after update patrol area');
+            redis_reset_api('patrolarea');
             return redirect()->route('patrol-area.index')->with('success', 'Patrol Area berhasil diubah');
         } catch(Exception $e) {
             DB::rollback();

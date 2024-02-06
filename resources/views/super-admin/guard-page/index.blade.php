@@ -19,8 +19,9 @@
                         <thead>
                             <tr>
                                 <th style="max-width: 40px;">No</th>
-                                <th class="text-nowrap">Badge Number</th>
+                                <th class="text-nowrap">Badge</th>
                                 <th class="text-nowrap">Nama</th>
+                                <th class="text-nowrap">Position</th>
                                 <th class="text-nowrap">Email</th>
                                 <th class="text-nowrap">Gender</th>
                                 <th class="text-nowrap">DOB</th>
@@ -68,6 +69,10 @@
                 {
                     data: 'name',
                     name: 'name',
+                },
+                {
+                    data: 'position',
+                    name: 'position',
                 },
                 {
                     data: 'email',

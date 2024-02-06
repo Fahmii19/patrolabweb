@@ -65,6 +65,7 @@ class GuardController extends Controller
             $validator = Validator::make($request->all(), [
                 'badge_number' => 'required|string|max:255|unique:guards',
                 'name' => 'required|string|max:255',
+                'position' => 'required|string|max:255',
                 'img_avatar' => 'image|mimes:jpeg,png,jpg',
                 'dob' => 'required|date',
                 'gender' => 'required|in:MALE,FEMALE',
@@ -99,6 +100,7 @@ class GuardController extends Controller
             $guard = new Guard([
                 'badge_number' => $validatedData['badge_number'],
                 'name' => $validatedData['name'],
+                'position' => $validatedData['position'],
                 'img_avatar' => $imgAvatar,
                 'dob' => $validatedData['dob'],
                 'gender' => $validatedData['gender'],
@@ -206,6 +208,7 @@ class GuardController extends Controller
             $validator = Validator::make($request->all(), [
                 'badge_number' => 'required|string|max:255|unique:guards,badge_number,' . $guard->id,
                 'name' => 'required|string|max:255',
+                'position' => 'required|string|max:255',
                 'img_avatar' => 'image|mimes:jpeg,png,jpg',
                 'dob' => 'required|date',
                 'gender' => 'required|in:MALE,FEMALE',
@@ -244,6 +247,7 @@ class GuardController extends Controller
             $update = [
                 'badge_number' => $validated['badge_number'],
                 'name' => $validated['name'],
+                'position' => $validated['position'],
                 'img_avatar' => $imgAvatar,
                 'dob' => $validated['dob'],
                 'gender' => $validated['gender'],
@@ -356,6 +360,9 @@ class GuardController extends Controller
             })
             ->addColumn('name', function (Guard $guard) {
                 return $guard->name;
+            })
+            ->addColumn('position', function (Guard $guard) {
+                return $guard->position;
             })
             ->addColumn('email', function (Guard $guard) {
                 return $guard->email;

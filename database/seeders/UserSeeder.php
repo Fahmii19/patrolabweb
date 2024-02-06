@@ -58,6 +58,7 @@ class UserSeeder extends Seeder
         Guard::create([
             'badge_number' => '123',
             'name' => 'Guard Agus',
+            'position' => 'Jabatan Agus',
             'img_avatar' => null,
             'dob' => '1999-01-01', //birth_date
             'gender' => 'MALE',

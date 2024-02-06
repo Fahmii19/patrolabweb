@@ -34,6 +34,12 @@
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Masukkan Nama" value="{{ old('name') }}" required>
                                 @error('name') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
+                            <!-- Kolom position -->
+                            <div class="mb-3">
+                                <label for="position" class="form-label">Position <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('position') is-invalid @enderror" name="position" id="position" placeholder="Masukkan Jabatan" value="{{ old('position') }}" required>
+                                @error('position') <span class="text-danger d-block">{{ $message }}</span> @enderror
+                            </div>
                             <!-- Kolom gender -->
                             <div class="mb-3">
                                 <label for="gender" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>

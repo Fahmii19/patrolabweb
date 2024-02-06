@@ -73,7 +73,7 @@ Route::get('/dashboard', function () {
         // Default hak akses sebagai guard / user
         else {
             // Redirect ke halaman default jika hak akses sebagai user / guard
-            return redirect()->route('default.dashboard');
+            return redirect()->route('user.logout');
         }
     }
     // Redirect ke login jika tidak terautentikasi
@@ -210,7 +210,7 @@ Route::group(['prefix' => 'super-admin', 'middleware' => ['auth', 'verified', 'r
 
 // Rute untuk super admin dan admin area
 Route::group(['middleware' => ['auth', 'verified', 'role:super-admin|admin-area']], function () {
-    Route::get('/admin-area/dashboard', [AdminAreaController::class, 'dashboard'])->name('admin-area.dashboard');
+    Route::get('/dashboard', [AdminAreaController::class, 'dashboard'])->name('admin-area.dashboard');
     Route::resources([
         'patrol-area' => PatrolAreaController::class,
         'notice-boards' => NoticeBoardController::class,
@@ -237,6 +237,10 @@ Route::group(['middleware' => ['auth', 'verified', 'role:super-admin|admin-area'
     Route::get('asset-patrol-datatable', [AssetPatrolCheckpointController::class, 'asset_datatable'])->name('asset-patrol-datatable');
     Route::get('aset-report-datatable', [AssetReportController::class, 'datatable'])->name('aset-report.datatable');
     Route::get('checkpoint-report-datatable', [CheckpointReportController::class, 'datatable'])->name('checkpoint-report.datatable');
+
+    Route::get('aset-report-datatable-test', [AssetReportController::class, 'datatable_test'])->name('aset-report.datatable');
+    Route::get('checkpoint-report-datatable-test', [CheckpointReportController::class, 'datatable_test'])->name('checkpoint-report.datatable');
+
     Route::get('shift-patrol-datatable', [ShiftPatrolController::class, 'datatable'])->name('shift-patrol.datatable');
 
     Route::get('/patrol-area-by-area/{id}', [PatrolAreaController::class, 'by_area']);
@@ -268,9 +272,12 @@ Route::group(['middleware' => ['auth', 'verified', 'role:super-admin|admin-area'
 // });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/{id}', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/{id}', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('user-logout', [UserController::class, 'logout'])->name('user.logout');
 
 require __DIR__ . '/auth.php';
