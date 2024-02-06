@@ -34,6 +34,12 @@
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Masukkan Nama" value="{{ old('name', $guard->name) }}" required>
                                 @error('name') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
+                            <!-- Kolom position -->
+                            <div class="mb-3">
+                                <label for="position" class="form-label">Position <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('position') is-invalid @enderror" name="position" id="position" placeholder="Masukkan Jabatan" value="{{ old('position', $guard->position) }}" required>
+                                @error('position') <span class="text-danger d-block">{{ $message }}</span> @enderror
+                            </div>
                             <!-- Kolom gender -->
                             <div class="mb-3">
                                 <label for="gender" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
@@ -63,20 +69,21 @@
                                 <small class="form-text">Jika password kosong, maka tetap menggunakan passsword yang lama</small>
                                 @error('password') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
+
+                        </div>
+                        <div class="col">
                             <!-- Kolom address -->
                             <div class="mb-3">
                                 <label for="address" class="form-label">Alamat <span class="text-danger">*</span></label>
                                 <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="address" placeholder="Deskripsi tentang area patrol" rows="3" required>{{ old('address', $guard->address) }}</textarea>
                                 @error('address') <span class="text-danger d-block">{{ $message }}</span> @enderror
                             </div>
-                        </div>
-                        <div class="col">
                             <div class="mb-3">
                                 <label for="img_avatar" class="form-label">Gambar Profile </label>
                                 <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control @error('img_avatar') is-invalid @enderror" name="img_avatar" id="img_avatar">
                                 <small class="form-text d-block mb-2">Ekstensi gambar yang diperbolehkan: jpeg, png & jpg</small>
                                 @error('img_avatar') <span class="text-danger d-block">{{$message}}</span> @enderror
-                                <img src="{{ $guard->img_avatar ? asset('gambar/guard/' . $guard->img_avatar) : asset('gambar/no-image.png') }}" width="200">
+                                <img src="{{ $guard->img_avatar ? check_img_path($guard->img_avatar) : asset('gambar/no-image.png') }}" width="200">
                             </div>
                             <!-- Kolom wa -->
                             <div class="mb-3">

@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('guards', function (Blueprint $table) {
             $table->id(); 
             $table->string('badge_number', 255)->unique(); // unique
-            $table->string('name', 255); 
+            $table->string('name', 255);
+            $table->string('position', 255);
             $table->string('img_avatar', 255)->nullable(); 
             $table->date('dob'); // Date of Birth
             $table->enum('gender', ['MALE', 'FEMALE']); 
