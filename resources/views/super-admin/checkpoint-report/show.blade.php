@@ -98,27 +98,27 @@
                                     </div>
                                     <div id="collapse{{ $item->id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $item->id }}">
                                         <div class="accordion-body">
-                                            <div class="row">
-                                                <div class="col-12 col-sm-6 col-xl-4">
-                                                    @foreach(explode(',', $item->unsafe_images) as $index => $image)
-                                                        <img src="{{ $image ? check_img_path($image) : asset('gambar/no-image.png') }}" class="img-fluid img-rounded" alt="img asset">
-                                                        <p>{{ $image }}</p>
-                                                    @endforeach
+                                            <div class="row gx-1 gy-3">
+                                                <div class="col-12 col-sm-3 col-md-5 col-xl-3">
+                                                    <p class="mb-0 text-muted">Status</p>
+                                                    <p class="fs-6">
+                                                        {{ $item->asset_unsafe_option_id ? $item->asset_unsafe_option->option_condition : '-' }}
+                                                    </p>
                                                 </div>
-                                                <div class="col-12 col-sm-6 col-xl-8">
-                                                    <div class="mb-3">
-                                                        <p class="mb-0 text-muted">Description</p>
-                                                        <p class="fs-6">
-                                                            {{ $item->unsafe_description ?? '-' }}
-                                                        </p>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <p class="mb-0 text-muted">Status</p>
-                                                        <p class="fs-6">
-                                                            {{ $item->asset_unsafe_option_id ? $item->asset_unsafe_option->option_condition : '-' }}
-                                                        </p>
-                                                    </div>
+                                                <div class="col-12 col-sm-9 col-md-7 col-xl-9">
+                                                    <p class="mb-0 text-muted">Description</p>
+                                                    <p class="fs-6">
+                                                        {{ $item->unsafe_description ?? '-' }}
+                                                    </p>
                                                 </div>
+                                                @foreach(explode(';', $item->unsafe_images) as $index => $image)
+                                                    @php $imageUrl = $image ? check_img_path($image) : asset('gambar/no-image.png'); @endphp
+                                                    <div class="col-12 col-sm-6 col-xl-4">
+                                                        <span class="btn p-0" data-bs-toggle="modal" data-bs-target="#assetImageModal{{ $index }}">
+                                                            <img src="{{ $imageUrl }}" class="img-fluid img-rounded" alt="img asset">
+                                                        </span>
+                                                    </div>
+                                                @endforeach
                                             </div>
                                         </div>
                                     </div>
@@ -131,6 +131,21 @@
                 </div>
             </div>
         </div>
+
+        @foreach(explode(';', $item->unsafe_images) as $index => $image)
+            <div class="modal fade" id="assetImageModal{{ $index }}" tabindex="-1" role="dialog" aria-labelledby="assetImageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <img src="{{ $imageUrl }}" class="img-fluid">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     </div>
 @endsection
 

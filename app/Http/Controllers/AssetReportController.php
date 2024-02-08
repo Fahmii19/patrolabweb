@@ -112,7 +112,7 @@ class AssetReportController extends Controller
             ->addColumn('description', '{{$unsafe_description ? $unsafe_description : "-"}}')
             ->addColumn('image', function ($row) {
                 $images = $row->unsafe_images;
-                $imageArray = explode(',', $images);
+                $imageArray = explode(';', $images);
 
                 // Ambil URL gambar pertama
                 $imageUrl = null;
