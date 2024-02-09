@@ -208,7 +208,7 @@ class UserController extends Controller
             DB::commit();
 
             insert_audit_log('Delete data user');
-            redis_reset_api('user');
+            redis_reset_api('user/spesific/'.$id);
             return redirect()->route('user.index')->with('success', 'User berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

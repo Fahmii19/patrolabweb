@@ -16,10 +16,13 @@ class PatrolAccidentalLogSeeder extends Seeder
     public function run()
     {
         PatrolAccidentalLog::create([
+            'id' => 'patrolaccidentallog-id01',
+            'accidental_location' => 'Lokasi self patrol 01',
             'accidental_long_lat_log' => '123;456',
             'description' => 'deskripsi self patrol 1',
             'images' => '170494756701184c9aa5c2bc044fa91d22881208b7d01.png',
             'location_condition_log' => 'kondisi lokasi 01',
+            'asset_unsafe_option_log' => 'kondisi asset unsafe 01',
             'shift_start_time_log' => date('H:i:s', strtotime('23:59:00')),
             'shift_end_time_log' => date('H:i:s', strtotime('23:59:00')),
             'guard_id' => 1,
@@ -31,10 +34,13 @@ class PatrolAccidentalLogSeeder extends Seeder
         ]);
 
         PatrolAccidentalLog::create([
+            'id' => 'patrolaccidentallog-id02',
+            'accidental_location' => 'Lokasi self patrol 02',
             'accidental_long_lat_log' => '456;789',
             'description' => 'deskripsi self patrol 2',
             'images' => '1704945869329898abd7bdfa14994aebdb23c4dca9e09.png',
             'location_condition_log' => 'kondisi lokasi 02',
+            'asset_unsafe_option_log' => 'kondisi asset unsafe 02',
             'shift_start_time_log' => date('H:i:s', strtotime('23:59:00')),
             'shift_end_time_log' => date('H:i:s', strtotime('23:59:00')),
             'guard_id' => 2,

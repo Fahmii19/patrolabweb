@@ -112,7 +112,7 @@ class AssetReportController extends Controller
             ->addColumn('description', '{{$unsafe_description ? $unsafe_description : "-"}}')
             ->addColumn('image', function ($row) {
                 $images = $row->unsafe_images;
-                $imageArray = explode(';', $images);
+                $imageArray = explode(',', $images);
 
                 // Ambil URL gambar pertama
                 $imageUrl = null;
@@ -126,23 +126,6 @@ class AssetReportController extends Controller
                 return '<img src="' . $imageUrl . '" alt="'.$imageArray[0].'" border="0" width="100" class="img-rounded" align="center" />';
             })
             ->rawColumns(['image'])
-        ->toJson();
-    }
-
-    public function datatable_test()
-    {
-        $data = AssetPatrolCheckpointLog::with('asset_patrol_checkpoint.asset', 'asset_unsafe_option', 'patrol_checkpoint_log.pleton', 'patrol_checkpoint_log.checkpoint.round.patrol_area.area');
-        if(auth()->user()->hasRole('admin-area')){
-            $area_id = explode(',', auth()->user()->access_area);
-
-            $data->whereHas('patrol_checkpoint_log.checkpoint.round.patrol_area', function ($query) use ($area_id) {
-                $query->whereIn('area_id', $area_id);
-            });
-        }
-
-        $row = $data->get();
-        return DataTables::of($row)
-        ->addIndexColumn()
         ->toJson();
     }
 }

@@ -175,6 +175,7 @@ class CheckPointController extends Controller
             DB::commit();
 
             insert_audit_log('Update data checkpoint');
+            redis_reset_api('checkpoint/spesific/'.$id);
             return redirect()->route('check-point.index')->with('success', 'Checkpoint berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
@@ -197,6 +198,7 @@ class CheckPointController extends Controller
             DB::commit();
 
             insert_audit_log('Delete data checkpoint');
+            redis_reset_api('checkpoint/spesific/'.$id);
             return redirect()->route('check-point.index')->with('success', 'Checkpoint Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();

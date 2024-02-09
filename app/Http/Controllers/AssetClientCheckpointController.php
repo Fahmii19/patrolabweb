@@ -69,10 +69,12 @@ class AssetClientCheckpointController extends Controller
                 "updated_at" => null
             ];
 
-            CheckpointAssetClient::create($data);
+            $action = CheckpointAssetClient::create($data);
+            $id = $action->id;
             DB::commit();
 
             insert_audit_log('Insert data asset client ' . $request->asset_id . ' to checkpoint ' . $request->insert_checkpoint);
+            redis_reset_api('asset-client-checkpoint/'.$id);
             return redirect()->route('asset-client-detail')->with('success', 'Asset Berhasil Ditambahkan');
         } catch (Throwable $e) {
             DB::rollback();
@@ -129,6 +131,7 @@ class AssetClientCheckpointController extends Controller
             DB::commit();
 
             insert_audit_log('Delete asset client checkpoint data');
+            redis_reset_api('asset-client-checkpoint/'.$id);
             return redirect()->route('asset-client-detail')->with('success', 'Asset Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();

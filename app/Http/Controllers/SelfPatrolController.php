@@ -211,9 +211,22 @@ class SelfPatrolController extends Controller
      * @param  \App\Models\SelfPatrol  $selfPatrol
      * @return \Illuminate\Http\Response
      */
-    public function show(SelfPatrol $selfPatrol)
+    public function show(PatrolAccidentalLog $selfPatrol)
     {
-        //
+        $data['title'] = "Detail Self Patrol Report";
+        $data['report'] = PatrolAccidentalLog::with([
+            'data_guard' => function($query){
+                $query->select('id','name');
+            },
+            'pleton' => function($query){
+                $query->select('id','code','name');
+            },
+            'location_condition',
+            'shift'
+        ])->find($selfPatrol->id);
+
+        // return response()->json($data);
+        return view('super-admin.self-patrol.show', $data);
     }
 
     /**
@@ -263,22 +276,26 @@ class SelfPatrolController extends Controller
             ->addColumn('condition', '{{$location_condition_log}}')
             ->addColumn('image', function ($row) {
                 $images = $row->images;
-                $imgHtml = '';
-                // Cek jika file gambar ada
-                if ($images) {
-                    $url = check_img_path($images);
-                } else {
-                    $url = asset('gambar/no-image.png'); // Gambar default
-                }
+                $imageArray = explode(',', $images);
 
-                $imgHtml .= '<span class="btn" data-bs-toggle="modal" data-bs-target="#imageModal' . $row->id . '"><img src="' . $url . '" border="0" width="100" class="img-rounded mr-1" align="center" /></span>';
+                // Ambil URL gambar pertama
+                $imageUrl = null;
+                if ($images && count($imageArray) > 0) {
+                    $imageUrl = check_img_path(trim($imageArray[0]));
+                } else {
+                    // Jika tidak ada gambar, gunakan gambar default
+                    $imageUrl = asset('gambar/no-image.png');
+                }
+                
+                $imgHtml = '';
+                $imgHtml .= '<span class="btn" data-bs-toggle="modal" data-bs-target="#imageModal' . $row->id . '"><img src="' . $imageUrl . '" border="0" width="100" class="img-rounded mr-1" align="center" /></span>';
                 
                 $imgHtml .= '
                     <div class="modal fade" id="imageModal' . $row->id . '" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-body">
-                                    <img src="' . $url . '" class="img-fluid">
+                                    <img src="' . $imageUrl . '" class="img-fluid">
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Close</button>

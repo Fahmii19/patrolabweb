@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PatrolAccidentalLog extends Model
 {
     use HasFactory;
-    protected $guarded = ['id'];
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $table = 'patrol_accidental_log';
 
     public function location_condition()

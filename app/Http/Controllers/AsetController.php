@@ -157,6 +157,7 @@ class AsetController extends Controller
             DB::commit();
 
             insert_audit_log('Update data aset '.$data['asset_master_type']);
+            redis_reset_api('asset-master/'.$aset->id);
             return redirect()->route('aset.index')->with('success', 'Aset berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
@@ -177,18 +178,12 @@ class AsetController extends Controller
         try {
             DB::beginTransaction();
 
-            // Hapus gambar dari server jika ada
-            // if ($aset->image) {
-            //     if (file_exists(public_path('gambar/aset/' . $aset->image))) {
-            //         unlink(public_path('gambar/aset/' . $aset->image));
-            //     }
-            // }
-
             // Hapus data area
             $aset->delete();
             DB::commit();
 
             insert_audit_log('Delete data aset '. $aset->asset_mmaster_type);
+            redis_reset_api('asset-master/'.$aset->id);
             return redirect()->route('aset.index')->with('success', 'Aset berhasil dihapus');
         } catch (\Exception $e) {
             DB::rollback();

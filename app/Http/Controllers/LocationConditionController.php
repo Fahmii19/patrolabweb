@@ -102,6 +102,7 @@ class LocationConditionController extends Controller
             DB::commit();
 
             insert_audit_log('Update data location condition option');
+            redis_reset_api('location-condition-option');
             return redirect()->route('location-condition.index')->with('success', 'Location condition option berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();

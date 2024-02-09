@@ -14,11 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('patrol_accidental_log', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 255)->primary();
+            $table->index('id');
+            $table->string('accidental_location', 255);
             $table->string('accidental_long_lat_log', 255)->nullable();
             $table->text('description')->nullable();
             $table->string('images', 255);
             $table->string('location_condition_log', 255);
+            $table->string('asset_unsafe_option_log', 255);
             $table->time('shift_start_time_log')->nullable();
             $table->time('shift_end_time_log')->nullable();
             $table->unsignedBigInteger('guard_id');
