@@ -183,19 +183,12 @@ class AreaController extends Controller
         try {
             DB::beginTransaction();
 
-           // Hapus gambar dari server jika ada
-        //    if ($area->img_location) {
-        //         if (file_exists(public_path('gambar/area/' . $area->img_location))) {
-        //             unlink(public_path('gambar/area/' . $area->img_location));
-        //         }
-        //     }
-
             // Hapus data area
             $area->delete();
             DB::commit();
 
             insert_audit_log('Delete data area');
-            redis_reset_api('area');
+            redis_reset_api('area/spesific/'.$area->id);
             return redirect()->route('area.index')->with('success', 'Area berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

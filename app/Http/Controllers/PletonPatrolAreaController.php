@@ -77,6 +77,7 @@ class PletonPatrolAreaController extends Controller
             DB::commit();
 
             insert_audit_log('Insert data pleton patrol area');
+            redis_reset_api('pleton-patrolarea');
             return redirect()->route('pleton-patrol-area.index')->with('success', 'Pleton patrol area berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
@@ -159,6 +160,7 @@ class PletonPatrolAreaController extends Controller
             DB::commit();
 
             insert_audit_log('Update pleton patrol area');
+            redis_reset_api('pleton-patrolarea');
             return redirect()->route('pleton-patrol-area.index')->with('success', 'Pleton patrol area berhasil diperbarui');
         } catch (Exception $e) {
             DB::rollback();

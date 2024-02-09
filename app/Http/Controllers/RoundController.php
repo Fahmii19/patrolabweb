@@ -138,6 +138,7 @@ class RoundController extends Controller
             DB::commit();
 
             insert_audit_log('Update data round');
+            redis_reset_api('round/spesific/'.$id);
             return redirect()->route('round.index')->with('success', 'Round berhasil diperbarui');
         } catch (Throwable $e) {
             DB::rollback();
@@ -154,6 +155,7 @@ class RoundController extends Controller
             DB::commit();
 
             insert_audit_log('Delete data round');
+            redis_reset_api('round/spesific/'.$id);
             return redirect()->route('round.index')->with('success', 'Route Berhasil Dihapus');
         } catch (Throwable $e) {
             DB::rollback();

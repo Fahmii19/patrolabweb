@@ -298,7 +298,7 @@ class GuardController extends Controller
             DB::commit();
 
             insert_audit_log('Automated update data user after data guard was updated');
-            redis_reset_api('guard');
+            redis_reset_api('user/spesific/'.$user->id);
             return redirect()->route('guard.index')->with('success', 'User guard berhasil diperbarui');
         } catch (Throwable $e) {
             DB::rollback();
@@ -324,22 +324,13 @@ class GuardController extends Controller
                 $guard->user->delete();
             }
 
-            // Hapus hubungan many-to-many dengan projects jika ada
-            // $guard->projects()->detach();
-
-            // if ($guard->img_avatar) {
-            //     $image = $guard->img_avatar;
-            //     if (file_exists(public_path('gambar/guard/' . $image))) {
-            //         unlink(public_path('gambar/guard/' . $image));
-            //     }
-            // }
-
             // Hapus data Guard
             $guard->delete();
 
             DB::commit();
 
             insert_audit_log('Delete data guard');
+            redis_reset_api('guard/spesific/'.$guard->id);
             return redirect()->route('guard.index')->with('success', 'Guard berhasil dihapus.');
         } catch (Exception $e) {
             DB::rollback();

@@ -199,6 +199,7 @@ class PletonController extends Controller
             DB::commit();
 
             insert_audit_log('Delete data pleton');
+            redis_reset_api('pleton/spesific/'.$id);
             return redirect()->route('pleton.index')->with('success', 'Pleton berhasil dihapus');
         } catch (Exception $e) {
             DB::rollback();

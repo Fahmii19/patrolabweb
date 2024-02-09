@@ -64,6 +64,7 @@ class AssetUnsafeOptionController extends Controller
             DB::commit();
 
             insert_audit_log('Insert data asset unsafe option');
+            redis_reset_api('asset-unsafe-option');
             return redirect()->route('aset-unsafe-option.index')->with('success', 'Aset unsafe option berhasil ditambahkan');
         } catch (Exception $e) {
             DB::rollback();
@@ -129,6 +130,7 @@ class AssetUnsafeOptionController extends Controller
             DB::commit();
 
             insert_audit_log('Update data asset unsafe option');
+            redis_reset_api('asset-unsafe-option');
             return redirect()->route('aset-unsafe-option.index')->with('success', 'Aset unsafe option berhasil diupdate');
         } catch (Exception $e) {
             DB::rollback();
