@@ -111,11 +111,11 @@
                                                         {{ $item->unsafe_description ?? '-' }}
                                                     </p>
                                                 </div>
-                                                @foreach(explode(';', $item->unsafe_images) as $index => $image)
+                                                @foreach(explode(',', $item->unsafe_images) as $index => $image)
                                                     @php $imageUrl = $image ? check_img_path($image) : asset('gambar/no-image.png'); @endphp
                                                     <div class="col-12 col-sm-6 col-xl-4">
                                                         <span class="btn p-0" data-bs-toggle="modal" data-bs-target="#assetImageModal{{ $index }}">
-                                                            <img src="{{ $imageUrl }}" class="img-fluid img-rounded" alt="img asset">
+                                                            <img src="{{ $imageUrl }}" class="img-fluid img-rounded" alt="{{ $image }}">
                                                         </span>
                                                     </div>
                                                 @endforeach
@@ -132,12 +132,12 @@
             </div>
         </div>
 
-        @foreach(explode(';', $item->unsafe_images) as $index => $image)
+        @foreach(explode(',', $item->unsafe_images) as $index => $image)
             <div class="modal fade" id="assetImageModal{{ $index }}" tabindex="-1" role="dialog" aria-labelledby="assetImageModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl">
                     <div class="modal-content">
                         <div class="modal-body">
-                            <img src="{{ $imageUrl }}" class="img-fluid">
+                            <img src="{{ check_img_path($image) }}" alt="{{ $image }}" class="img-fluid">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Close</button>
