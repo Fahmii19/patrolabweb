@@ -58,10 +58,6 @@
                                     <p class="mb-0 text-muted">Description</p>
                                     <p class="fs-6">{{ $report->description }}</p>
                                 </div>
-                                <div class="mb-3">
-                                    <p class="mb-0 text-muted">Asset Condition</p>
-                                    <p class="fs-6">{{ $report->asset_unsafe_option_log }}</p>
-                                </div>
                             </div>
                         </div>
                     </div>

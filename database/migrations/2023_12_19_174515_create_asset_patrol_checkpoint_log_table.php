@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('unsafe_description')->nullable();
             $table->text('unsafe_images')->nullable();
             $table->enum('status', ['SAFE', 'UNSAFE']);
+            $table->string('asset_unsafe_option_log', 255);
             $table->string('patrol_checkpoint_log_id', 255);
             $table->foreign('patrol_checkpoint_log_id')->references('id')->on('patrol_checkpoint_log');
             $table->unsignedBigInteger('asset_unsafe_option_id')->nullable();

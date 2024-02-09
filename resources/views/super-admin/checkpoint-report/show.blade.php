@@ -102,7 +102,7 @@
                                                 <div class="col-12 col-sm-3 col-md-5 col-xl-3">
                                                     <p class="mb-0 text-muted">Status</p>
                                                     <p class="fs-6">
-                                                        {{ $item->asset_unsafe_option_id ? $item->asset_unsafe_option->option_condition : '-' }}
+                                                        {{ $item->asset_unsafe_option_log }}
                                                     </p>
                                                 </div>
                                                 <div class="col-12 col-sm-9 col-md-7 col-xl-9">

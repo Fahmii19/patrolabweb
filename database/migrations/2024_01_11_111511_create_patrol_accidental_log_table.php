@@ -21,7 +21,6 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('images', 255);
             $table->string('location_condition_log', 255);
-            $table->string('asset_unsafe_option_log', 255);
             $table->time('shift_start_time_log')->nullable();
             $table->time('shift_end_time_log')->nullable();
             $table->unsignedBigInteger('guard_id');
