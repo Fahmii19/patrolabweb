@@ -41,41 +41,30 @@
         processing: true,
         serverSide: true,
         ajax: "{{ route('self-patrol.datatable') }}",
-        columns: [{
-                data: 'DT_RowIndex',
-                name: 'No'
-            },
-            {
-                data: 'guard',
-                name: 'Nama Guard'
-            },
-            {
-                data: 'pleton',
-                name: 'Nama Pleton'
-            },
-            {
-                data: 'coordinat',
-                name: 'Titik Koordinat Lokasi'
-            },
-            {
-                data: 'description',
-                name: 'Deskripsi Laporan'
-            },
-            {
-                data: 'condition',
-                name: 'Kondisi Lokasi'
-            },
-            {
-                data: 'image',
+        columns: [
+            { data: 'DT_RowIndex', name: 'No' },
+            { data: 'guard', name: 'Nama Guard' },
+            { data: 'pleton', name: 'Nama Pleton' },
+            { data: 'coordinat', name: 'Titik Koordinat Lokasi' },
+            { data: 'description', name: 'Deskripsi Laporan' },
+            { data: 'condition', name: 'Kondisi Lokasi' },
+            { 
+                data: 'image', 
                 name: 'Foto Laporan',
                 orderable: false,
-                searchable: false,
+                searchable: false, 
             },
-            {
-                data: 'reported_at',
-                name: 'Tanggal dan Waktu Laporan'
-            },
-        ]
+            { data: 'reported_at', name: 'Tanggal dan Waktu Laporan' },
+        ],
+        rowCallback: function(row, data) {
+            // Set the cursor style to pointer
+            $(row).css('cursor', 'pointer');
+            // Attach a click event handler to each row
+            $(row).on('click', function() {
+                // Handle the row click event
+                location.href = `{{ route('self-patrol.show', ':id') }}`.replace(':id', data.id);
+            });
+        }
     });
     active_menu("#menu-report", "#sub-report-self-patrol")
 </script>
